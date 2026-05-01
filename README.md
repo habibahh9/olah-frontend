@@ -57,4 +57,5 @@ src/
 - [ ] Deployment ke GCP
 - [ ] Dokumentasi final
 
+## 🔗 Repository Terkait
 [olah-backend](https://github.com/habibahh99/olah-backend) — Backend API
