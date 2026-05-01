@@ -31,7 +31,6 @@ cp .env.example .env
 # Jalankan development server
 npm run dev
 ```
-del README.md
 Buka browser di `http://localhost:5173`
 
 ## 📁 Struktur Foldersrc/
@@ -57,4 +56,5 @@ src/
 - [ ] Testing & QA
 - [ ] Deployment ke GCP
 - [ ] Dokumentasi final
-- [olah-backend](https://github.com/habibahh99/olah-backend) — Backend API
+
+[olah-backend](https://github.com/habibahh99/olah-backend) — Backend API
