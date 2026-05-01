@@ -1,16 +1,49 @@
-# React + Vite
+# 🍳 Olah — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Antarmuka pengguna aplikasi Olah, sistem rekomendasi resep berbasis AI.
 
-Currently, two official plugins are available:
+## 🛠️ Tech Stack
+- **React JS** + Vite
+- **Tailwind CSS**
+- **Axios**
+- **React Router DOM**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Cara Menjalankan
 
-## React Compiler
+### Prerequisites
+- Node.js 18+
+- npm atau yarn
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Instalasi
 
-## Expanding the ESLint configuration
+```bash
+# Clone repository
+git clone https://github.com/USERNAME_KAMU/olah-frontend.git
+cd olah-frontend
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Install dependencies
+npm install
+
+# Setup environment variables
+cp .env.example .env
+# Edit .env sesuai kebutuhan
+
+# Jalankan development server
+npm run dev
+```
+del README.md
+Buka browser di `http://localhost:5173`
+
+## 📁 Struktur Foldersrc/
+src/
+├── assets/         # Gambar dan aset statis
+├── components/     # Komponen reusable
+│   ├── common/     # Button, Input, Card, dll
+│   └── layout/     # Navbar, Footer, dll
+├── pages/          # Halaman-halaman utama
+├── hooks/          # Custom React hooks
+├── services/       # Integrasi API
+├── context/        # State global (Auth, dll)
+└── utils/          # Fungsi helper## 🔗 Repository Terkait
+
+- [olah-backend](https://github.com/habibahh99/olah-backend) — Backend API
