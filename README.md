@@ -58,4 +58,4 @@ src/
 - [ ] Dokumentasi final
 
 ## 🔗 Repository Terkait
-[olah-backend](https://github.com/habibahh99/olah-backend) — Backend API
+[olah-backend](https://github.com/habibahh9/olah-backend) — Backend API
