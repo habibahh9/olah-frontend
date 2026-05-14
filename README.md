@@ -31,19 +31,31 @@ cp .env.example .env
 # Jalankan development server
 npm run dev
 ```
-del README.md
 Buka browser di `http://localhost:5173`
 
 ## 📁 Struktur Foldersrc/
 src/
-├── assets/         # Gambar dan aset statis
-├── components/     # Komponen reusable
-│   ├── common/     # Button, Input, Card, dll
-│   └── layout/     # Navbar, Footer, dll
-├── pages/          # Halaman-halaman utama
-├── hooks/          # Custom React hooks
-├── services/       # Integrasi API
-├── context/        # State global (Auth, dll)
-└── utils/          # Fungsi helper## 🔗 Repository Terkait
+- ├── assets/         # Gambar dan aset statis
+- ├── components/     # Komponen reusable
+- │   ├── common/     # Button, Input, Card, dll
+- │   └── layout/     # Navbar, Footer, dll
+- ├── pages/          # Halaman-halaman utama
+- ├── hooks/          # Custom React hooks
+- ├── services/       # Integrasi API
+- ├── context/        # State global (Auth, dll)
+- └── utils/          # Fungsi helper## 🔗 Repository Terkait
 
-- [olah-backend](https://github.com/habibahh99/olah-backend) — Backend API
+## 🗺️ Roadmap
+- [ ] Design UI (Figma)
+- [ ] Setup arsitektur & GitHub
+- [ ] Slicing design: halaman login, register, dashboard
+- [ ] Database schema & API dasar
+- [ ] Integrasi backend–frontend
+- [ ] Fitur input bahan makanan
+- [ ] Integrasi AI/RAG pipeline
+- [ ] Testing & QA
+- [ ] Deployment ke GCP
+- [ ] Dokumentasi final
+
+## 🔗 Repository Terkait
+[olah-backend](https://github.com/habibahh9/olah-backend) — Backend API
