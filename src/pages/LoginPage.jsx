@@ -14,8 +14,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
-  e.preventDefault();
-  navigate("/dashboard");
+    e.preventDefault();
+    navigate("/dashboard");
   };
 
   return (
@@ -119,7 +119,6 @@ export default function LoginPage() {
             background: "linear-gradient(160deg, #f5cda8 0%, #e09060 35%, #c96030 70%, #a84020 100%)",
           }}
         >
-          {/* Overlay gradasi putih di atas */}
           <div
             className="absolute inset-x-0 top-0 pointer-events-none"
             style={{
@@ -129,39 +128,19 @@ export default function LoginPage() {
             }}
           />
 
-          {/* Foto 1 — kiri atas */}
-          <div
-            className="absolute rounded-full overflow-hidden"
-            style={{ width: 148, height: 148, left: "4%", top: "4%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}
-          >
+          <div className="absolute rounded-full overflow-hidden" style={{ width: 148, height: 148, left: "4%", top: "4%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}>
             <img src={food1} alt="makanan 1" className="w-full h-full object-cover" style={{ transform: "scale(1.35)" }} />
           </div>
-
-          {/* Foto 2 — tengah atas */}
-          <div
-            className="absolute rounded-full overflow-hidden"
-            style={{ width: 148, height: 148, right: "35%", top: "22%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}
-          >
+          <div className="absolute rounded-full overflow-hidden" style={{ width: 148, height: 148, right: "35%", top: "22%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}>
             <img src={food2} alt="makanan 2" className="w-full h-full object-cover" style={{ transform: "scale(1.35)" }} />
           </div>
-
-          {/* Foto 3 — tengah bawah */}
-          <div
-            className="absolute rounded-full overflow-hidden"
-            style={{ width: 148, height: 148, right: "35%", top: "50%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}
-          >
+          <div className="absolute rounded-full overflow-hidden" style={{ width: 148, height: 148, right: "35%", top: "50%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}>
             <img src={food3} alt="makanan 3" className="w-full h-full object-cover" style={{ transform: "scale(1.35)" }} />
           </div>
-
-          {/* Foto 4 — kiri bawah */}
-          <div
-            className="absolute rounded-full overflow-hidden"
-            style={{ width: 148, height: 148, left: "4%", top: "70%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}
-          >
+          <div className="absolute rounded-full overflow-hidden" style={{ width: 148, height: 148, left: "4%", top: "70%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}>
             <img src={food4} alt="makanan 4" className="w-full h-full object-cover" style={{ transform: "scale(1.35)" }} />
           </div>
 
-          {/* Tagline kanan bawah */}
           <div className="absolute bottom-7 right-7 text-right" style={{ zIndex: 20 }}>
             <p className="text-white/80 text-sm font-medium">Punya Sisa Bahan Makanan?</p>
             <p className="text-white text-base">

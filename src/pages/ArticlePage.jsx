@@ -1,0 +1,433 @@
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import logoOlah from "../assets/logo-olah.png";
+
+// ── NAV ICONS (same as dashboard) ──────────────────────────────────────────
+const IconBeranda = () => (
+  <svg width="22" height="22" viewBox="0 0 46 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M44.8763 19.7641L25.7097 1.09287C24.9909 0.393093 24.0162 0 23 0C21.9838 0 21.0091 0.393093 20.2903 1.09287L1.12367 19.7641C0.765982 20.11 0.482445 20.5216 0.289545 20.9752C0.0966444 21.4288 -0.0017697 21.9152 2.40864e-05 22.4061V44.8116C2.40864e-05 45.3068 0.201958 45.7817 0.561403 46.1318C0.920847 46.482 1.40836 46.6787 1.91669 46.6787H17.25C17.7583 46.6787 18.2458 46.482 18.6053 46.1318C18.9647 45.7817 19.1667 45.3068 19.1667 44.8116V31.7417H26.8333V44.8116C26.8333 45.3068 27.0353 45.7817 27.3947 46.1318C27.7542 46.482 28.2417 46.6787 28.75 46.6787H44.0833C44.5916 46.6787 45.0792 46.482 45.4386 46.1318C45.798 45.7817 46 45.3068 46 44.8116V22.4061C46.0018 21.9152 45.9034 21.4288 45.7105 20.9752C45.5176 20.5216 45.234 20.11 44.8763 19.7641ZM42.1666 42.9445H30.6667V29.8746C30.6667 29.3794 30.4647 28.9045 30.1053 28.5543C29.7458 28.2042 29.2583 28.0075 28.75 28.0075H17.25C16.7417 28.0075 16.2542 28.2042 15.8947 28.5543C15.5353 28.9045 15.3333 29.3794 15.3333 29.8746V42.9445H3.83335V22.4061L23 3.73485L42.1666 22.4061V42.9445Z" fill="currentColor"/>
+  </svg>
+);
+const IconBahan = () => (
+  <svg width="22" height="22" viewBox="0 0 47 53" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M45.2583 11.7029H39.0123L44.7489 5.28092C44.9107 5.0997 45.0391 4.88456 45.1267 4.64779C45.2142 4.41101 45.2593 4.15724 45.2593 3.90096C45.2593 3.64467 45.2142 3.3909 45.1267 3.15412C45.0391 2.91735 44.9107 2.70221 44.7489 2.52099C44.5871 2.33977 44.395 2.19602 44.1836 2.09795C43.9721 1.99987 43.7455 1.94939 43.5167 1.94939C43.2878 1.94939 43.0612 1.99987 42.8498 2.09795C42.6384 2.19602 42.4463 2.33977 42.2845 2.52099L36.5501 8.94538V1.95048C36.5501 1.43318 36.3666 0.937067 36.04 0.571282C35.7133 0.205496 35.2703 0 34.8084 0C34.3465 0 33.9035 0.205496 33.5769 0.571282C33.2503 0.937067 33.0668 1.43318 33.0668 1.95048V9.89136C30.4129 8.17563 27.328 7.48752 24.2897 7.93356C21.2514 8.37961 18.4291 9.93492 16.2598 12.3587C7.52975 21.9624 0.965885 44.8049 0.325826 47.0894C0.0240474 47.8149 -0.0711896 48.6267 0.0530321 49.4148C0.177254 50.203 0.514922 50.9292 1.02024 51.4951C1.52556 52.061 2.17407 52.4392 2.87782 52.5783C3.58157 52.7174 4.30649 52.6108 4.95427 52.2728C6.99419 51.556 27.4173 44.1954 35.971 34.4235C38.1337 31.9934 39.521 28.8327 39.9181 25.4307C40.3152 22.0286 39.7 18.5748 38.1676 15.6038H45.2583C45.7203 15.6038 46.1633 15.3983 46.4899 15.0325C46.8165 14.6668 47 14.1706 47 13.6533C47 13.136 46.8165 12.6399 46.4899 12.2741C46.1633 11.9084 45.7203 11.7029 45.2583 11.7029Z" fill="currentColor"/>
+  </svg>
+);
+const IconResep = () => (
+  <svg width="22" height="22" viewBox="0 0 46 53" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M36.4167 21.9324C36.4167 22.5141 36.2147 23.0719 35.8553 23.4832C35.4958 23.8945 35.0083 24.1256 34.5 24.1256H19.1667C18.6583 24.1256 18.1708 23.8945 17.8114 23.4832C17.4519 23.0719 17.25 22.5141 17.25 21.9324C17.25 21.3507 17.4519 20.7928 17.8114 20.3815C18.1708 19.9702 18.6583 19.7391 19.1667 19.7391H34.5C35.0083 19.7391 35.4958 19.9702 35.8553 20.3815C36.2147 20.7928 36.4167 21.3507 36.4167 21.9324ZM34.5 28.5121H19.1667C18.6583 28.5121 18.1708 28.7432 17.8114 29.1545C17.4519 29.5658 17.25 30.1236 17.25 30.7053C17.25 31.287 17.4519 31.8449 17.8114 32.2562C18.1708 32.6675 18.6583 32.8986 19.1667 32.8986H34.5C35.0083 32.8986 35.4958 32.6675 35.8553 32.2562C36.2147 31.8449 36.4167 31.287 36.4167 30.7053C36.4167 30.1236 36.2147 29.5658 35.8553 29.1545C35.4958 28.7432 35.0083 28.5121 34.5 28.5121ZM46 4.38647V48.2512C46 49.4146 45.5961 50.5303 44.8772 51.3529C44.1584 52.1755 43.1833 52.6377 42.1667 52.6377H3.83333C2.81667 52.6377 1.84165 52.1755 1.12276 51.3529C0.403868 50.5303 0 49.4146 0 48.2512V4.38647C0 3.22311 0.403868 2.10739 1.12276 1.28477C1.84165 0.462145 2.81667 0 3.83333 0H42.1667C43.1833 0 44.1584 0.462145 44.8772 1.28477C45.5961 2.10739 46 3.22311 46 4.38647ZM3.83333 48.2512H9.58333V4.38647H3.83333V48.2512ZM42.1667 48.2512V4.38647H13.4167V48.2512H42.1667Z" fill="currentColor"/>
+  </svg>
+);
+const IconKeranjang = () => (
+  <svg width="22" height="22" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M43.6163 9.65765C43.4633 9.45521 43.272 9.29238 43.0559 9.18066C42.8398 9.06894 42.6042 9.01106 42.3657 9.0111H9.50783L8.26945 1.48007C8.20124 1.06481 8.00342 0.689203 7.71049 0.418726C7.41755 0.148248 7.04808 6.09989e-05 6.66648 0H1.62945C1.19729 0 0.782835 0.189876 0.477254 0.527858C0.171673 0.86584 0 1.32424 0 1.80222C0 2.2802 0.171673 2.7386 0.477254 3.07658C0.782835 3.41457 1.19729 3.60444 1.62945 3.60444H5.29571L10.5018 35.2086C10.6552 36.1459 11.0297 37.0218 11.5874 37.7475C10.8176 38.5428 10.262 39.5583 9.98212 40.6815C9.70228 41.8048 9.70917 42.9918 10.002 44.1109C10.2949 45.23 10.8623 46.2376 11.6412 47.0219C12.4202 47.8062 13.3804 48.3365 14.4152 48.5541C15.4501 48.7716 16.5192 48.668 17.504 48.2545C18.4889 47.8411 19.3509 47.134 19.9946 46.2118C20.6383 45.2896 21.0385 44.1882 21.1508 43.0297C21.2631 41.8713 21.0832 40.7011 20.6309 39.6489H29.8821C29.5175 40.493 29.3289 41.4168 29.3301 42.3522C29.3301 43.5998 29.6646 44.8193 30.2912 45.8566C30.9179 46.8939 31.8086 47.7024 32.8507 48.1798C33.8928 48.6572 35.0395 48.7822 36.1458 48.5388C37.252 48.2954 38.2682 47.6946 39.0658 46.8125C39.8634 45.9303 40.4066 44.8064 40.6266 43.5828C40.8467 42.3592 40.7337 41.0909 40.3021 39.9383C39.8704 38.7857 39.1395 37.8006 38.2016 37.1075C37.2637 36.4144 36.1611 36.0444 35.0331 36.0444H15.3107C14.9291 36.0444 14.5596 35.8962 14.2667 35.6257C13.9738 35.3552 13.7759 34.9796 13.7077 34.5643L13.0621 30.6378H36.6891C37.8339 30.6376 38.9423 30.193 39.8211 29.3816C40.6999 28.5701 41.2934 27.4433 41.498 26.1975L43.9747 11.1355C44.0167 10.8751 44.0063 10.6078 43.9443 10.3524C43.8824 10.097 43.7704 9.85981 43.6163 9.65765Z" fill="currentColor"/>
+  </svg>
+);
+const IconRiwayat = () => (
+  <svg width="22" height="22" viewBox="0 0 44 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24.6477 9.6834V18.4529L32.5966 22.8245C32.997 23.0449 33.2854 23.4021 33.3985 23.8175C33.5116 24.2329 33.44 24.6725 33.1996 25.0396C32.9591 25.4066 32.5694 25.671 32.1163 25.7747C31.6631 25.8783 31.1836 25.8127 30.7832 25.5923L21.9805 20.7506C21.7199 20.6072 21.5044 20.4043 21.3547 20.1618C21.2051 19.9192 21.1265 19.6454 21.1266 19.3667V9.6834C21.1266 9.25537 21.3121 8.84487 21.6423 8.5422C21.9724 8.23954 22.4202 8.06951 22.8871 8.06951C23.3541 8.06951 23.8019 8.23954 24.132 8.5422C24.4622 8.84487 24.6477 9.25537 24.6477 9.6834Z" fill="currentColor"/>
+  </svg>
+);
+
+// ── DUMMY ARTICLES (placeholder sebelum API dipasang) ───────────────────────
+const DUMMY_ARTICLES = [
+  {
+    id: 1,
+    title: "5 Cara Cerdas Mengurangi Sisa Makanan di Dapur",
+    category: "Tips & Trik",
+    author: "Tim OLAH",
+    date: "20 Mei 2026",
+    readTime: "4 mnt",
+    excerpt: "Sisa bahan makanan bisa diolah menjadi hidangan lezat. Temukan lima cara mudah untuk memanfaatkan bahan yang hampir kadaluarsa.",
+    image: null,
+    featured: true,
+  },
+  {
+    id: 2,
+    title: "Manfaat Bayam untuk Kesehatan yang Jarang Diketahui",
+    category: "Nutrisi",
+    author: "Dr. Sari",
+    date: "18 Mei 2026",
+    readTime: "6 mnt",
+    excerpt: "Bayam bukan sekadar sayur biasa. Kandungan zat besi dan vitamin K-nya memberikan manfaat luar biasa bagi tubuh Anda.",
+    image: null,
+    featured: false,
+  },
+  {
+    id: 3,
+    title: "Resep Sup Sehat dari Sisa Sayuran Kulkas",
+    category: "Resep",
+    author: "Chef Budi",
+    date: "15 Mei 2026",
+    readTime: "3 mnt",
+    excerpt: "Tidak perlu belanja lagi! Sisa wortel, bayam, dan tomat bisa disulap menjadi sup bergizi tinggi untuk keluarga.",
+    image: null,
+    featured: false,
+  },
+  {
+    id: 4,
+    title: "Panduan Menyimpan Bahan Makanan agar Tahan Lama",
+    category: "Tips & Trik",
+    author: "Tim OLAH",
+    date: "12 Mei 2026",
+    readTime: "5 mnt",
+    excerpt: "Cara menyimpan bahan makanan yang benar bisa memperpanjang kesegaran hingga 2x lipat. Pelajari teknik sederhana ini.",
+    image: null,
+    featured: false,
+  },
+  {
+    id: 5,
+    title: "Fermentasi Tempe: Tradisi yang Kaya Gizi",
+    category: "Kuliner Nusantara",
+    author: "Indah W.",
+    date: "10 Mei 2026",
+    readTime: "7 mnt",
+    excerpt: "Tempe adalah superfood lokal Indonesia yang mulai diakui dunia. Kenali proses fermentasinya dan kandungan proteinnya.",
+    image: null,
+    featured: false,
+  },
+  {
+    id: 6,
+    title: "Meal Prep Mingguan: Hemat Waktu dan Bahan",
+    category: "Tips & Trik",
+    author: "Tim OLAH",
+    date: "8 Mei 2026",
+    readTime: "5 mnt",
+    excerpt: "Dengan persiapan masak satu hari, kamu bisa menikmati makanan sehat sepanjang minggu tanpa perlu repot setiap hari.",
+    image: null,
+    featured: false,
+  },
+];
+
+const CATEGORIES = ["Semua", "Tips & Trik", "Resep", "Nutrisi", "Kuliner Nusantara"];
+
+// Category color map
+const CAT_COLORS = {
+  "Tips & Trik":       { bg: "#fff3eb", text: "#d06224" },
+  "Resep":             { bg: "#ebf5eb", text: "#4a7c4a" },
+  "Nutrisi":           { bg: "#ebf0ff", text: "#3b5bdb" },
+  "Kuliner Nusantara": { bg: "#fff8eb", text: "#ae7c1e" },
+};
+
+// Placeholder illustration per category
+const CAT_EMOJI = {
+  "Tips & Trik":       "💡",
+  "Resep":             "🍲",
+  "Nutrisi":           "🥦",
+  "Kuliner Nusantara": "🥘",
+};
+
+export default function ArticlePage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [activeCategory, setActiveCategory] = useState("Semua");
+  const [searchQuery, setSearchQuery]       = useState("");
+  const [articles, setArticles]             = useState(DUMMY_ARTICLES);
+  const [loading, setLoading]               = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+  // ── API PLACEHOLDER ─────────────────────────────────────────────────────
+  // Ganti bagian ini dengan pemanggilan API artikel makanan kamu.
+  // Contoh:
+  //
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetch("https://your-api.com/articles?category=" + activeCategory)
+  //     .then(res => res.json())
+  //     .then(data => { setArticles(data.articles); setLoading(false); })
+  //     .catch(() => setLoading(false));
+  // }, [activeCategory]);
+  // ────────────────────────────────────────────────────────────────────────
+
+  const filtered = articles.filter((a) => {
+    const matchCat  = activeCategory === "Semua" || a.category === activeCategory;
+    const q         = searchQuery.toLowerCase();
+    const matchSearch = !q || a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q);
+    return matchCat && matchSearch;
+  });
+
+  const featured    = filtered.find((a) => a.featured);
+  const regularList = filtered.filter((a) => !a.featured || activeCategory !== "Semua" || searchQuery);
+
+  const navItems = [
+    { label: "Beranda",   path: "/dashboard",  icon: <IconBeranda />   },
+    { label: "Bahan",     path: "/bahan",       icon: <IconBahan />     },
+    { label: "Resep",     path: "/resep",       icon: <IconResep />     },
+    { label: "Keranjang", path: "/keranjang",   icon: <IconKeranjang /> },
+    { label: "Riwayat",   path: "/riwayat",     icon: <IconRiwayat />   },
+  ];
+
+  return (
+    <div className="flex flex-col sm:flex-row min-h-screen bg-[#f4f4f4]">
+
+      {/* ── SIDEBAR ── */}
+      <aside className="hidden sm:flex fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
+        <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
+
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.label}
+              onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center gap-1 transition text-xs font-medium w-full px-2
+                ${isActive ? "text-[#d06224]" : "text-gray-400 hover:text-[#d06224]"}`}
+            >
+              {item.icon}
+              <span className="leading-tight">{item.label}</span>
+            </button>
+          );
+        })}
+
+        <div className="mt-auto relative">
+          <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
+            <svg width="52" height="52" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="70" height="70" rx="35" fill="white" fillOpacity="0.85"/>
+              <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224"/>
+            </svg>
+          </button>
+          {isProfileMenuOpen && (
+            <div className="absolute bottom-14 left-0 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
+              <button onClick={() => { setIsProfileMenuOpen(false); navigate("/profil"); }}
+                className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
+                Kelola Profil
+              </button>
+              <button onClick={() => { setIsProfileMenuOpen(false); navigate("/sandi"); }}
+                className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
+                Ubah Kata Sandi
+              </button>
+              <hr className="my-1" />
+              <button onClick={() => navigate("/login")}
+                className="w-full text-left px-4 py-2 text-sm text-[#ae431e] font-semibold hover:bg-gray-50">
+                Keluar
+              </button>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* ── MAIN CONTENT ── */}
+      <main className="flex-1 sm:ml-[110px] flex flex-col overflow-hidden min-w-0">
+
+        {/* ── PAGE HEADER ── */}
+        <div className="relative bg-gradient-to-br from-[#d06224] via-[#c8571f] to-[#ae431e] px-7 pt-8 pb-6 overflow-hidden">
+          {/* decorative circles */}
+          <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10" />
+          <div className="absolute top-10 -right-4 w-24 h-24 rounded-full bg-white/5" />
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
+            <div>
+              <p className="text-white/70 text-sm font-light">Wawasan kuliner terpercaya</p>
+              <h1 className="text-white text-2xl font-semibold mt-0.5">Artikel Makanan</h1>
+            </div>
+
+            {/* Search */}
+            <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 gap-2 w-full sm:w-[280px]">
+              <svg width="16" height="16" viewBox="0 0 28 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M26.5865 24.2967L20.6502 18.3986C22.4301 16.095 23.2611 13.2053 22.9746 10.3156C22.6881 7.42597 21.3056 4.75272 19.1075 2.83817C16.9095 0.923624 14.0604 -0.0888533 11.1383 0.00612555C8.21628 0.101104 5.43999 1.29643 3.37267 3.34962C1.30535 5.4028 0.1018 8.16011 0.00616771 11.0622C-0.0894648 13.9643 0.929981 16.7939 2.85771 18.9769C4.78543 21.16 7.47708 22.533 10.3866 22.8175C13.2962 23.1021 16.2058 22.2768 18.5252 20.5091L24.4665 26.4109C24.7516 26.6951 25.1318 26.848 25.529 26.848C25.9262 26.848 26.3064 26.6951 26.5915 26.4109C26.8767 26.1267 27.0316 25.7449 27.0316 25.3557C27.0316 24.9665 26.8767 24.5847 26.5915 24.3005L26.5865 24.2967ZM3.02522 11.4464C3.02522 9.77678 3.52374 8.14463 4.45773 6.75637C5.39172 5.36811 6.71924 4.28609 8.27241 3.64714C9.82558 3.00819 11.5346 2.84102 13.1835 3.16675C14.8323 3.49248 16.3469 4.29649 17.5356 5.47711C18.7244 6.65773 19.5339 8.16193 19.8619 9.7995C20.1899 11.4371 20.0215 13.1345 19.3782 14.677C18.7348 16.2196 17.6454 17.538 16.2476 18.4656C14.8497 19.393 13.2346 19.9115 11.5735 19.9115C9.33278 19.9115 7.18377 19.0278 5.6114 17.4657C4.03904 15.9036 3.02522 13.7694 3.02522 11.4464Z" fill="white"/>
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari artikel..."
+                className="bg-transparent text-white placeholder-white/60 text-sm outline-none flex-1"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="text-white/70 hover:text-white text-xs">✕</button>
+              )}
+            </div>
+          </div>
+
+          {/* Category filter tabs */}
+          <div className="flex gap-2 mt-5 overflow-x-auto pb-1 relative z-10 scrollbar-hide">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  activeCategory === cat
+                    ? "bg-white text-[#d06224] shadow"
+                    : "bg-white/20 text-white hover:bg-white/30"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── CONTENT AREA ── */}
+        <div className="px-7 py-6 flex flex-col gap-6 overflow-auto">
+
+          {loading ? (
+            // ── SKELETON LOADING ──
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {[1,2,3,4,5,6].map((i) => (
+                <div key={i} className="bg-white rounded-[15px] overflow-hidden shadow-sm animate-pulse">
+                  <div className="h-[160px] bg-gray-200" />
+                  <div className="p-4 flex flex-col gap-2">
+                    <div className="h-3 w-1/3 bg-gray-200 rounded" />
+                    <div className="h-4 w-3/4 bg-gray-200 rounded" />
+                    <div className="h-3 w-full bg-gray-200 rounded" />
+                    <div className="h-3 w-2/3 bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
+            // ── EMPTY STATE ──
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <span className="text-5xl mb-4">🔍</span>
+              <p className="text-gray-500 text-base">Artikel tidak ditemukan</p>
+              <p className="text-gray-400 text-sm mt-1">Coba kata kunci atau kategori lain</p>
+              <button
+                onClick={() => { setSearchQuery(""); setActiveCategory("Semua"); }}
+                className="mt-4 px-5 py-2 bg-[#d06224] text-white rounded-full text-sm font-medium"
+              >
+                Reset Filter
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* ── FEATURED ARTICLE (hanya tampil di tab "Semua" tanpa search) ── */}
+              {featured && activeCategory === "Semua" && !searchQuery && (
+                <section>
+                  <h2 className="text-base font-light text-black mb-3">Artikel Pilihan</h2>
+                  <div
+                    className="relative w-full rounded-[18px] overflow-hidden cursor-pointer shadow-sm group"
+                    onClick={() => navigate(`/artikel/${featured.id}`)}
+                  >
+                    {/* Placeholder image area */}
+                    <div className="h-[220px] bg-gradient-to-br from-[#f5c5a0] to-[#d06224] flex items-center justify-center">
+                      <span className="text-7xl opacity-40">🍽️</span>
+                    </div>
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
+                    {/* Text */}
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span
+                          className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
+                          style={{
+                            background: CAT_COLORS[featured.category]?.bg ?? "#fff3eb",
+                            color:      CAT_COLORS[featured.category]?.text ?? "#d06224",
+                          }}
+                        >
+                          {featured.category}
+                        </span>
+                        <span className="text-white/70 text-[11px]">{featured.readTime} baca</span>
+                      </div>
+                      <h3 className="text-white font-semibold text-lg leading-snug">{featured.title}</h3>
+                      <p className="text-white/80 text-sm mt-1 line-clamp-2">{featured.excerpt}</p>
+                      <div className="flex items-center justify-between mt-3">
+                        <span className="text-white/60 text-xs">{featured.author} · {featured.date}</span>
+                        <span className="text-white text-xs font-medium group-hover:underline">Baca selengkapnya →</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {/* ── ARTICLE GRID ── */}
+              <section>
+                {activeCategory === "Semua" && !searchQuery && (
+                  <h2 className="text-base font-light text-black mb-3">Artikel Terbaru</h2>
+                )}
+                {searchQuery && (
+                  <p className="text-sm text-gray-500 mb-3">
+                    Menampilkan <span className="font-semibold text-black">{filtered.length}</span> hasil untuk "
+                    <span className="font-semibold text-black">{searchQuery}</span>"
+                  </p>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {regularList.map((article) => (
+                    <ArticleCard
+                      key={article.id}
+                      article={article}
+                      onClick={() => navigate(`/artikel/${article.id}`)}
+                    />
+                  ))}
+                </div>
+              </section>
+            </>
+          )}
+        </div>
+      </main>
+
+      {/* ── BOTTOM NAV (mobile) ── */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex z-50">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.label}
+              onClick={() => navigate(item.path)}
+              className={`flex-1 flex flex-col items-center py-2 gap-0.5 text-[10px] font-medium transition
+                ${isActive ? "text-[#d06224]" : "text-gray-400"}`}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          );
+        })}
+      </nav>
+    </div>
+  );
+}
+
+// ── ARTICLE CARD COMPONENT ──────────────────────────────────────────────────
+function ArticleCard({ article, onClick }) {
+  const colors = CAT_COLORS[article.category] ?? { bg: "#fff3eb", text: "#d06224" };
+  const emoji  = CAT_EMOJI[article.category]  ?? "📰";
+
+  return (
+    <article
+      onClick={onClick}
+      className="bg-white rounded-[15px] overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow group"
+    >
+      {/* Thumbnail – ganti dengan <img> saat API sudah punya URL gambar */}
+      {article.image ? (
+        <img src={article.image} alt={article.title} className="w-full h-[150px] object-cover" />
+      ) : (
+        <div
+          className="h-[150px] flex items-center justify-center"
+          style={{ background: `linear-gradient(135deg, ${colors.bg}, #fde8d5)` }}
+        >
+          <span className="text-5xl opacity-50">{emoji}</span>
+        </div>
+      )}
+
+      <div className="p-4">
+        {/* Category badge + read time */}
+        <div className="flex items-center justify-between mb-2">
+          <span
+            className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
+            style={{ background: colors.bg, color: colors.text }}
+          >
+            {article.category}
+          </span>
+          <span className="text-gray-400 text-[11px]">{article.readTime} baca</span>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-black font-semibold text-sm leading-snug line-clamp-2 group-hover:text-[#d06224] transition-colors">
+          {article.title}
+        </h3>
+
+        {/* Excerpt */}
+        <p className="text-gray-500 text-xs mt-1.5 line-clamp-2 font-light leading-relaxed">
+          {article.excerpt}
+        </p>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+          <span className="text-gray-400 text-[11px]">{article.author} · {article.date}</span>
+          <span className="text-[#d06224] text-[11px] font-medium group-hover:underline">Baca →</span>
+        </div>
+      </div>
+    </article>
+  );
+}
