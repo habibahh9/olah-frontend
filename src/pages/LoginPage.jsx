@@ -19,13 +19,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6">
       <div
-        className="flex w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl"
+        className="flex flex-col md:flex-row w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl"
         style={{ minHeight: 620 }}
       >
         {/* ── PANEL KIRI ── */}
-        <div className="w-1/2 flex flex-col justify-center px-14 py-12 bg-white">
+        <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-10 md:px-14 py-10 md:py-12 bg-white">
           <div className="mb-8 flex justify-center">
             <img src={logoOlah} alt="OLAH Logo" className="h-14 w-auto object-contain" />
           </div>
@@ -112,9 +112,9 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* ── PANEL KANAN ── */}
+        {/* ── PANEL KANAN — hidden di mobile ── */}
         <div
-          className="w-1/2 relative overflow-hidden"
+          className="hidden md:block w-1/2 relative overflow-hidden"
           style={{
             background: "linear-gradient(160deg, #f5cda8 0%, #e09060 35%, #c96030 70%, #a84020 100%)",
           }}

@@ -43,7 +43,10 @@ export default function PageLayout({ children }) {
               <button onClick={() => { setIsProfileMenuOpen(false); navigate("/profil"); }} className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Kelola Profil</button>
               <button onClick={() => { setIsProfileMenuOpen(false); navigate("/sandi"); }} className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Ubah Kata Sandi</button>
               <hr className="my-1" />
-              <button onClick={() => navigate("/login")} className="w-full text-left px-4 py-2 text-sm text-[#ae431e] font-semibold hover:bg-gray-50">Keluar</button>
+              <button onClick={() => {
+                localStorage.removeItem("isLoggedIn");
+                navigate("/login");
+              }} className="w-full text-left px-4 py-2 text-sm text-[#ae431e] font-semibold hover:bg-gray-50">Keluar</button>
             </div>
           )}
         </div>

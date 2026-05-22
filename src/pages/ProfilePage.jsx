@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import logoOlah from "../assets/logo-olah.png";
+import { useNavigate } from "react-router-dom";
+import PageLayout from "../components/layout/PageLayout";
 import profilePhoto from "../assets/asset5.png";
 
 export default function ProfilePage() {
