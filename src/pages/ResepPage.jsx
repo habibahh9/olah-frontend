@@ -148,14 +148,14 @@
           <div className="px-7 py-5">
 
             {/* SEARCH */}
-            <div className="flex items-center gap-5 mb-5">
+            <div className="flex md:flex-row flex-col md:items-center gap-5 mb-5">
               <div className="flex flex-1">
                 <input
                   type="text"
                   placeholder="Cari Resep Masakan"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 h-[40px] rounded-l-full px-6 bg-white outline-none text-sm"
+                  className="flex-1 h-[40px] rounded-l-full px-2 bg-white outline-none text-sm"
                 />
 
                 <button className="w-[50px] h-[40px] rounded-r-full bg-[#d06224] flex items-center justify-center">
@@ -165,11 +165,11 @@
                 </button>
               </div>
 
-              <button onClick={() => navigate("/bahan-lengkap")} className="h-[40px] px-10 rounded-full bg-[#9f9b4a] text-white font-Regular">
+              <button onClick={() => navigate("/bahan-lengkap")} className="h-[40px] md:h-[50px] px-10 rounded-full bg-[#9f9b4a] text-white font-Regular">
                 Bahan Lengkap
               </button>
 
-              <button onClick={() => navigate("/cepat")} className="h-[40px] px-12 rounded-full bg-[#9f9b4a] text-white font-Regular">
+              <button onClick={() => navigate("/cepat")} className="h-[40px] md:h-[50px] px-12 rounded-full bg-[#9f9b4a] text-white font-Regular">
                 Cepat
               </button>
             </div>
