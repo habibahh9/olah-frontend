@@ -129,7 +129,7 @@ export default function SandiPage() {
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
       {/* SIDEBAR */}
-      <aside className="fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex flex-col items-center py-5 gap-7 z-50">
+      <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
 
         {navItems.map((item) => {
@@ -147,8 +147,8 @@ export default function SandiPage() {
           );
         })}
 
-        <div className="mt-auto relative">
-        <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
+        <div className="mt-auto relative profile-menu-wrapper">
+        <button onMouseDown={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
             <svg width="52" height="52" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="70" height="70" rx="35" fill="#d06224" fillOpacity="0.15"/>
               <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224"/>
@@ -157,20 +157,21 @@ export default function SandiPage() {
           {isProfileMenuOpen && (
             <div className="absolute bottom-14 left-0 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
               <button
-                onClick={() => { setIsProfileMenuOpen(false); navigate("/profil"); }}
+                onMouseDown={(e) => { e.preventDefault(); setIsProfileMenuOpen(false); navigate("/profil"); }}
                 className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
               >
                 Kelola Profil
               </button>
+
               <button
-                onClick={() => { setIsProfileMenuOpen(false); navigate("/sandi"); }}
+                onMouseDown={(e) => { e.preventDefault(); setIsProfileMenuOpen(false); navigate("/sandi"); }}
                 className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
               >
                 Ubah Kata Sandi
               </button>
-              <hr className="my-1" />
+
               <button
-                onClick={() => navigate("/login")}
+                onMouseDown={(e) => { e.preventDefault(); navigate("/login"); }}
                 className="w-full text-left px-4 py-2 text-sm text-[#ae431e] font-semibold hover:bg-gray-50"
               >
                 Keluar
@@ -181,18 +182,18 @@ export default function SandiPage() {
       </aside>
 
       {/* KONTEN UTAMA */}
-      <main className="ml-[110px] flex-1 flex flex-col min-h-screen">
+      <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
         {/* Header */}
-        <div className="px-8 pt-7 pb-4 border-b border-gray-200 bg-white">
+        <div className="px-4 md:px-8 pt-5 md:pt-7 pb-4 border-b border-gray-200 bg-white">
           <h1 className="text-2xl font-semibold text-[#d06224]">Profil Anda</h1>
         </div>
 
         {/* Body */}
-        <div className="flex gap-6 px-8 py-7 flex-1">
+       <div className="flex flex-col md:flex-row gap-6 px-4 md:px-8 py-5 md:py-7 flex-1">
 
           {/* Kartu Profil Kiri — sama seperti ProfilePage */}
-          <div className="w-[310px] shrink-0 bg-white rounded-2xl shadow-sm flex flex-col items-center py-8 px-6">
+          <div className="flex-1 bg-white rounded-2xl shadow-sm flex flex-col items-center py-8 px-6">
             <h2 className="text-lg font-semibold text-[#d06224] tracking-widest mb-5">PROFIL</h2>
 
             <div className="w-[110px] h-[110px] rounded-full overflow-hidden border-4 border-[#d06224]/20 mb-4">
@@ -341,6 +342,23 @@ export default function SandiPage() {
 
         </div>
       </main>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.label}
+              onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium px-2 py-1 transition ${isActive ? "text-[#d06224]" : "text-gray-400"}`}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+      
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import PageLayout from "../components/layout/PageLayout";
+import { useNavigate, useLocation } from "react-router-dom";
 import profilePhoto from "../assets/asset5.png";
+import logoOlah from "../assets/logo-olah.png";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -98,7 +98,7 @@ const [formData, setFormData] = useState(() => {
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
       {/* SIDEBAR */}
-      <aside className="fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex flex-col items-center py-5 gap-7 z-50">
+      <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
 
         {navItems.map((item) => {
@@ -151,18 +151,18 @@ const [formData, setFormData] = useState(() => {
       </aside>
 
       {/* KONTEN UTAMA */}
-      <main className="ml-[110px] flex-1 flex flex-col min-h-screen">
+      <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
         {/* Header */}
-        <div className="px-8 pt-7 pb-4 border-b border-gray-200 bg-white">
+        <div className="px-4 md:px-8 pt-5 md:pt-7 pb-4 border-b border-gray-200 bg-white">
           <h1 className="text-2xl font-semibold text-[#d06224]">Profil Anda</h1>
         </div>
 
         {/* Body */}
-        <div className="flex gap-6 px-8 py-7 flex-1">
+        <div className="flex flex-col md:flex-row gap-6 px-4 md:px-8 py-5 md:py-7 flex-1">
 
           {/* Kartu Profil Kiri */}
-          <div className="w-[310px] shrink-0 bg-white rounded-2xl shadow-sm flex flex-col items-center py-8 px-6">
+          <div className="flex-1 bg-white rounded-2xl shadow-sm flex flex-col items-center py-8 px-6">
             <h2 className="text-lg font-semibold text-[#d06224] tracking-widest mb-5">PROFIL</h2>
 
             {/* Foto Profil — ganti src dengan import foto kamu */}
@@ -290,6 +290,23 @@ const [formData, setFormData] = useState(() => {
 
         </div>
       </main>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.label}
+              onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium px-2 py-1 transition ${isActive ? "text-[#d06224]" : "text-gray-400"}`}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
     </div>
   );
 }

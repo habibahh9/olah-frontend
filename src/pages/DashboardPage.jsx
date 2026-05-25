@@ -1,24 +1,20 @@
 import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../components/layout/PageLayout";
-import food7 from "../assets/asset7.png";
-import food8 from "../assets/asset8.png";
-import food9 from "../assets/asset9.png";
-import food10 from "../assets/asset10.png";
-import food11 from "../assets/asset11.png";
+import { useUnsplashImage } from "../hooks/useUnsplashImage";
 import heroImg from "../assets/asset6.png";
 
 const INITIAL_RECIPES = [
-  { id: 5,  title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   image: food7,  isFavorite: false },
-  { id: 6,  title: "Sup Telur Wortel",    time: "20 Menit", portion: "2 Porsi", ingredients: ["Telur", "Wortel"], image: food8,  isFavorite: true  },
-  { id: 7,  title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   image: food9,  isFavorite: false },
-  { id: 8,  title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   image: food10, isFavorite: true  },
-  { id: 9,  title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  image: food11, isFavorite: false },
-  { id: 10, title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   image: food7,  isFavorite: false },
-  { id: 11, title: "Sup Telur Wortel",    time: "20 Menit", portion: "2 Porsi", ingredients: ["Telur", "Wortel"], image: food8,  isFavorite: false },
-  { id: 12, title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   image: food9,  isFavorite: true  },
-  { id: 13, title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   image: food10, isFavorite: false },
-  { id: 14, title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  image: food11, isFavorite: false },
+  { id: 5,  title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   isFavorite: false },
+  { id: 6,  title: "Sup Telur Wortel",    time: "20 Menit", portion: "2 Porsi", ingredients: ["Telur", "Wortel"], isFavorite: true  },
+  { id: 7,  title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   isFavorite: false },
+  { id: 8,  title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   isFavorite: true  },
+  { id: 9,  title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  isFavorite: false },
+  { id: 10, title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   isFavorite: false },
+  { id: 11, title: "Sup Telur Wortel",    time: "20 Menit", portion: "2 Porsi", ingredients: ["Telur", "Wortel"], isFavorite: false },
+  { id: 12, title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   isFavorite: true  },
+  { id: 13, title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   isFavorite: false },
+  { id: 14, title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  isFavorite: false },
 ];
 
 function loadStorage(key, fallback) {
@@ -65,10 +61,58 @@ export default function DashboardPage() {
     saveStorage("dashboard_favorites", favoritesMap);
   }, [recipeCards]);
 
-  const toggleFavorite = (id, e) => {
+    const toggleFavorite = (id, e) => {
     e.stopPropagation();
     setRecipeCards((prev) =>
       prev.map((r) => r.id === id ? { ...r, isFavorite: !r.isFavorite } : r)
+    );
+  };
+
+  const RecipeCard = ({ recipe }) => {
+    const imageUrl = useUnsplashImage(recipe.title);
+
+    return (
+      <article
+        className="relative h-[180px] sm:h-[220px] cursor-pointer"
+        onClick={() => navigate(`/detail-resep/${recipe.id}`)}
+      >
+        <img
+          src={imageUrl}
+          alt={recipe.title}
+          className="absolute top-0 left-0 w-full h-[175px] sm:h-[215px] object-cover rounded-[12px]"
+        />
+        <div className="absolute top-[95px] sm:top-[130px] left-0 w-full h-[80px] sm:h-[85px] bg-[#8a8635cc] rounded-[12px]" />
+        <div className="absolute top-[100px] sm:top-[137px] left-[8px] right-[8px] sm:left-[10px] sm:right-[10px]">
+          <span className="font-semibold text-white text-xs sm:text-sm leading-normal truncate block">
+            {recipe.title}
+          </span>
+        </div>
+        <button
+          onClick={(e) => toggleFavorite(recipe.id, e)}
+          className="absolute top-[118px] sm:top-[155px] right-[8px] sm:right-[10px] p-1"
+        >
+          <svg width="16" height="15" viewBox="0 0 20 19" fill="none">
+            <path
+              d="M9.316 18.362C9.44273 18.4518 9.5942 18.5 9.7495 18.5C9.9048 18.5 10.0563 18.4518 10.183 18.362L9.75 17.75L10.184 18.362L10.192 18.356L10.213 18.341L10.293 18.283C10.3623 18.233 10.4607 18.16 10.588 18.064C12.074 16.9424 13.4767 15.7145 14.785 14.39C15.933 13.222 17.1 11.857 17.984 10.409C18.864 8.969 19.5 7.385 19.5 5.797C19.5 3.912 18.915 2.439 17.88 1.439C16.85 0.445 15.46 0 14 0C12.275 0 10.752 0.833 9.75 2.117C8.748 0.833 7.224 0 5.5 0C2.42 0 0 2.639 0 5.797C0 7.385 0.637 8.968 1.516 10.409C2.4 11.857 3.567 13.222 4.715 14.391C6.10981 15.8021 7.61161 17.1034 9.207 18.283L9.287 18.341L9.308 18.356L9.316 18.362Z"
+              fill={recipe.isFavorite ? "white" : "none"}
+              stroke="white"
+              strokeWidth={recipe.isFavorite ? "0" : "1.5"}
+            />
+          </svg>
+        </button>
+        <div className="absolute top-[127px] sm:top-[162px] left-[8px] sm:left-[10px] flex items-center gap-1 whitespace-nowrap">
+          <span className="text-white text-[10px] sm:text-xs">{recipe.time}</span>
+          <span className="w-1 h-1 bg-white rounded-full inline-block" />
+          <span className="text-white text-[10px] sm:text-xs">{recipe.portion}</span>
+        </div>
+        <div className="absolute top-[145px] sm:top-[185px] left-[8px] sm:left-[10px] flex gap-1">
+          {recipe.ingredients.slice(0, 2).map((ing) => (
+            <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-1.5 h-[16px] sm:h-[18px] flex items-center justify-center">
+              <span className="text-white text-[9px] sm:text-[11px]">{ing}</span>
+            </div>
+          ))}
+        </div>
+      </article>
     );
   };
 
@@ -190,51 +234,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               filteredRecipes.map((recipe) => (
-                <article
-                  key={recipe.id}
-                  className="relative h-[180px] sm:h-[220px] cursor-pointer"
-                  onClick={() => navigate(`/detail-resep/${recipe.id}`)}
-                >
-                  <img
-                    src={recipe.image}
-                    alt={recipe.title}
-                    className="absolute top-0 left-0 w-full h-[175px] sm:h-[215px] object-cover rounded-[12px]"
-                  />
-                  <div className="absolute top-[95px] sm:top-[130px] left-0 w-full h-[80px] sm:h-[85px] bg-[#8a8635cc] rounded-[12px]" />
-                  <div className="absolute top-[100px] sm:top-[137px] left-[8px] right-[8px] sm:left-[10px] sm:right-[10px]">
-                    <span className="font-semibold text-white text-xs sm:text-sm leading-normal truncate block">
-                      {recipe.title}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={(e) => toggleFavorite(recipe.id, e)}
-                    className="absolute top-[118px] sm:top-[155px] right-[8px] sm:right-[10px] p-1"
-                    title={recipe.isFavorite ? "Hapus dari favorit" : "Tambah ke favorit"}
-                  >
-                    <svg width="16" height="15" viewBox="0 0 20 19" fill="none">
-                      <path
-                        d="M9.316 18.362C9.44273 18.4518 9.5942 18.5 9.7495 18.5C9.9048 18.5 10.0563 18.4518 10.183 18.362L9.75 17.75L10.184 18.362L10.192 18.356L10.213 18.341L10.293 18.283C10.3623 18.233 10.4607 18.16 10.588 18.064C12.074 16.9424 13.4767 15.7145 14.785 14.39C15.933 13.222 17.1 11.857 17.984 10.409C18.864 8.969 19.5 7.385 19.5 5.797C19.5 3.912 18.915 2.439 17.88 1.439C16.85 0.445 15.46 0 14 0C12.275 0 10.752 0.833 9.75 2.117C8.748 0.833 7.224 0 5.5 0C2.42 0 0 2.639 0 5.797C0 7.385 0.637 8.968 1.516 10.409C2.4 11.857 3.567 13.222 4.715 14.391C6.10981 15.8021 7.61161 17.1034 9.207 18.283L9.287 18.341L9.308 18.356L9.316 18.362Z"
-                        fill={recipe.isFavorite ? "white" : "none"}
-                        stroke="white"
-                        strokeWidth={recipe.isFavorite ? "0" : "1.5"}
-                      />
-                    </svg>
-                  </button>
-
-                  <div className="absolute top-[127px] sm:top-[162px] left-[8px] sm:left-[10px] flex items-center gap-1 whitespace-nowrap">
-                    <span className="text-white text-[10px] sm:text-xs">{recipe.time}</span>
-                    <span className="w-1 h-1 bg-white rounded-full inline-block" />
-                    <span className="text-white text-[10px] sm:text-xs">{recipe.portion}</span>
-                  </div>
-                  <div className="absolute top-[145px] sm:top-[185px] left-[8px] sm:left-[10px] flex gap-1">
-                    {recipe.ingredients.slice(0, 2).map((ing) => (
-                      <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-1.5 h-[16px] sm:h-[18px] flex items-center justify-center">
-                        <span className="text-white text-[9px] sm:text-[11px]">{ing}</span>
-                      </div>
-                    ))}
-                  </div>
-                </article>
+                <RecipeCard key={recipe.id} recipe={recipe} />
               ))
             )}
           </div>
@@ -247,45 +247,23 @@ export default function DashboardPage() {
           <div className="flex-1 bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
 
-              {/* Pie charts — scroll horizontally on small screens */}
-              <div className="flex gap-5 shrink-0 overflow-x-auto pb-1 w-full sm:w-auto justify-center sm:justify-start">
-                <div className="flex flex-col items-center gap-2 shrink-0">
-                  <svg width="110" height="110" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#e8d5c8" strokeWidth="20" />
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#d06224" strokeWidth="20"
-                      strokeDasharray={`${72 * 2.513} ${(100 - 72) * 2.513}`}
-                      strokeDashoffset="62.8" strokeLinecap="butt" transform="rotate(-90 50 50)"
-                    />
-                  </svg>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#d06224] inline-block" />
-                      <span className="text-[10px] text-gray-500">Terselamatkan 72%</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#e8d5c8] inline-block" />
-                      <span className="text-[10px] text-gray-500">Sisa 28%</span>
-                    </div>
+              {/* Pie chart — single donut */}
+              <div className="flex flex-col items-center gap-3 shrink-0">
+                <svg width="200" height="200" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#ae431e" strokeWidth="20" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#d06224" strokeWidth="20"
+                    strokeDasharray={`${72 * 2.513} ${(100 - 72) * 2.513}`}
+                    strokeDashoffset="62.8" strokeLinecap="butt" transform="rotate(-90 50 50)"
+                  />
+                </svg>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#d06224] inline-block" />
+                    <span className="text-xs text-gray-500">Terselamatkan 72%</span>
                   </div>
-                </div>
-
-                <div className="flex flex-col items-center gap-2 shrink-0">
-                  <svg width="110" height="110" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#e8d5c8" strokeWidth="20" />
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ae431e" strokeWidth="20"
-                      strokeDasharray={`${35 * 2.513} ${(100 - 35) * 2.513}`}
-                      strokeDashoffset="62.8" strokeLinecap="butt" transform="rotate(-90 50 50)"
-                    />
-                  </svg>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#ae431e] inline-block" />
-                      <span className="text-[10px] text-gray-500">Terbuang 35%</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#e8d5c8] inline-block" />
-                      <span className="text-[10px] text-gray-500">Sisa 65%</span>
-                    </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#ae431e] inline-block" />
+                    <span className="text-xs text-gray-500">Terbuang 35%</span>
                   </div>
                 </div>
               </div>

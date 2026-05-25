@@ -48,7 +48,7 @@ export default function DetailMasakPage() {
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
       {/* SIDEBAR */}
-      <aside className="fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex flex-col items-center py-5 gap-7 z-50">
+      <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -79,10 +79,10 @@ export default function DetailMasakPage() {
       </aside>
 
       {/* MAIN */}
-      <main className="ml-[110px] flex-1 flex flex-col min-h-screen">
+      <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
         {/* HEADER */}
-        <div className="h-[90px] bg-white shadow-sm flex items-center justify-between px-10">
+        <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center justify-between px-4 md:px-10">
           <h1 className="text-[28px] font-bold text-[#d06224]">
             Buku Resep
           </h1>
@@ -95,7 +95,7 @@ export default function DetailMasakPage() {
         </div>
 
         {/* CONTENT */}
-        <div className="px-10 py-6 flex flex-col gap-4">
+        <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col gap-4">
 
           <h2 className="text-lg font-light text-black">Cara Membuat</h2>
 
@@ -109,7 +109,7 @@ export default function DetailMasakPage() {
                   onClick={() => toggleStep(index)}
                 >
                   {/* Nomor */}
-                  <div className={`w-14 h-14 rounded-[12px] flex items-center justify-center shrink-0 text-2xl font-semibold transition ${
+                  <div className={`w-10 h-10 md:w-14 md:h-14 rounded-[12px] text-xl md:text-2xl flex items-center justify-center shrink-0 text-2xl font-semibold transition ${
                     done ? "bg-[#f5c5ac] text-[#d06224]/50" : "bg-[#d06224] text-white"
                   }`}>
                     {step.id}
@@ -139,6 +139,23 @@ export default function DetailMasakPage() {
 
         </div>
       </main>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.label}
+              onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium px-2 py-1 transition ${isActive ? "text-[#d06224]" : "text-gray-400"}`}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+      
     </div>
   );
 }

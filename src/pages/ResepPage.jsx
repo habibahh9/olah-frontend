@@ -1,11 +1,7 @@
   import { useState, useEffect } from "react";
   import { useNavigate, useLocation } from "react-router-dom";
   import PageLayout from "../components/layout/PageLayout";
-  import food7 from "../assets/asset7.png";
-  import food8 from "../assets/asset8.png";
-  import food9 from "../assets/asset9.png";
-  import food10 from "../assets/asset10.png";
-  import food11 from "../assets/asset11.png";
+  import { useUnsplashImage } from "../hooks/useUnsplashImage";
 
   export default function ResepPage() {
     const navigate = useNavigate();
@@ -21,24 +17,24 @@
     }, [searchQuery]);
 
     const favoriteMenus = [
-    { id: 1, title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   image: food7,  available: true  },
-    { id: 2, title: "Sup Telur Wortel",    time: "20 Menit", portion: "3 Porsi", ingredients: ["Telur", "Wortel"], image: food8,  available: false },
-    { id: 3, title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   image: food9,  available: false },
-    { id: 4, title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  image: food11, available: false },
-    { id: 5, title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   image: food10, available: true  },
+    { id: 1, title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   available: true  },
+    { id: 2, title: "Sup Telur Wortel",    time: "20 Menit", portion: "3 Porsi", ingredients: ["Telur", "Wortel"], available: false },
+    { id: 3, title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   available: false },
+    { id: 4, title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  available: false },
+    { id: 5, title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   available: true  },
     ];
 
     const allMenus = [
-    { id: 6,  title: "Sate Ayam",           time: "60 Menit", portion: "2 Porsi", ingredients: ["Ayam"],           image: food7,  available: true  },
-    { id: 7,  title: "Telur Balado",        time: "45 Menit", portion: "1 Porsi", ingredients: ["Telur", "Cabe"],  image: food8,  available: true  },
-    { id: 8,  title: "Sup Ayam",            time: "45 Menit", portion: "1 Porsi", ingredients: ["Ayam", "Wortel"], image: food9,  available: true  },
-    { id: 9,  title: "Nasi Goreng Spesial", time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"], image: food11, available: false },
-    { id: 10, title: "Tumis Tahu",          time: "20 Menit", portion: "2 Porsi", ingredients: ["Tahu", "Kol"],    image: food10, available: true  },
-    { id: 11, title: "Orak-arik Wortel",    time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel"],         image: food9,  available: false },
-    { id: 12, title: "Sambal Tempe",        time: "30 Menit", portion: "1 Porsi", ingredients: ["Tempe"],          image: food10, available: true  },
-    { id: 13, title: "Sup Bayam",           time: "20 Menit", portion: "2 Porsi", ingredients: ["Bayam"],          image: food7,  available: true  },
-    { id: 14, title: "Telur Ceplok",        time: "10 Menit", portion: "1 Porsi", ingredients: ["Telur"],          image: food8,  available: true  },
-    { id: 15, title: "Nasi Goreng Cabe",    time: "25 Menit", portion: "2 Porsi", ingredients: ["Nasi", "Cabe"],   image: food11, available: false },
+    { id: 6,  title: "Sate Ayam",           time: "60 Menit", portion: "2 Porsi", ingredients: ["Ayam"],             available: true  },
+    { id: 7,  title: "Telur Balado",        time: "45 Menit", portion: "1 Porsi", ingredients: ["Telur", "Cabe"],    available: true  },
+    { id: 8,  title: "Sup Ayam",            time: "45 Menit", portion: "1 Porsi", ingredients: ["Ayam", "Wortel"],   available: true  },
+    { id: 9,  title: "Nasi Goreng Spesial", time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],   available: false },
+    { id: 10, title: "Tumis Tahu",          time: "20 Menit", portion: "2 Porsi", ingredients: ["Tahu", "Kol"],      available: true  },
+    { id: 11, title: "Orak-arik Wortel",    time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel"],           available: false },
+    { id: 12, title: "Sambal Tempe",        time: "30 Menit", portion: "1 Porsi", ingredients: ["Tempe"],            available: true  },
+    { id: 13, title: "Sup Bayam",           time: "20 Menit", portion: "2 Porsi", ingredients: ["Bayam"],            available: true  },
+    { id: 14, title: "Telur Ceplok",        time: "10 Menit", portion: "1 Porsi", ingredients: ["Telur"],            available: true  },
+    { id: 15, title: "Nasi Goreng Cabe",    time: "25 Menit", portion: "2 Porsi", ingredients: ["Nasi", "Cabe"],     available: false },
     ];
 
     const navItems = [
@@ -89,40 +85,44 @@
       },
     ];
 
-    const RecipeCard = ({ recipe }) => (
-      <article className="relative h-[220px] cursor-pointer" onClick={() => navigate(`/detail-resep/${recipe.id}`)}>
-        <img
-          src={recipe.image}
-          alt={recipe.title}
-          className="absolute top-0 left-0 w-full h-[215px] object-cover rounded-[12px]"
-        />
-        <div className="absolute top-[130px] left-0 w-full h-[85px] bg-[#8a8635cc] rounded-[12px]" />
-        <div className="absolute top-[137px] left-[10px] right-[10px]">
-          <span className="font-semibold text-white text-sm leading-normal truncate block">
-            {recipe.title}
-          </span>
-        </div>
-        <div className="absolute top-[148px] right-[8px]">
-          {recipe.available ? (
-            <div className="w-5 h-5 rounded-full bg-[#36c35c] flex items-center justify-center text-white text-[10px]">✓</div>
-          ) : (
-            <div className="w-5 h-5 rounded-full bg-[#ff2e2e] flex items-center justify-center text-white text-[10px]">✕</div>
-          )}
-        </div>
-        <div className="absolute top-[163px] left-[10px] flex items-center gap-1.5 whitespace-nowrap">
-          <span className="text-white text-xs">{recipe.time}</span>
-          <span className="w-1 h-1 bg-white rounded-full inline-block" />
-          <span className="text-white text-xs">{recipe.portion}</span>
-        </div>
-        <div className="absolute top-[185px] left-[10px] flex gap-1.5">
-          {recipe.ingredients.map((ing) => (
-            <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-2 h-[18px] flex items-center justify-center">
-              <span className="text-white text-[11px]">{ing}</span>
-            </div>
-          ))}
-        </div>
-      </article>
-    );
+    const RecipeCard = ({ recipe }) => {
+      const imageUrl = useUnsplashImage(recipe.title); // ← TAMBAH INI
+
+      return (
+        <article className="relative h-[220px] cursor-pointer" onClick={() => navigate(`/detail-resep/${recipe.id}`)}>
+          <img
+            src={imageUrl}         // ← GANTI DARI recipe.image ke imageUrl
+            alt={recipe.title}
+            className="absolute top-0 left-0 w-full h-[215px] object-cover rounded-[12px]"
+          />
+          <div className="absolute top-[130px] left-0 w-full h-[85px] bg-[#8a8635cc] rounded-[12px]" />
+          <div className="absolute top-[137px] left-[10px] right-[10px]">
+            <span className="font-semibold text-white text-sm leading-normal truncate block">
+              {recipe.title}
+            </span>
+          </div>
+          <div className="absolute top-[148px] right-[8px]">
+            {recipe.available ? (
+              <div className="w-5 h-5 rounded-full bg-[#36c35c] flex items-center justify-center text-white text-[10px]">✓</div>
+            ) : (
+              <div className="w-5 h-5 rounded-full bg-[#ff2e2e] flex items-center justify-center text-white text-[10px]">✕</div>
+            )}
+          </div>
+          <div className="absolute top-[163px] left-[10px] flex items-center gap-1.5 whitespace-nowrap">
+            <span className="text-white text-xs">{recipe.time}</span>
+            <span className="w-1 h-1 bg-white rounded-full inline-block" />
+            <span className="text-white text-xs">{recipe.portion}</span>
+          </div>
+          <div className="absolute top-[185px] left-[10px] flex gap-1.5">
+            {recipe.ingredients.map((ing) => (
+              <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-2 h-[18px] flex items-center justify-center">
+                <span className="text-white text-[11px]">{ing}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+      );
+    };
 
     // Filter menus based on search query (case-insensitive)
     const query = searchQuery.trim().toLowerCase();
