@@ -2,20 +2,8 @@ import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../components/layout/PageLayout";
 import { useUnsplashImage } from "../hooks/useUnsplashImage";
+import { recipeAPI, pantryAPI, notificationAPI } from "../utils/api";
 import heroImg from "../assets/asset6.png";
-
-const INITIAL_RECIPES = [
-  { id: 5,  title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   isFavorite: false },
-  { id: 6,  title: "Sup Telur Wortel",    time: "20 Menit", portion: "2 Porsi", ingredients: ["Telur", "Wortel"], isFavorite: true  },
-  { id: 7,  title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   isFavorite: false },
-  { id: 8,  title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   isFavorite: true  },
-  { id: 9,  title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  isFavorite: false },
-  { id: 10, title: "Tumis Bayam Tahu",    time: "30 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"],   isFavorite: false },
-  { id: 11, title: "Sup Telur Wortel",    time: "20 Menit", portion: "2 Porsi", ingredients: ["Telur", "Wortel"], isFavorite: false },
-  { id: 12, title: "Orak-arik Sayur",     time: "15 Menit", portion: "2 Porsi", ingredients: ["Wortel", "Kol"],   isFavorite: true  },
-  { id: 13, title: "Sambal Goreng Tempe", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"],   isFavorite: false },
-  { id: 14, title: "Nasi Goreng",         time: "35 Menit", portion: "2 Porsi", ingredients: ["Bawang", "Nasi"],  isFavorite: false },
-];
 
 function loadStorage(key, fallback) {
   try {
@@ -25,7 +13,7 @@ function loadStorage(key, fallback) {
 }
 
 function saveStorage(key, value) {
-  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { }
 }
 
 export default function DashboardPage() {
@@ -37,19 +25,13 @@ export default function DashboardPage() {
   const [showAllExpiring, setShowAllExpiring] = useState(
     () => loadStorage("dashboard_showAllExpiring", false)
   );
-  const [recipeCards, setRecipeCards] = useState(() => {
-    const savedFavorites = loadStorage("dashboard_favorites", null);
-    if (savedFavorites) {
-      return INITIAL_RECIPES.map((r) => ({
-        ...r,
-        isFavorite: savedFavorites[r.id] ?? r.isFavorite,
-      }));
-    }
-    return INITIAL_RECIPES;
-  });
-
-  const [searchQuery, setSearchQuery]     = useState("");
+  const [recipeCards, setRecipeCards] = useState([]);
+  const [expiringItems, setExpiringItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState("Pengguna");
+  const [searchQuery, setSearchQuery] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
+  const [notifications, setNotifications] = useState([]);
 
   const recommendationFilters = ["Semua", "Cepat", "Favorit"];
 
@@ -61,7 +43,56 @@ export default function DashboardPage() {
     saveStorage("dashboard_favorites", favoritesMap);
   }, [recipeCards]);
 
-    const toggleFavorite = (id, e) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Ambil resep
+        const resepRes = await recipeAPI.getAll();
+        console.log("resepRes:", resepRes);
+        const recipes = Array.isArray(resepRes.data)
+          ? resepRes.data
+          : Array.isArray(resepRes.data?.recipes)
+            ? resepRes.data.recipes
+            : [];
+        setRecipeCards(recipes);
+
+        // Ambil pantry
+        const pantryRes = await pantryAPI.getAll();
+        console.log("pantryRes:", pantryRes);
+        const pantryList = Array.isArray(pantryRes.data)
+          ? pantryRes.data
+          : Array.isArray(pantryRes.data?.items)
+            ? pantryRes.data.items
+            : [];
+        const expiring = pantryList
+          .filter((item) => item.daysLeft <= 5)
+          .map((item) => ({
+            name: item.name,
+            days: `${item.daysLeft} Hari Lagi`,
+            percent: Math.min(100, (item.daysLeft / 7) * 100),
+          }));
+        setExpiringItems(expiring);
+        
+        const notifRes = await notificationAPI.getAll();
+        const notifList = Array.isArray(notifRes.data?.notifications)
+          ? notifRes.data.notifications
+          : [];
+        setNotifications(notifList);
+        // Ambil nama user
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        if (user?.name) setUserName(user.name);
+
+      } catch (err) {
+        console.error("Gagal fetch data dashboard:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const toggleFavorite = (id, e) => {
     e.stopPropagation();
     setRecipeCards((prev) =>
       prev.map((r) => r.id === id ? { ...r, isFavorite: !r.isFavorite } : r)
@@ -70,7 +101,6 @@ export default function DashboardPage() {
 
   const RecipeCard = ({ recipe }) => {
     const imageUrl = useUnsplashImage(recipe.title);
-
     return (
       <article
         className="relative h-[180px] sm:h-[220px] cursor-pointer"
@@ -116,20 +146,7 @@ export default function DashboardPage() {
     );
   };
 
-  const expiringItems = [
-    { name: "Wortel", days: "3 Hari Lagi", percent: 65 },
-    { name: "Bayam",  days: "2 Hari Lagi", percent: 45 },
-    { name: "Tahu",   days: "1 Hari Lagi", percent: 20 },
-    { name: "Kol",    days: "2 Hari Lagi", percent: 45 },
-    { name: "Cabe",   days: "4 Hari Lagi", percent: 80 },
-  ];
-
   const visibleExpiring = showAllExpiring ? expiringItems : expiringItems.slice(0, 4);
-
-  const notifications = [
-    { id: 1, category: "Stok",             message: "Stok sayuran hampir habis",  time: "2 jam lalu"  },
-    { id: 2, category: "Bahan Kadaluarsa", message: "Kentang sudah kadaluarsa",   time: "1 hari lalu" },
-  ];
 
   const filteredRecipes = useMemo(() => {
     let results = recipeCards;
@@ -153,9 +170,8 @@ export default function DashboardPage() {
         <img src={heroImg} alt="Hero" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(232,179,148,0.74)_38%,rgba(208,98,36,1)_100%)]" />
 
-        {/* Hero text — left side on all sizes */}
         <div className="absolute top-[20px] left-4 sm:left-[40px] w-[55%] sm:w-[calc(100%-340px)] max-w-[380px]">
-          <p className="text-white text-lg sm:text-2xl font-normal leading-tight">Selamat Pagi,</p>
+          <p className="text-white text-lg sm:text-2xl font-normal leading-tight">Selamat Pagi, {userName}!</p>
           <h1 className="text-white text-xl sm:text-[28px] font-semibold mt-0.5 leading-snug">Mau Masak Apa Hari Ini?</h1>
           <p className="text-white/80 text-xs sm:text-base mt-1 hidden sm:block">
             Punya Sisa Bahan Makanan? di <strong>OLAH</strong> Aja!
@@ -173,7 +189,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Search bar — right side on sm+, bottom on mobile */}
         <div className="absolute top-3 left-4 right-4 sm:top-[32px] sm:bottom-auto sm:left-auto sm:right-8 sm:w-[300px] flex gap-0">
           <input
             type="search"
@@ -195,7 +210,7 @@ export default function DashboardPage() {
             className="bg-[#E87722] px-4 rounded-r-full flex items-center justify-center"
           >
             <svg width="16" height="16" viewBox="0 0 28 27" fill="none">
-              <path d="M26.5865 24.2967L20.6502 18.3986C22.4301 16.095 23.2611 13.2053 22.9746 10.3156C22.6881 7.42597 21.3056 4.75272 19.1075 2.83817C16.9095 0.923624 14.0604 -0.0888533 11.1383 0.00612555C8.21628 0.101104 5.43999 1.29643 3.37267 3.34962C1.30535 5.4028 0.1018 8.16011 0.00616771 11.0622C-0.0894648 13.9643 0.929981 16.7939 2.85771 18.9769C4.78543 21.16 7.47708 22.533 10.3866 22.8175C13.2962 23.1021 16.2058 22.2768 18.5252 20.5091L24.4665 26.4109C24.606 26.5495 24.7716 26.6594 24.9539 26.7344C25.1363 26.8094 25.3316 26.848 25.529 26.848C25.7263 26.848 25.9217 26.8094 26.104 26.7344C26.2863 26.6594 26.4519 26.5495 26.5915 26.4109C26.731 26.2724 26.8417 26.1078 26.9172 25.9268C26.9927 25.7457 27.0316 25.5517 27.0316 25.3557C27.0316 25.1597 26.9927 24.9657 26.9172 24.7846C26.8417 24.6035 26.731 24.439 26.5915 24.3005L26.5865 24.2967ZM3.02522 11.4464C3.02522 9.77678 3.52374 8.14463 4.45773 6.75637C5.39172 5.36811 6.71924 4.28609 8.27241 3.64714C9.82558 3.00819 11.5346 2.84102 13.1835 3.16675C14.8323 3.49248 16.3469 4.29649 17.5356 5.47711C18.7244 6.65773 19.5339 8.16193 19.8619 9.7995C20.1899 11.4371 20.0215 13.1345 19.3782 14.677C18.7348 16.2196 17.6454 17.538 16.2476 18.4656C14.8497 19.393 13.2346 19.9115 11.5735 19.9115C9.33278 19.9115 7.18377 19.0278 5.6114 17.4657C4.03904 15.9036 3.02522 13.7694 3.02522 11.4464Z" fill="white"/>
+              <path d="M26.5865 24.2967L20.6502 18.3986C22.4301 16.095 23.2611 13.2053 22.9746 10.3156C22.6881 7.42597 21.3056 4.75272 19.1075 2.83817C16.9095 0.923624 14.0604 -0.0888533 11.1383 0.00612555C8.21628 0.101104 5.43999 1.29643 3.37267 3.34962C1.30535 5.4028 0.1018 8.16011 0.00616771 11.0622C-0.0894648 13.9643 0.929981 16.7939 2.85771 18.9769C4.78543 21.16 7.47708 22.533 10.3866 22.8175C13.2962 23.1021 16.2058 22.2768 18.5252 20.5091L24.4665 26.4109C24.606 26.5495 24.7716 26.6594 24.9539 26.7344C25.1363 26.8094 25.3316 26.848 25.529 26.848C25.7263 26.848 25.9217 26.8094 26.104 26.7344C26.2863 26.6594 26.4519 26.5495 26.5915 26.4109C26.731 26.2724 26.8417 26.1078 26.9172 25.9268C26.9927 25.7457 27.0316 25.5517 27.0316 25.3557C27.0316 25.1597 26.9927 24.9657 26.9172 24.7846C26.8417 24.6035 26.731 24.439 26.5915 24.3005L26.5865 24.2967ZM3.02522 11.4464C3.02522 9.77678 3.52374 8.14463 4.45773 6.75637C5.39172 5.36811 6.71924 4.28609 8.27241 3.64714C9.82558 3.00819 11.5346 2.84102 13.1835 3.16675C14.8323 3.49248 16.3469 4.29649 17.5356 5.47711C18.7244 6.65773 19.5339 8.16193 19.8619 9.7995C20.1899 11.4371 20.0215 13.1345 19.3782 14.677C18.7348 16.2196 17.6454 17.538 16.2476 18.4656C14.8497 19.393 13.2346 19.9115 11.5735 19.9115C9.33278 19.9115 7.18377 19.0278 5.6114 17.4657C4.03904 15.9036 3.02522 13.7694 3.02522 11.4464Z" fill="white" />
             </svg>
           </button>
         </div>
@@ -215,9 +230,7 @@ export default function DashboardPage() {
                 <button
                   key={f}
                   onClick={() => setActiveFilter(f)}
-                  className={`flex-1 h-full text-sm font-medium transition ${
-                    isActive ? "bg-[#d06224] text-white" : "text-[#99999980]"
-                  }`}
+                  className={`flex-1 h-full text-sm font-medium transition ${isActive ? "bg-[#d06224] text-white" : "text-[#99999980]"}`}
                 >
                   {f}
                 </button>
@@ -227,10 +240,18 @@ export default function DashboardPage() {
 
           {/* Recipe cards */}
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 w-full">
-            {appliedSearch && appliedSearch.trim() !== "" && filteredRecipes.length === 0 ? (
+            {loading ? (
+              <div className="col-span-full text-center text-gray-400 py-6">
+                Memuat resep...
+              </div>
+            ) : appliedSearch && appliedSearch.trim() !== "" && filteredRecipes.length === 0 ? (
               <div className="col-span-full bg-white rounded-[12px] p-6 text-center text-gray-500">
                 Tidak ditemukan resep atau bahan untuk "
                 <span className="font-semibold text-black">{appliedSearch}</span>"
+              </div>
+            ) : filteredRecipes.length === 0 ? (
+              <div className="col-span-full text-center text-gray-400 py-6">
+                Belum ada resep tersedia.
               </div>
             ) : (
               filteredRecipes.map((recipe) => (
@@ -246,8 +267,6 @@ export default function DashboardPage() {
           {/* Bahan Kadaluarsa */}
           <div className="flex-1 bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-
-              {/* Pie chart — single donut */}
               <div className="flex flex-col items-center gap-3 shrink-0">
                 <svg width="200" height="200" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="40" fill="none" stroke="#ae431e" strokeWidth="20" />
@@ -268,7 +287,6 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Bar List */}
               <div className="flex-1 min-w-0 w-full">
                 <div className="flex justify-between items-center mb-3">
                   <h2 className="text-base sm:text-lg font-light text-black">Bahan Segera Kadaluarsa</h2>
@@ -280,26 +298,29 @@ export default function DashboardPage() {
                   </button>
                 </div>
                 <div className="flex flex-col gap-4 sm:gap-5">
-                  {visibleExpiring.map((item) => (
-                    <div key={item.name}>
-                      <div className="flex justify-between mb-0.5">
-                        <span className="text-xs font-medium text-black">{item.name}</span>
-                        <span className="text-[10px] text-gray-400">{item.days}</span>
+                  {visibleExpiring.length === 0 ? (
+                    <p className="text-sm text-gray-400">Tidak ada bahan yang hampir kadaluarsa.</p>
+                  ) : (
+                    visibleExpiring.map((item) => (
+                      <div key={item.name}>
+                        <div className="flex justify-between mb-0.5">
+                          <span className="text-xs font-medium text-black">{item.name}</span>
+                          <span className="text-[10px] text-gray-400">{item.days}</span>
+                        </div>
+                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${item.percent}%`,
+                              background: item.percent <= 25 ? "#ae431e" : item.percent >= 75 ? "#8a8635" : "#d06224"
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width: `${item.percent}%`,
-                            background: item.percent <= 25 ? "#ae431e" : item.percent >= 75 ? "#8a8635" : "#d06224"
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -307,18 +328,22 @@ export default function DashboardPage() {
           <div className="w-full lg:w-[450px] bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
             <h2 className="text-base sm:text-lg font-light text-black mb-3">Notifikasi Terbaru</h2>
             <div className="flex flex-col gap-2">
-              {notifications.map((n) => (
-                <div key={n.id} className="bg-[#d9d9d980] rounded-[15px] px-4 py-3">
-                  <p className="text-[#d06224] text-sm font-medium">{n.category}</p>
-                  <p className="text-black text-sm font-light mt-0.5">{n.message}</p>
-                  <p className="text-[#99999980] text-[10px] mt-1">{n.time}</p>
+              {notifications.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-gray-400 text-sm">Tidak ada notifikasi saat ini.</p>
                 </div>
-              ))}
+              ) : (
+                notifications.map((n) => (
+                  <div key={n.id} className="bg-[#d9d9d980] rounded-[15px] px-4 py-3">
+                    <p className="text-[#d06224] text-sm font-medium">{n.category}</p>
+                    <p className="text-black text-sm font-light mt-0.5">{n.message}</p>
+                    <p className="text-[#99999980] text-[10px] mt-1">{n.time}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
-
         </section>
-
       </div>
     </PageLayout>
   );

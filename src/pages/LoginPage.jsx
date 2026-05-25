@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { authAPI } from "../utils/api"; 
 import food1 from "../assets/asset1.png";
 import food2 from "../assets/asset2.png";
 import food3 from "../assets/asset3.png";
@@ -10,13 +11,47 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const location = useLocation();
+  const [email, setEmail] = useState(location.state?.email || "");
+  const [password, setPassword] = useState(location.state?.password || "");
+  const [error, setError] = useState("");      
+  const [loading, setLoading] = useState(false); 
 
-  const handleSubmit = (e) => {
+  // ── Ganti handleSubmit ────────────────────────────────────────────────────
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await authAPI.login({ email, password });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // Ingat saya — simpan email
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", email);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message || "Email atau kata sandi salah.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // ── Auto-fill email kalau ada remembered email ────────────────────────────
+  useState(() => {
+    const saved = localStorage.getItem("rememberedEmail");
+    if (saved) {
+      setEmail(saved);
+      setRememberMe(true);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6">
@@ -40,6 +75,13 @@ export default function LoginPage() {
             </p>
           </div>
 
+          {/* ── Tampilkan error ── */}
+          {error && (
+            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-bold text-gray-800 mb-1">Email</label>
@@ -48,6 +90,7 @@ export default function LoginPage() {
                 placeholder="example@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#E87722] focus:border-transparent transition"
               />
             </div>
@@ -60,6 +103,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#E87722] focus:border-transparent transition pr-12"
                 />
                 <button
@@ -96,11 +140,13 @@ export default function LoginPage() {
               </Link>
             </div>
 
+            {/* ── Tombol dengan loading state ── */}
             <button
               type="submit"
-              className="w-full bg-[#E87722] hover:bg-[#d06a1a] text-white font-bold py-3 rounded-xl tracking-widest text-sm transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+              disabled={loading}
+              className="w-full bg-[#E87722] hover:bg-[#d06a1a] disabled:bg-[#f0a875] disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl tracking-widest text-sm transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
             >
-              MASUK
+              {loading ? "Memproses..." : "MASUK"}
             </button>
           </form>
 
@@ -112,22 +158,14 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* ── PANEL KANAN — hidden di mobile ── */}
+        {/* ── PANEL KANAN — sama seperti sebelumnya ── */}
         <div
           className="hidden md:block w-1/2 relative overflow-hidden"
           style={{
             background: "linear-gradient(160deg, #f5cda8 0%, #e09060 35%, #c96030 70%, #a84020 100%)",
           }}
         >
-          <div
-            className="absolute inset-x-0 top-0 pointer-events-none"
-            style={{
-              height: "35%",
-              zIndex: 0,
-              background: "linear-gradient(to bottom, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%)",
-            }}
-          />
-
+          <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: "35%", zIndex: 0, background: "linear-gradient(to bottom, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%)" }} />
           <div className="absolute rounded-full overflow-hidden" style={{ width: 148, height: 148, left: "4%", top: "4%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}>
             <img src={food1} alt="makanan 1" className="w-full h-full object-cover" style={{ transform: "scale(1.35)" }} />
           </div>
@@ -140,12 +178,9 @@ export default function LoginPage() {
           <div className="absolute rounded-full overflow-hidden" style={{ width: 148, height: 148, left: "4%", top: "70%", zIndex: 10, boxShadow: "0 12px 40px rgba(0,0,0,0.35)" }}>
             <img src={food4} alt="makanan 4" className="w-full h-full object-cover" style={{ transform: "scale(1.35)" }} />
           </div>
-
           <div className="absolute bottom-7 right-7 text-right" style={{ zIndex: 20 }}>
             <p className="text-white/80 text-sm font-medium">Punya Sisa Bahan Makanan?</p>
-            <p className="text-white text-base">
-              di <span className="font-extrabold">OLAH</span> Aja!
-            </p>
+            <p className="text-white text-base">di <span className="font-extrabold">OLAH</span> Aja!</p>
           </div>
         </div>
 

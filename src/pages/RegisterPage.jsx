@@ -5,6 +5,7 @@ import food2 from "../assets/asset2.png";
 import food3 from "../assets/asset3.png";
 import food4 from "../assets/asset4.png";
 import logoOlah from "../assets/logo-olah.png";
+import { authAPI } from "../utils/api";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -16,11 +17,39 @@ export default function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate("/login");
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  if (formData.password !== formData.confirmPassword) {
+    setError("Kata sandi dan konfirmasi tidak cocok.");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    await authAPI.register({
+      name: `${formData.firstName} ${formData.lastName}`.trim(),
+      email: formData.email,
+      password: formData.password,
+    });
+
+    // Redirect ke login dengan email & password ter-isi otomatis
+    navigate("/login", {
+      state: {
+        email: formData.email,
+        password: formData.password,
+      },
+    });
+  } catch (err) {
+    setError(err.message || "Gagal membuat akun. Coba lagi.");
+  } finally {
+    setLoading(false);
+  }
   };
 
   const passwordStrength = (() => {
@@ -162,12 +191,20 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-[#E87722] hover:bg-[#d06a1a] text-white font-bold py-3 rounded-xl tracking-widest text-sm transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
-            >
-              BUAT AKUN
-            </button>
+          {error && (
+            <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
+          {/* Tombol submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#E87722] hover:bg-[#d06a1a] disabled:bg-[#f0a875] disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl tracking-widest text-sm transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+          >
+            {loading ? "Memproses..." : "BUAT AKUN"}
+          </button>
           </form>
 
           <p className="mt-5 text-center text-sm text-gray-500">

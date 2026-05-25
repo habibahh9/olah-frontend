@@ -1,7 +1,6 @@
 // src/hooks/useUnsplashImage.js
 import { useState, useEffect } from "react";
-import { UNSPLASH_CLIENT_ID } from "../utils/api";
-
+const UNSPLASH_CLIENT_ID = import.meta.env.VITE_UNSPLASH_CLIENT_ID;
 
 // Fallback image kalau API gagal
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400";
