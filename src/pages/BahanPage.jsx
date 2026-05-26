@@ -242,8 +242,8 @@ export default function BahanPage() {
       />
 
       {/* HEADER */}
-      <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center px-4 md:px-10">
-        <h1 className="text-[22px] md:text-[28px] font-bold text-[#d06224]">
+      <div className="h-[70px] md:h-[80px] bg-white shadow-sm flex items-center px-4 md:px-10">
+        <h1 className="text-[22px] md:text-[24px] font-semibold text-[#d06224]">
           Bahan Makanan
         </h1>
       </div>
@@ -338,43 +338,50 @@ export default function BahanPage() {
                 ))}
               </div>
 
-              {/* ── DESKTOP GRID (sm ke atas) — kartu vertikal ── */}
-              <div className="hidden sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {/* ── DESKTOP GRID (sm ke atas) — recipe card style ── */}
+              <div className="hidden sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                 {allItems.map((item) => (
                   <div
                     key={item.id}
-                    className="group relative rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow shadow-sm border border-gray-100"
+                    className="group relative h-[150px] rounded-xl overflow-hidden cursor-pointer"
                   >
-                    {/* Gambar */}
-                    <div className="w-full h-[140px] overflow-hidden border-b-2 border-[#d06224]">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                    </div>
+                    {/* Gambar penuh */}
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="absolute inset-0 w-full h-full object-cover scale-110"
+                    />
 
-                    {/* Info */}
-                    <div className="px-3 py-2.5 bg-[#d06224bf]">
-                      <p className="text-sm font-semibold text-white truncate leading-snug mb-1">
+                    {/* Overlay bawah */}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 h-[56px]"
+                      style={{ background: "rgba(208, 98, 36, 0.80)" }}
+                    />
+
+                    {/* Info teks */}
+                    <div className="absolute bottom-[8px] left-[8px] right-[28px]">
+                      <p className="text-white font-semibold text-xs leading-snug truncate">
                         {item.name}
                       </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-white/80">{item.qty}</span>
-                        <div className="flex items-center gap-1">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="2"/>
-                            <path d="M12 7V12L15 15" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                          <span className="text-xs text-white">{item.days}</span>
-                        </div>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <span className="text-white/80 text-[10px]">{item.qty}</span>
+                        <span className="text-white/50 text-[10px]">·</span>
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
+                          <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="2"/>
+                          <path d="M12 7V12L15 15" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        <span className="text-white/80 text-[10px]">{item.days}</span>
                       </div>
                     </div>
 
-                    {/* Tombol Hapus — muncul saat hover di sudut kanan atas */}
+                    {/* Tombol Hapus — pojok kanan bawah */}
                     <button
                       onClick={() => setDeleteTarget(item)}
                       aria-label={`Hapus ${item.name}`}
-                      className="absolute top-2 right-2 w-[30px] h-[30px] rounded-full bg-white/90 flex items-center justify-center shadow-sm
-                                 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
+                      className="absolute bottom-[8px] right-[6px] w-[30px] h-[30px] rounded-full bg-white/20 flex items-center justify-center
+                                opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/40"
                     >
-                      <IconTrash size={13} color="#e53e3e" />
+                      <IconTrash size={16} color="white" />
                     </button>
                   </div>
                 ))}

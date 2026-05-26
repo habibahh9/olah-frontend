@@ -85,7 +85,7 @@
       },
     ];
 
-    const RecipeCard = ({ recipe }) => {
+    const RecipeCard = ({ recipe, showLove = false }) => {
       const imageUrl = useUnsplashImage(recipe.title); // ← TAMBAH INI
 
       return (
@@ -101,25 +101,30 @@
               {recipe.title}
             </span>
           </div>
-          <div className="absolute top-[148px] right-[8px]">
-            {recipe.available ? (
-              <div className="w-5 h-5 rounded-full bg-[#36c35c] flex items-center justify-center text-white text-[10px]">✓</div>
-            ) : (
-              <div className="w-5 h-5 rounded-full bg-[#ff2e2e] flex items-center justify-center text-white text-[10px]">✕</div>
-            )}
-          </div>
-          <div className="absolute top-[163px] left-[10px] flex items-center gap-1.5 whitespace-nowrap">
-            <span className="text-white text-xs">{recipe.time}</span>
-            <span className="w-1 h-1 bg-white rounded-full inline-block" />
-            <span className="text-white text-xs">{recipe.portion}</span>
-          </div>
-          <div className="absolute top-[185px] left-[10px] flex gap-1.5">
-            {recipe.ingredients.map((ing) => (
-              <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-2 h-[18px] flex items-center justify-center">
-                <span className="text-white text-[11px]">{ing}</span>
-              </div>
-            ))}
-          </div>
+          {showLove && (
+          <button onClick={(e) => { e.stopPropagation(); }} className="absolute top-[148px] right-[8px] p-1">
+            <svg width="16" height="15" viewBox="0 0 20 19" fill="none">
+              <path
+                d="M9.316 18.362C9.44273 18.4518 9.5942 18.5 9.7495 18.5C9.9048 18.5 10.0563 18.4518 10.183 18.362L9.75 17.75L10.184 18.362L10.192 18.356L10.213 18.341L10.293 18.283C10.3623 18.233 10.4607 18.16 10.588 18.064C12.074 16.9424 13.4767 15.7145 14.785 14.39C15.933 13.222 17.1 11.857 17.984 10.409C18.864 8.969 19.5 7.385 19.5 5.797C19.5 3.912 18.915 2.439 17.88 1.439C16.85 0.445 15.46 0 14 0C12.275 0 10.752 0.833 9.75 2.117C8.748 0.833 7.224 0 5.5 0C2.42 0 0 2.639 0 5.797C0 7.385 0.637 8.968 1.516 10.409C2.4 11.857 3.567 13.222 4.715 14.391C6.10981 15.8021 7.61161 17.1034 9.207 18.283L9.287 18.341L9.308 18.356L9.316 18.362Z"
+                fill="white"
+                stroke="white"
+                strokeWidth="0"
+              />
+            </svg>
+          </button>
+        )}
+        <div className="absolute top-[163px] left-[10px] flex items-center gap-1.5 whitespace-nowrap">
+          <span className="text-white text-xs">{recipe.time}</span>
+          <span className="w-1 h-1 bg-white rounded-full inline-block" />
+          <span className="text-white text-xs">{recipe.portion}</span>
+        </div>
+        <div className="absolute top-[185px] left-[10px] flex gap-1.5">
+          {recipe.ingredients.map((ing) => (
+            <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-2 h-[18px] flex items-center justify-center">
+              <span className="text-white text-[11px]">{ing}</span>
+            </div>
+          ))}
+        </div>
         </article>
       );
     };
@@ -138,8 +143,8 @@
       <PageLayout>
 
           {/* HEADER */}
-          <div className="h-[90px] bg-white shadow-sm flex items-center px-4 sm:px-10">
-            <h1 className="text-[28px] font-bold text-[#d06224]">
+          <div className="h-[70px] md:h-[80px] bg-white shadow-sm flex items-center px-4 md:px-10">
+            <h1 className="text-[22px] md:text-[24px] font-semibold text-[#d06224]">
               Buku Resep
             </h1>
           </div>
@@ -175,7 +180,7 @@
             </div>
 
             {/* FAVORIT */}
-            <section className="mb-12">
+            <section className="mb-6">
               <h2 className="text-lg font-light text-black mb-4">
                 Menu Favorit
               </h2>
@@ -183,7 +188,7 @@
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {filteredFavoriteMenus.length > 0 ? (
                   filteredFavoriteMenus.map((menu) => (
-                    <RecipeCard key={menu.id} recipe={menu} />
+                    <RecipeCard key={menu.id} recipe={menu} showLove={true} />
                   ))
                 ) : (
                   <div className="col-span-full text-center text-sm text-gray-500 py-10">

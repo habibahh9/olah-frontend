@@ -99,8 +99,6 @@ const DUMMY_ARTICLES = [
   },
 ];
 
-const CATEGORIES = ["Semua", "Tips & Trik", "Resep", "Nutrisi", "Kuliner Nusantara"];
-
 // Category color map
 const CAT_COLORS = {
   "Tips & Trik":       { bg: "#fff3eb", text: "#d06224" },
@@ -121,7 +119,6 @@ export default function ArticlePage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [activeCategory, setActiveCategory] = useState("Semua");
   const [searchQuery, setSearchQuery]       = useState("");
   const [articles, setArticles]             = useState(DUMMY_ARTICLES);
   const [loading, setLoading]               = useState(false);
@@ -141,14 +138,12 @@ export default function ArticlePage() {
   // ────────────────────────────────────────────────────────────────────────
 
   const filtered = articles.filter((a) => {
-    const matchCat  = activeCategory === "Semua" || a.category === activeCategory;
-    const q         = searchQuery.toLowerCase();
-    const matchSearch = !q || a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q);
-    return matchCat && matchSearch;
+    const q = searchQuery.toLowerCase();
+    return !q || a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q);
   });
 
-  const featured    = filtered.find((a) => a.featured);
-  const regularList = filtered.filter((a) => !a.featured || activeCategory !== "Semua" || searchQuery);
+  const featured = filtered.find((a) => a.featured);
+  const regularList = filtered.filter((a) => !a.featured || searchQuery);
 
   const navItems = [
   { label: "Beranda", path: "/dashboard", icon: ( <svg width="22" height="22" viewBox="0 0 46 47" fill="none"><path d="M44.8763 19.7641L25.7097 1.09287C24.9909 0.393093 24.0162 0 23 0C21.9838 0 21.0091 0.393093 20.2903 1.09287L1.12367 19.7641C0.765982 20.11 0.482445 20.5216 0.289545 20.9752C0.0966444 21.4288 -0.0017697 21.9152 2.40864e-05 22.4061V44.8116C2.40864e-05 45.3068 0.201958 45.7817 0.561403 46.1318C0.920847 46.482 1.40836 46.6787 1.91669 46.6787H17.25C17.7583 46.6787 18.2458 46.482 18.6053 46.1318C18.9647 45.7817 19.1667 45.3068 19.1667 44.8116V31.7417H26.8333V44.8116C26.8333 45.3068 27.0353 45.7817 27.3947 46.1318C27.7542 46.482 28.2417 46.6787 28.75 46.6787H44.0833C44.5916 46.6787 45.0792 46.482 45.4386 46.1318C45.798 45.7817 46 45.3068 46 44.8116V22.4061C46.0018 21.9152 45.9034 21.4288 45.7105 20.9752C45.5176 20.5216 45.234 20.11 44.8763 19.7641ZM42.1666 42.9445H30.6667V29.8746C30.6667 29.3794 30.4647 28.9045 30.1053 28.5543C29.7458 28.2042 29.2583 28.0075 28.75 28.0075H17.25C16.7417 28.0075 16.2542 28.2042 15.8947 28.5543C15.5353 28.9045 15.3333 29.3794 15.3333 29.8746V42.9445H3.83335V22.4061L23 3.73485L42.1666 22.4061V42.9445Z" fill="currentColor"/></svg> ) },
@@ -182,7 +177,7 @@ export default function ArticlePage() {
 
         <div className="mt-auto relative">
           <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
-            <svg width="52" height="52" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="45" height="52" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="70" height="70" rx="35" fill="white" fillOpacity="0.85"/>
               <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224"/>
             </svg>
@@ -239,23 +234,6 @@ export default function ArticlePage() {
               )}
             </div>
           </div>
-
-          {/* Category filter tabs */}
-          <div className="flex gap-2 mt-5 overflow-x-auto pb-1 relative z-10 scrollbar-hide">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  activeCategory === cat
-                    ? "bg-white text-[#d06224] shadow"
-                    : "bg-white/20 text-white hover:bg-white/30"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* ── CONTENT AREA ── */}
@@ -292,7 +270,7 @@ export default function ArticlePage() {
           ) : (
             <>
               {/* ── FEATURED ARTICLE (hanya tampil di tab "Semua" tanpa search) ── */}
-              {featured && activeCategory === "Semua" && !searchQuery && (
+              {featured && !searchQuery && (
                 <section>
                   <h2 className="text-base font-light text-black mb-3">Artikel Pilihan</h2>
                   <div
@@ -332,7 +310,7 @@ export default function ArticlePage() {
 
               {/* ── ARTICLE GRID ── */}
               <section>
-                {activeCategory === "Semua" && !searchQuery && (
+                {!searchQuery && (
                   <h2 className="text-base font-light text-black mb-3">Artikel Terbaru</h2>
                 )}
                 {searchQuery && (
