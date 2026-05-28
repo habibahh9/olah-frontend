@@ -39,11 +39,10 @@ export default function SandiPage() {
 
   const handleSave = () => {
   setSaved(true);
-  setForm({ sandiSaatIni: "", sandiBaru: "", konfirmasi: "" }); // bersihkan form
+  setForm({ sandiSaatIni: "", sandiBaru: "", konfirmasi: "" }); 
   setTimeout(() => setSaved(false), 2000);
 };
 
-  // Strength checker
   const getStrength = (password) => {
     if (!password) return null;
     let score = 0;
@@ -108,7 +107,6 @@ export default function SandiPage() {
     },
   ];
 
-  // Eye icon component
   const EyeIcon = ({ show, onClick }) => (
     <button type="button" onClick={onClick} className="text-gray-400 hover:text-gray-600">
       {show ? (
@@ -128,7 +126,6 @@ export default function SandiPage() {
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-      {/* SIDEBAR */}
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
 
@@ -181,18 +178,18 @@ export default function SandiPage() {
           </div>
       </aside>
 
-      {/* KONTEN UTAMA */}
+      {/* konten */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
-        {/* Header */}
+        {/* header */}
         <div className="px-4 md:px-8 pt-5 md:pt-7 pb-4 border-b border-gray-200 bg-white">
           <h1 className="text-2xl font-semibold text-[#d06224]">Profil Anda</h1>
         </div>
 
-        {/* Body */}
+        {/* body */}
        <div className="flex flex-col md:flex-row gap-6 px-4 md:px-8 py-5 md:py-7 flex-1">
 
-          {/* Kartu Profil Kiri — sama seperti ProfilePage */}
+          {/* profil*/}
           <div className="flex-1 bg-white rounded-2xl shadow-sm flex flex-col items-center py-8 px-6">
             <h2 className="text-lg font-semibold text-[#d06224] tracking-widest mb-5">PROFIL</h2>
 
@@ -205,10 +202,10 @@ export default function SandiPage() {
             </div>
 
             <h3 className="text-xl font-bold text-gray-800 tracking-wider mb-1">
-              {namaLengkap.toUpperCase()} {/* [localStorage] was hardcode */}
+              {namaLengkap.toUpperCase()} 
             </h3>
             <p className="text-gray-500 text-sm text-center mb-6 leading-relaxed">
-              {bioProfil} {/* [localStorage] was hardcode */}
+              {bioProfil} 
             </p>
 
             <div className="w-full flex flex-col gap-0 divide-y divide-gray-100">
@@ -238,13 +235,13 @@ export default function SandiPage() {
             </div>
           </div>
 
-          {/* Form Ubah Kata Sandi Kanan */}
+          {/* form ubah kata sandi */}
           <div className="flex-1 bg-white rounded-2xl shadow-sm p-7">
             <h2 className="text-lg font-light text-gray-700 mb-5">Ubah Kata Sandi</h2>
 
             <div className="flex flex-col gap-5">
 
-              {/* Kata Sandi Saat Ini */}
+              {/* kata sandi saat ini */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kata Sandi Saat Ini</label>
                 <div className="relative">
@@ -262,7 +259,7 @@ export default function SandiPage() {
                 </div>
               </div>
 
-              {/* Kata Sandi Baru */}
+              {/* kata sandi baru */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kata Sandi Baru</label>
                 <div className="relative">
@@ -279,7 +276,7 @@ export default function SandiPage() {
                   </div>
                 </div>
 
-                {/* Strength bar */}
+                {/* strength bar */}
                 {form.sandiBaru && strength && (
                   <div className="mt-2">
                     <div className="flex gap-1 mb-1">
@@ -297,7 +294,7 @@ export default function SandiPage() {
                 )}
               </div>
 
-              {/* Konfirmasi Kata Sandi */}
+              {/* konfirmasi kata sandi */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Konfirmasi Kata Sandi</label>
                 <div className="relative">
@@ -320,7 +317,6 @@ export default function SandiPage() {
                 )}
               </div>
 
-              {/* Tombol */}
               <div className="flex justify-end mt-2">
                 <button
                   onClick={handleSave}

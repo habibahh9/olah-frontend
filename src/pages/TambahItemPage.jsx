@@ -17,7 +17,6 @@ export default function TambahItemPage() {
   const location = useLocation();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-  // Form state
   const [namaBAhan, setNamaBahan] = useState("");
   const [berat, setBerat] = useState("");
   const [satuan, setSatuan] = useState("Kg");
@@ -26,9 +25,8 @@ export default function TambahItemPage() {
   const [imagePreview, setImagePreview] = useState(null);
   const [showImageOptions, setShowImageOptions] = useState(false);
 
-  // Refs untuk file input
-  const fileInputRef = useRef(null);       // dari galeri
-  const cameraInputRef = useRef(null);     // dari kamera
+  const fileInputRef = useRef(null);      
+  const cameraInputRef = useRef(null);     
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -53,10 +51,9 @@ export default function TambahItemPage() {
       qty: `${berat} ${satuan}`,
       days: daysLabel,
       image: imagePreview || null,
-      kategori: "lainnya", // atau "sayuran", terserah default-nya
+      kategori: "lainnya",
     };
 
-    // Simpan langsung ke localStorage
     try {
       const saved = localStorage.getItem("bahan_items");
       const itemsMap = saved
@@ -69,14 +66,13 @@ export default function TambahItemPage() {
       localStorage.setItem("bahan_items", JSON.stringify(itemsMap));
     } catch {}
 
-    // Kirim ke BahanPage biar langsung tampil tanpa reload
     navigate("/bahan", { state: { newItem } });
   };
 
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-      {/* SIDEBAR */}
+      {/* sidebar */}
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
         {navItems.map((item) => {
@@ -112,10 +108,10 @@ export default function TambahItemPage() {
         </div>
       </aside>
 
-      {/* MAIN */}
+      {/* main */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
-        {/* HEADER */}
+        {/* header */}
         <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center px-4 md:px-10 gap-4">
           <button
             onClick={() => navigate("/bahan")}
@@ -128,11 +124,10 @@ export default function TambahItemPage() {
           <h1 className="text-[28px] font-bold text-[#d06224]">Tambah Bahan</h1>
         </div>
 
-        {/* CONTENT */}
+        {/* content */}
         <div className="flex-1 flex items-start justify-center px-4 md:px-10 py-5 md:py-10">
           <div className="w-full max-w-[620px] bg-white rounded-[20px] shadow-sm overflow-hidden">
 
-            {/* Kategori selector header */}
             <div className="px-6 pt-5 pb-4 border-b border-gray-100">
               <div className="flex items-center gap-4">
                 {/* Icon box */}
@@ -141,7 +136,6 @@ export default function TambahItemPage() {
                     <path d="M45.2583 11.7029H39.0123L44.7489 5.28092C44.9107 5.0997 45.0391 4.88456 45.1267 4.64779C45.2142 4.41101 45.2593 4.15724 45.2593 3.90096C45.2593 3.64467 45.2142 3.3909 45.1267 3.15412C45.0391 2.91735 44.9107 2.70221 44.7489 2.52099C44.5871 2.33977 44.395 2.19602 44.1836 2.09795C43.9721 1.99987 43.7455 1.94939 43.5167 1.94939C43.2878 1.94939 43.0612 1.99987 42.8498 2.09795C42.6384 2.19602 42.4463 2.33977 42.2845 2.52099L36.5501 8.94538V1.95048C36.5501 1.43318 36.3666 0.937067 36.04 0.571282C35.7133 0.205496 35.2703 0 34.8084 0C34.3465 0 33.9035 0.205496 33.5769 0.571282C33.2503 0.937067 33.0668 1.43318 33.0668 1.95048V9.89136C30.4129 8.17563 27.328 7.48752 24.2897 7.93356C21.2514 8.37961 18.4291 9.93492 16.2598 12.3587C7.52975 21.9624 0.965885 44.8049 0.325826 47.0894C0.0240474 47.8149 -0.0711896 48.6267 0.0530321 49.4148C0.177254 50.203 0.514922 50.9292 1.02024 51.4951C1.52556 52.061 2.17407 52.4392 2.87782 52.5783C3.58157 52.7174 4.30649 52.6108 4.95427 52.2728C6.99419 51.556 27.4173 44.1954 35.971 34.4235C38.1337 31.9934 39.521 28.8327 39.9181 25.4307C40.3152 22.0286 39.7 18.5748 38.1676 15.6038H45.2583C45.7203 15.6038 46.1633 15.3983 46.4899 15.0325C46.8165 14.6668 47 14.1706 47 13.6533C47 13.136 46.8165 12.6399 46.4899 12.2741C46.1633 11.9084 45.7203 11.7029 45.2583 11.7029Z" fill="#d06224"/>
                   </svg>
                 </div>
-                {/* Nama + sub */}
                 <div className="flex-1">
                   <p className="text-base font-semibold text-[#d06224]">Informasi Bahan</p>
                   <p className="text-xs text-gray-400">Tambah Bahan</p>
@@ -149,15 +143,14 @@ export default function TambahItemPage() {
               </div>
             </div>
 
-            {/* Form body */}
+            {/* body */}
             <div className="px-6 py-5 flex flex-col gap-5">
 
-              {/* Gambar + Nama Bahan — satu baris */}
+              {/* nama dan bahan */}
               <div className="flex gap-5 items-start">
 
-                {/* Upload gambar */}
+                {/* upload gambar */}
                 <div className="flex flex-col items-center gap-1.5 shrink-0">
-                  {/* Hidden file inputs */}
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -174,7 +167,6 @@ export default function TambahItemPage() {
                     onChange={handleImageChange}
                   />
 
-                  {/* Preview / placeholder box */}
                   <div className="relative">
                     <button
                       onClick={() => setShowImageOptions(!showImageOptions)}
@@ -193,7 +185,7 @@ export default function TambahItemPage() {
                       )}
                     </button>
 
-                    {/* Dropdown pilihan foto/kamera */}
+                    {/* pilihan foto/kamera */}
                     {showImageOptions && (
                       <div className="absolute top-[125px] left-0 z-30 bg-white rounded-[12px] shadow-xl border border-gray-100 py-1 w-[150px]">
                         <button
@@ -233,7 +225,7 @@ export default function TambahItemPage() {
                   <span className="text-xs text-gray-400">Masukkan Gambar</span>
                 </div>
 
-                {/* Nama Bahan */}
+                {/* nama Bahan */}
                 <div className="flex-1 flex flex-col gap-1.5 pt-1">
                   <label className="text-sm font-semibold text-[#d06224]">Nama Bahan</label>
                   <input
@@ -246,7 +238,7 @@ export default function TambahItemPage() {
                 </div>
               </div>
 
-              {/* Berat / Jumlah + Satuan */}
+              {/* berat / jumlah + satuan */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-[#d06224]">Berat/Jumlah</label>
                 <div className="flex gap-2">
@@ -257,7 +249,7 @@ export default function TambahItemPage() {
                     onChange={(e) => setBerat(e.target.value)}
                     className="flex-1 h-[42px] rounded-[10px] bg-[#f4f4f4] px-4 text-sm text-gray-700 placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#d06224]/30"
                   />
-                  {/* Satuan dropdown */}
+                  {/* satuan */}
                   <div className="relative">
                     <button
                       onClick={() => setShowSatuanDropdown(!showSatuanDropdown)}
@@ -287,7 +279,7 @@ export default function TambahItemPage() {
                 </div>
               </div>
 
-              {/* Tanggal Kadaluarsa */}
+              {/* tanggal kadaluarsa */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-[#d06224]">Tanggal Kadaluarsa</label>
                 <div className="flex items-center gap-2 h-[42px] bg-[#f4f4f4] rounded-[10px] px-4 w-fit">
@@ -304,7 +296,7 @@ export default function TambahItemPage() {
                 </div>
               </div>
 
-              {/* Tombol Tambah */}
+              {/* tombol tambah */}
               <button
                 onClick={handleTambah}
                 disabled={!namaBAhan.trim() || !berat.trim() || !tanggal}

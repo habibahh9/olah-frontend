@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logoOlah from "../assets/logo-olah.png";
 
-// ── NAV ICONS (same as dashboard) ──────────────────────────────────────────
+// ikon navigasi
 const IconBeranda = () => (
   <svg width="22" height="22" viewBox="0 0 46 47" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M44.8763 19.7641L25.7097 1.09287C24.9909 0.393093 24.0162 0 23 0C21.9838 0 21.0091 0.393093 20.2903 1.09287L1.12367 19.7641C0.765982 20.11 0.482445 20.5216 0.289545 20.9752C0.0966444 21.4288 -0.0017697 21.9152 2.40864e-05 22.4061V44.8116C2.40864e-05 45.3068 0.201958 45.7817 0.561403 46.1318C0.920847 46.482 1.40836 46.6787 1.91669 46.6787H17.25C17.7583 46.6787 18.2458 46.482 18.6053 46.1318C18.9647 45.7817 19.1667 45.3068 19.1667 44.8116V31.7417H26.8333V44.8116C26.8333 45.3068 27.0353 45.7817 27.3947 46.1318C27.7542 46.482 28.2417 46.6787 28.75 46.6787H44.0833C44.5916 46.6787 45.0792 46.482 45.4386 46.1318C45.798 45.7817 46 45.3068 46 44.8116V22.4061C46.0018 21.9152 45.9034 21.4288 45.7105 20.9752C45.5176 20.5216 45.234 20.11 44.8763 19.7641ZM42.1666 42.9445H30.6667V29.8746C30.6667 29.3794 30.4647 28.9045 30.1053 28.5543C29.7458 28.2042 29.2583 28.0075 28.75 28.0075H17.25C16.7417 28.0075 16.2542 28.2042 15.8947 28.5543C15.5353 28.9045 15.3333 29.3794 15.3333 29.8746V42.9445H3.83335V22.4061L23 3.73485L42.1666 22.4061V42.9445Z" fill="currentColor"/>
@@ -29,7 +29,7 @@ const IconRiwayat = () => (
   </svg>
 );
 
-// ── DUMMY ARTICLES (placeholder sebelum API dipasang) ───────────────────────
+// data artikel 
 const DUMMY_ARTICLES = [
   {
     id: 1,
@@ -99,7 +99,7 @@ const DUMMY_ARTICLES = [
   },
 ];
 
-// Category color map
+// warna badge
 const CAT_COLORS = {
   "Tips & Trik":       { bg: "#fff3eb", text: "#d06224" },
   "Resep":             { bg: "#ebf5eb", text: "#4a7c4a" },
@@ -107,7 +107,7 @@ const CAT_COLORS = {
   "Kuliner Nusantara": { bg: "#fff8eb", text: "#ae7c1e" },
 };
 
-// Placeholder illustration per category
+// emoji 
 const CAT_EMOJI = {
   "Tips & Trik":       "💡",
   "Resep":             "🍲",
@@ -120,22 +120,40 @@ export default function ArticlePage() {
   const location = useLocation();
 
   const [searchQuery, setSearchQuery]       = useState("");
-  const [articles, setArticles]             = useState(DUMMY_ARTICLES);
-  const [loading, setLoading]               = useState(false);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-  // ── API PLACEHOLDER ─────────────────────────────────────────────────────
-  // Ganti bagian ini dengan pemanggilan API artikel makanan kamu.
-  // Contoh:
-  //
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch("https://your-api.com/articles?category=" + activeCategory)
-  //     .then(res => res.json())
-  //     .then(data => { setArticles(data.articles); setLoading(false); })
-  //     .catch(() => setLoading(false));
-  // }, [activeCategory]);
-  // ────────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    setLoading(true);
+    fetch("https://newsapi.org/v2/everything?q=%22food+waste%22&language=en&pageSize=12&sortBy=relevancy&apiKey=3b871ecba7824872a03f2461e3a3cab4")
+      .then(res => res.json())
+      .then(data => {
+        const mapped = (data.articles || [])
+        .filter(article => 
+          article.title?.toLowerCase().includes("food waste") ||
+          article.description?.toLowerCase().includes("food waste")
+        )
+        .map((article, i) => ({
+          id: i + 1,
+          title: article.title || "",
+          excerpt: article.description || "",
+          author: article.author || article.source?.name || "Unknown",
+          date: new Date(article.publishedAt).toLocaleDateString("id-ID", {
+            day: "numeric", month: "long", year: "numeric"
+          }),
+          image: article.urlToImage || null,
+          url: article.url,
+          featured: i === 0,
+        }));
+        setArticles(mapped);
+        setLoading(false);
+      })
+      .catch(() => {
+        setArticles(DUMMY_ARTICLES); 
+        setLoading(false);
+      });
+  }, []);
 
   const filtered = articles.filter((a) => {
     const q = searchQuery.toLowerCase();
@@ -156,7 +174,7 @@ export default function ArticlePage() {
   return (
     <div className="flex flex-col sm:flex-row min-h-screen bg-[#f4f4f4]">
 
-      {/* ── SIDEBAR ── */}
+      {/* sidebar */}
       <aside className="hidden sm:flex fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
 
@@ -202,22 +220,20 @@ export default function ArticlePage() {
         </div>
       </aside>
 
-      {/* ── MAIN CONTENT ── */}
+      {/* main */}
       <main className="flex-1 sm:ml-[110px] flex flex-col overflow-hidden min-w-0">
 
-        {/* ── PAGE HEADER ── */}
-        <div className="relative bg-gradient-to-br from-[#d06224] via-[#c8571f] to-[#ae431e] px-7 pt-8 pb-6 overflow-hidden">
-          {/* decorative circles */}
+        {/* page header */}
+        <div className="relative bg-gradient-to-br from-[#d06224] via-[#c8571f] to-[#ae431e] px-7 pt-6 pb-6 overflow-hidden">
           <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10" />
           <div className="absolute top-10 -right-4 w-24 h-24 rounded-full bg-white/5" />
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
             <div>
-              <p className="text-white/70 text-sm font-light">Wawasan kuliner terpercaya</p>
-              <h1 className="text-white text-2xl font-semibold mt-0.5">Artikel Makanan</h1>
+              <h1 className="text-white text-2xl font-semibold">Artikel Makanan</h1>
             </div>
 
-            {/* Search */}
+            {/* search */}
             <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 gap-2 w-full sm:w-[280px]">
               <svg width="16" height="16" viewBox="0 0 28 27" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M26.5865 24.2967L20.6502 18.3986C22.4301 16.095 23.2611 13.2053 22.9746 10.3156C22.6881 7.42597 21.3056 4.75272 19.1075 2.83817C16.9095 0.923624 14.0604 -0.0888533 11.1383 0.00612555C8.21628 0.101104 5.43999 1.29643 3.37267 3.34962C1.30535 5.4028 0.1018 8.16011 0.00616771 11.0622C-0.0894648 13.9643 0.929981 16.7939 2.85771 18.9769C4.78543 21.16 7.47708 22.533 10.3866 22.8175C13.2962 23.1021 16.2058 22.2768 18.5252 20.5091L24.4665 26.4109C24.7516 26.6951 25.1318 26.848 25.529 26.848C25.9262 26.848 26.3064 26.6951 26.5915 26.4109C26.8767 26.1267 27.0316 25.7449 27.0316 25.3557C27.0316 24.9665 26.8767 24.5847 26.5915 24.3005L26.5865 24.2967ZM3.02522 11.4464C3.02522 9.77678 3.52374 8.14463 4.45773 6.75637C5.39172 5.36811 6.71924 4.28609 8.27241 3.64714C9.82558 3.00819 11.5346 2.84102 13.1835 3.16675C14.8323 3.49248 16.3469 4.29649 17.5356 5.47711C18.7244 6.65773 19.5339 8.16193 19.8619 9.7995C20.1899 11.4371 20.0215 13.1345 19.3782 14.677C18.7348 16.2196 17.6454 17.538 16.2476 18.4656C14.8497 19.393 13.2346 19.9115 11.5735 19.9115C9.33278 19.9115 7.18377 19.0278 5.6114 17.4657C4.03904 15.9036 3.02522 13.7694 3.02522 11.4464Z" fill="white"/>
@@ -236,11 +252,11 @@ export default function ArticlePage() {
           </div>
         </div>
 
-        {/* ── CONTENT AREA ── */}
+        {/* content */}
         <div className="px-7 py-6 flex flex-col gap-6 overflow-auto">
 
           {loading ? (
-            // ── SKELETON LOADING ──
+            // loading
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {[1,2,3,4,5,6].map((i) => (
                 <div key={i} className="bg-white rounded-[15px] overflow-hidden shadow-sm animate-pulse">
@@ -255,7 +271,7 @@ export default function ArticlePage() {
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            // ── EMPTY STATE ──
+            // tampilan kosong
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <span className="text-5xl mb-4">🔍</span>
               <p className="text-gray-500 text-base">Artikel tidak ditemukan</p>
@@ -269,7 +285,7 @@ export default function ArticlePage() {
             </div>
           ) : (
             <>
-              {/* ── FEATURED ARTICLE (hanya tampil di tab "Semua" tanpa search) ── */}
+              {/* artikel pilihan */}
               {featured && !searchQuery && (
                 <section>
                   <h2 className="text-base font-light text-black mb-3">Artikel Pilihan</h2>
@@ -277,26 +293,13 @@ export default function ArticlePage() {
                     className="relative w-full rounded-[18px] overflow-hidden cursor-pointer shadow-sm group"
                     onClick={() => navigate(`/artikel/${featured.id}`)}
                   >
-                    {/* Placeholder image area */}
                     <div className="h-[220px] bg-gradient-to-br from-[#f5c5a0] to-[#d06224] flex items-center justify-center">
                       <span className="text-7xl opacity-40">🍽️</span>
                     </div>
-                    {/* Overlay */}
+                    {/* overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
-                    {/* Text */}
+                    {/* text */}
                     <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span
-                          className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
-                          style={{
-                            background: CAT_COLORS[featured.category]?.bg ?? "#fff3eb",
-                            color:      CAT_COLORS[featured.category]?.text ?? "#d06224",
-                          }}
-                        >
-                          {featured.category}
-                        </span>
-                        <span className="text-white/70 text-[11px]">{featured.readTime} baca</span>
-                      </div>
                       <h3 className="text-white font-semibold text-lg leading-snug">{featured.title}</h3>
                       <p className="text-white/80 text-sm mt-1 line-clamp-2">{featured.excerpt}</p>
                       <div className="flex items-center justify-between mt-3">
@@ -308,7 +311,7 @@ export default function ArticlePage() {
                 </section>
               )}
 
-              {/* ── ARTICLE GRID ── */}
+              {/* artikel grid */}
               <section>
                 {!searchQuery && (
                   <h2 className="text-base font-light text-black mb-3">Artikel Terbaru</h2>
@@ -335,7 +338,7 @@ export default function ArticlePage() {
         </div>
       </main>
 
-      {/* ── BOTTOM NAV (mobile) ── */}
+      {/* mobile */}
       <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex z-50">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -356,17 +359,17 @@ export default function ArticlePage() {
   );
 }
 
-// ── ARTICLE CARD COMPONENT ──────────────────────────────────────────────────
+// article card
 function ArticleCard({ article, onClick }) {
   const colors = CAT_COLORS[article.category] ?? { bg: "#fff3eb", text: "#d06224" };
   const emoji  = CAT_EMOJI[article.category]  ?? "📰";
 
   return (
     <article
-      onClick={onClick}
+      onClick={() => window.open(article.url, "_blank")}
       className="bg-white rounded-[15px] overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow group"
     >
-      {/* Thumbnail – ganti dengan <img> saat API sudah punya URL gambar */}
+      {/* thumbnail */}
       {article.image ? (
         <img src={article.image} alt={article.title} className="w-full h-[150px] object-cover" />
       ) : (
@@ -379,28 +382,18 @@ function ArticleCard({ article, onClick }) {
       )}
 
       <div className="p-4">
-        {/* Category badge + read time */}
-        <div className="flex items-center justify-between mb-2">
-          <span
-            className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
-            style={{ background: colors.bg, color: colors.text }}
-          >
-            {article.category}
-          </span>
-          <span className="text-gray-400 text-[11px]">{article.readTime} baca</span>
-        </div>
 
-        {/* Title */}
+        {/* judul */}
         <h3 className="text-black font-semibold text-sm leading-snug line-clamp-2 group-hover:text-[#d06224] transition-colors">
           {article.title}
         </h3>
 
-        {/* Excerpt */}
+        {/* excerpt */}
         <p className="text-gray-500 text-xs mt-1.5 line-clamp-2 font-light leading-relaxed">
           {article.excerpt}
         </p>
 
-        {/* Footer */}
+        {/* footer */}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
           <span className="text-gray-400 text-[11px]">{article.author} · {article.date}</span>
           <span className="text-[#d06224] text-[11px] font-medium group-hover:underline">Baca →</span>

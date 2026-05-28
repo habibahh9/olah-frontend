@@ -55,7 +55,7 @@ export default function KeranjangPage() {
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-      {/* SIDEBAR — desktop only */}
+      {/* dekstop */}
       <aside className="hidden md:flex fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
         {NAV_ITEMS.map((item) => {
@@ -80,7 +80,7 @@ export default function KeranjangPage() {
         </div>
       </aside>
 
-      {/* BOTTOM NAV — mobile only */}
+      {/* mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.path;
@@ -93,10 +93,10 @@ export default function KeranjangPage() {
         })}
       </nav>
 
-      {/* MAIN */}
+      {/* main */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-16 md:pb-0">
 
-        {/* HEADER */}
+        {/* header */}
         <div className="h-[70px] md:h-[80px] bg-white shadow-sm flex items-center justify-between px-4 md:px-10 w-full">
           <h1 className="text-[22px] md:text-[24px] font-semibold text-[#d06224]">
             Daftar Belanja
@@ -109,13 +109,11 @@ export default function KeranjangPage() {
           </button>
         </div>
 
-        {/* CONTENT */}
+        {/* content */}
         <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col lg:flex-row gap-4 md:gap-6">
 
-          {/* LEFT COLUMN */}
           <div className="flex-1 flex flex-col gap-4">
 
-            {/* STATS */}
             <div className="grid grid-cols-3 gap-3 md:gap-4">
               {[
                 { label: "Total Item", value: totalItem, color: "text-[#d06224]" },
@@ -129,7 +127,7 @@ export default function KeranjangPage() {
               ))}
             </div>
 
-            {/* SEARCH */}
+            {/* search */}
             <div className="bg-white rounded-[15px] flex items-center px-4 md:px-5 gap-3 shadow-sm h-[50px] md:h-[56px]">
               <input
                 type="text"
@@ -145,7 +143,7 @@ export default function KeranjangPage() {
               </button>
             </div>
 
-            {/* ITEM LIST */}
+            {/* item list */}
             <div className="bg-white rounded-[15px] shadow-sm overflow-hidden">
               {filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-gray-300">
@@ -209,7 +207,6 @@ export default function KeranjangPage() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN */}
           <div className="w-full lg:w-[280px] flex flex-col gap-4 shrink-0">
             <h2 className="text-base md:text-lg font-normal text-gray-700">Sumber dari resep</h2>
             <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-3">
@@ -224,7 +221,6 @@ export default function KeranjangPage() {
         </div>
       </main>
 
-      {/* ADD ITEM MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/30 flex items-end sm:items-center justify-center z-[100]" onClick={() => setShowAddModal(false)}>
           <div className="bg-white rounded-t-[20px] sm:rounded-[20px] shadow-2xl p-6 w-full sm:w-[380px] flex flex-col gap-4" onClick={(e) => e.stopPropagation()}>

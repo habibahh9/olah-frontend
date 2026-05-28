@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");      
   const [loading, setLoading] = useState(false); 
 
-  // ── Ganti handleSubmit ────────────────────────────────────────────────────
+  // handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -29,7 +29,7 @@ export default function LoginPage() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // Ingat saya — simpan email
+      // ingat saya
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email);
       } else {
@@ -44,7 +44,7 @@ export default function LoginPage() {
     }
   };
 
-  // ── Auto-fill email kalau ada remembered email ────────────────────────────
+  // auto fill email
   useState(() => {
     const saved = localStorage.getItem("rememberedEmail");
     if (saved) {
@@ -59,7 +59,6 @@ export default function LoginPage() {
         className="flex flex-col md:flex-row w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl"
         style={{ minHeight: 620 }}
       >
-        {/* ── PANEL KIRI ── */}
         <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-10 md:px-14 py-10 md:py-12 bg-white">
           <div className="mb-8 flex justify-center">
             <img src={logoOlah} alt="OLAH Logo" className="h-14 w-auto object-contain" />
@@ -75,7 +74,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* ── Tampilkan error ── */}
+          {/* tampilan error */}
           {error && (
             <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
               {error}
@@ -140,7 +139,7 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            {/* ── Tombol dengan loading state ── */}
+            {/* tombol loading */}
             <button
               type="submit"
               disabled={loading}
@@ -158,7 +157,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* ── PANEL KANAN — sama seperti sebelumnya ── */}
         <div
           className="hidden md:block w-1/2 relative overflow-hidden"
           style={{

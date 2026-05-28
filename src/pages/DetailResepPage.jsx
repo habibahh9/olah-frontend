@@ -46,7 +46,7 @@ export default function DetailResepPage() {
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-      {/* SIDEBAR */}
+      {/* sidebar */}
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-6 gap-6">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
 
@@ -86,10 +86,10 @@ export default function DetailResepPage() {
         </div>
       </aside>
 
-      {/* MAIN */}
+      {/* main */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
-        {/* HEADER */}
+        {/* header */}
         <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center px-4 md:px-10">
           <button onClick={() => navigate(-1)} className="mr-4 text-[#d06224] hover:opacity-70">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -101,26 +101,26 @@ export default function DetailResepPage() {
           </h1>
         </div>
 
-        {/* CONTENT */}
+        {/* content */}
         <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col gap-6 flex-1">
 
-          {/* JUDUL RESEP */}
+          {/* judul */}
           <h2 className="text-2xl font-light text-black">{recipe.title}</h2>
 
-          {/* INFO UTAMA */}
+          {/* info */}
           <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-start">
 
-            {/* GAMBAR */}
+            {/* gambar */}
             <img
               src={imageUrl}  
               alt={recipe.title}
               className="w-full md:w-[300px] h-[200px] md:h-[250px] object-cover rounded-[15px] shrink-0"
             />
 
-            {/* DETAIL */}
+            {/* detil */}
             <div className="flex flex-col gap-4 flex-1">
 
-              {/* Tombol favorit */}
+              {/* tombol favorit */}
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
                 className={`w-full md:w-[260px] h-[46px] rounded-[15px] font-medium text-base transition ${
@@ -132,12 +132,12 @@ export default function DetailResepPage() {
                 {isFavorite ? "✓ Ditambahkan Ke Favorit" : "Tambahkan Ke Favorit"}
               </button>
 
-              {/* Deskripsi */}
+              {/* deskripsi */}
               <p className="text-black text-base font-light leading-relaxed max-w-[600px]">
                 {recipe.description}
               </p>
 
-              {/* Waktu & Porsi */}
+              {/* waktu & Porsi */}
               <div className="flex gap-3">
                 <div className="px-6 py-2 bg-[#8a8635cc] rounded-[15px] text-white font-medium text-sm">
                   {recipe.time}
@@ -149,7 +149,7 @@ export default function DetailResepPage() {
             </div>
           </div>
 
-          {/* BAHAN-BAHAN */}
+          {/* bahan */}
           <div>
             <h3 className="text-lg font-light text-black mb-4">Bahan - bahan</h3>
             <div className="flex flex-col gap-4 max-w-[700px]">
@@ -181,7 +181,7 @@ export default function DetailResepPage() {
             </div>
           </div>
 
-          {/* TOMBOL MULAI MASAK */}
+          {/* tombol mulai */}
           <button
             onClick={() => navigate("/detail-masak")}
             className="w-full h-[50px] bg-[#d06224] rounded-[15px] text-white font-semibold text-lg mt-auto mb-6 hover:bg-[#b85520] transition"
@@ -192,7 +192,7 @@ export default function DetailResepPage() {
         </div>
       </main>
 
-      {/* BOTTOM NAV — hanya mobile */}
+      {/* mpbile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;

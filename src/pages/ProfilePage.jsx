@@ -8,7 +8,6 @@ export default function ProfilePage() {
   const location = useLocation();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-  // [localStorage] ganti dari nilai hardcode ke load localStorage
 const [formData, setFormData] = useState(() => {
   try {
     const saved = localStorage.getItem("user_profile");
@@ -23,15 +22,14 @@ const [formData, setFormData] = useState(() => {
       };
     }
   } catch {}
-  // fallback default
-  return {
-    namaDepan:    "Putri",
-    namaBelakang: "Anisa",
-    namaTampilan: "Putri Anisa",
-    email:        "putrianisacc4@gmail.com",
-    bio:          "Suka memasak masakan Indonesia dan berusaha mengurangi food waste di rumah.",
-  };
-});
+    return {
+      namaDepan:    "Putri",
+      namaBelakang: "Anisa",
+      namaTampilan: "Putri Anisa",
+      email:        "putrianisacc4@gmail.com",
+      bio:          "Suka memasak masakan Indonesia dan berusaha mengurangi food waste di rumah.",
+    };
+  });
 
   const [saved, setSaved] = useState(false);
 
@@ -97,7 +95,7 @@ const [formData, setFormData] = useState(() => {
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-      {/* SIDEBAR */}
+      {/* sidebar */}
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
 
@@ -150,22 +148,22 @@ const [formData, setFormData] = useState(() => {
       </div>
       </aside>
 
-      {/* KONTEN UTAMA */}
+      {/* konten */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
-        {/* Header */}
+        {/* header */}
         <div className="px-4 md:px-8 pt-5 md:pt-7 pb-4 border-b border-gray-200 bg-white">
           <h1 className="text-2xl font-semibold text-[#d06224]">Profil Anda</h1>
         </div>
 
-        {/* Body */}
+        {/* body */}
         <div className="flex flex-col md:flex-row gap-6 px-4 md:px-8 py-5 md:py-7 flex-1">
 
-          {/* Kartu Profil Kiri */}
+          {/* profil */}
           <div className="flex-1 bg-white rounded-2xl shadow-sm flex flex-col items-center py-8 px-6">
             <h2 className="text-lg font-semibold text-[#d06224] tracking-widest mb-5">PROFIL</h2>
 
-            {/* Foto Profil — ganti src dengan import foto kamu */}
+            {/* import profil */}
             <div className="w-[110px] h-[110px] rounded-full overflow-hidden border-4 border-[#d06224]/20 mb-4">
               <img
                 src={profilePhoto}
@@ -182,7 +180,7 @@ const [formData, setFormData] = useState(() => {
             </p>
 
             <div className="w-full flex flex-col gap-0 divide-y divide-gray-100">
-              {/* Email */}
+              {/* email */}
               <div className="flex items-center gap-3 py-4">
                 <div className="w-9 h-9 rounded-lg bg-[#f5ede6] flex items-center justify-center shrink-0">
                   <svg width="18" height="14" viewBox="0 0 24 20" fill="none">
@@ -195,7 +193,7 @@ const [formData, setFormData] = useState(() => {
                 </div>
               </div>
 
-              {/* Bergabung Sejak */}
+              {/* bergabung Sejak */}
               <div className="flex items-center gap-3 py-4">
                 <div className="w-9 h-9 rounded-lg bg-[#f0eedb] flex items-center justify-center shrink-0">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -210,12 +208,12 @@ const [formData, setFormData] = useState(() => {
             </div>
           </div>
 
-          {/* Form Kelola Profil Kanan */}
+          {/* kelola profil */}
           <div className="flex-1 bg-white rounded-2xl shadow-sm p-7">
             <h2 className="text-lg font-light text-gray-700 mb-5">Kelola Profil</h2>
 
             <div className="flex flex-col gap-5">
-              {/* Nama Depan & Belakang */}
+              {/* nama depan & belakang */}
               <div className="flex gap-5">
                 <div className="flex-1">
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Nama Depan</label>
@@ -239,7 +237,6 @@ const [formData, setFormData] = useState(() => {
                 </div>
               </div>
 
-              {/* Nama Tampilan */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Nama Tampilan</label>
                 <input
@@ -251,7 +248,7 @@ const [formData, setFormData] = useState(() => {
                 />
               </div>
 
-              {/* Email */}
+              {/* email */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
                 <input
@@ -263,7 +260,7 @@ const [formData, setFormData] = useState(() => {
                 />
               </div>
 
-              {/* Bio */}
+              {/* bio */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Bio</label>
                 <textarea
@@ -275,7 +272,7 @@ const [formData, setFormData] = useState(() => {
                 />
               </div>
 
-              {/* Tombol Simpan */}
+              {/* tombol Simpan */}
               <div className="flex justify-end mt-2">
                 <button
                   onClick={handleSave}

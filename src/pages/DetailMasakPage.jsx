@@ -47,7 +47,7 @@ export default function DetailMasakPage() {
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-      {/* SIDEBAR */}
+      {/* sidebar */}
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
         {navItems.map((item) => {
@@ -78,10 +78,10 @@ export default function DetailMasakPage() {
         </div>
       </aside>
 
-      {/* MAIN */}
+      {/* main */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
-        {/* HEADER */}
+        {/* header */}
         <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center justify-between px-4 md:px-10">
           <h1 className="text-[28px] font-bold text-[#d06224]">
             Buku Resep
@@ -94,7 +94,7 @@ export default function DetailMasakPage() {
           </button>
         </div>
 
-        {/* CONTENT */}
+        {/* content */}
         <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col gap-4">
 
           <h2 className="text-lg font-light text-black">Cara Membuat</h2>
@@ -108,21 +108,21 @@ export default function DetailMasakPage() {
                   className="flex items-center gap-5 bg-white rounded-[15px] px-5 py-4 cursor-pointer"
                   onClick={() => toggleStep(index)}
                 >
-                  {/* Nomor */}
+                  {/* nomor */}
                   <div className={`w-10 h-10 md:w-14 md:h-14 rounded-[12px] text-xl md:text-2xl flex items-center justify-center shrink-0 text-2xl font-semibold transition ${
                     done ? "bg-[#f5c5ac] text-[#d06224]/50" : "bg-[#d06224] text-white"
                   }`}>
                     {step.id}
                   </div>
 
-                  {/* Teks langkah */}
+                  {/* teks  */}
                   <p className={`flex-1 text-base font-medium leading-relaxed transition ${
                     done ? "text-[#d06224]/40 line-through" : "text-[#d06224]"
                   }`}>
                     {step.text}
                   </p>
 
-                  {/* Checkbox */}
+                  {/* checkbox */}
                   <div className={`w-9 h-9 rounded-[8px] border-2 flex items-center justify-center shrink-0 transition ${
                     done ? "border-[#d06224] bg-white" : "border-[#d06224] bg-white"
                   }`}>

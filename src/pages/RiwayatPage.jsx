@@ -70,7 +70,7 @@ export default function RiwayatPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
-      {/* SIDEBAR — hanya tampil di md ke atas */}
+      {/* sidebar */}
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
         {navItems.map((item) => {
@@ -107,26 +107,24 @@ export default function RiwayatPage() {
         </div>
       </aside>
 
-      {/* MAIN */}
+      {/* main */}
       <main className="md:ml-[110px] flex-1 pb-20 md:pb-6 min-w-0">
 
-        {/* HEADER */}
+        {/* header */}
         <div className="h-[70px] md:h-[80px] bg-white shadow-sm flex items-center px-4 md:px-10">
           <h1 className="text-[22px] md:text-[24px] font-semibold text-[#d06224]">
             Riwayat Masakan
           </h1>
         </div>
 
-        {/* CONTENT */}
+        {/* content */}
         <div className="px-3 md:px-7 py-4 md:py-5 flex flex-col md:flex-row gap-5 md:gap-6">
 
-          {/* LEFT — Riwayat list */}
           <div className="flex-1 flex flex-col gap-4 min-w-0">
 
-            {/* SEARCH + FILTER */}
             <div className="flex flex-col gap-3">
 
-              {/* Search */}
+              {/* search */}
               <div className="flex">
                 <input
                   type="text"
@@ -142,7 +140,7 @@ export default function RiwayatPage() {
                 </button>
               </div>
 
-              {/* Filter pills — scroll horizontal di mobile */}
+              {/* mobile */}
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
                 {filterOptions.map((opt) => (
                   <button
@@ -160,7 +158,6 @@ export default function RiwayatPage() {
               </div>
             </div>
 
-            {/* GROUPED LIST */}
             {filteredData.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-gray-300">
                 <svg width="48" height="39" viewBox="0 0 44 39" fill="none" className="mb-3 opacity-40">
@@ -180,7 +177,7 @@ export default function RiwayatPage() {
                         key={item.id}
                         className="bg-white rounded-[12px] px-4 md:px-6 py-4 shadow-sm"
                       >
-                        {/* Baris atas: nama resep + tanggal */}
+                        {/* nama resep */}
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <p className="font-semibold text-[#d06224] text-sm md:text-base leading-snug">
                             {item.title}
@@ -190,7 +187,7 @@ export default function RiwayatPage() {
                           </span>
                         </div>
 
-                        {/* Baris bawah: tags + tombol */}
+                        {/* tags */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             {item.ingredients.map((ing) => (
@@ -218,7 +215,6 @@ export default function RiwayatPage() {
               ))
             )}
 
-            {/* Panel Resep Paling Sering — tampil di bawah list pada mobile */}
             <div className="md:hidden flex flex-col gap-3 mt-1">
               <h2 className="text-base font-light text-black">Resep Paling Sering</h2>
               <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-1">
@@ -233,7 +229,6 @@ export default function RiwayatPage() {
             </div>
           </div>
 
-          {/* RIGHT — Resep Paling Sering (hanya desktop) */}
           <div className="hidden md:flex w-[280px] flex-col gap-4 shrink-0">
             <h2 className="text-lg font-light text-black">Resep Paling Sering</h2>
             <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-2">
@@ -249,7 +244,7 @@ export default function RiwayatPage() {
         </div>
       </main>
 
-      {/* BOTTOM NAV — hanya mobile */}
+      {/* mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
