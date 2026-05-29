@@ -1,10 +1,16 @@
 import { useMemo, useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useNavigate, useLocation } from "react-router-dom";
 import logoOlah from "../assets/logo-olah.png";
+=======
+import { useNavigate } from "react-router-dom";
+import PageLayout from "../components/layout/PageLayout";
+>>>>>>> a6a8478 (update api endpoint)
 import { useUnsplashImage } from "../hooks/useUnsplashImage";
 import { recipeAPI, pantryAPI, notificationAPI } from "../utils/api";
 import heroImg from "../assets/asset6.png";
 
+<<<<<<< HEAD
 const NAV_ITEMS = [
   { label: "Beranda", path: "/dashboard", icon: ( <svg width="22" height="22" viewBox="0 0 46 47" fill="none"><path d="M44.8763 19.7641L25.7097 1.09287C24.9909 0.393093 24.0162 0 23 0C21.9838 0 21.0091 0.393093 20.2903 1.09287L1.12367 19.7641C0.765982 20.11 0.482445 20.5216 0.289545 20.9752C0.0966444 21.4288 -0.0017697 21.9152 2.40864e-05 22.4061V44.8116C2.40864e-05 45.3068 0.201958 45.7817 0.561403 46.1318C0.920847 46.482 1.40836 46.6787 1.91669 46.6787H17.25C17.7583 46.6787 18.2458 46.482 18.6053 46.1318C18.9647 45.7817 19.1667 45.3068 19.1667 44.8116V31.7417H26.8333V44.8116C26.8333 45.3068 27.0353 45.7817 27.3947 46.1318C27.7542 46.482 28.2417 46.6787 28.75 46.6787H44.0833C44.5916 46.6787 45.0792 46.482 45.4386 46.1318C45.798 45.7817 46 45.3068 46 44.8116V22.4061C46.0018 21.9152 45.9034 21.4288 45.7105 20.9752C45.5176 20.5216 45.234 20.11 44.8763 19.7641ZM42.1666 42.9445H30.6667V29.8746C30.6667 29.3794 30.4647 28.9045 30.1053 28.5543C29.7458 28.2042 29.2583 28.0075 28.75 28.0075H17.25C16.7417 28.0075 16.2542 28.2042 15.8947 28.5543C15.5353 28.9045 15.3333 29.3794 15.3333 29.8746V42.9445H3.83335V22.4061L23 3.73485L42.1666 22.4061V42.9445Z" fill="currentColor"/></svg> ) },
   { label: "Bahan",   path: "/bahan",     icon: ( <svg width="22" height="22" viewBox="0 0 47 53" fill="none"><path d="M45.2583 11.7029H39.0123L44.7489 5.28092C44.9107 5.0997 45.0391 4.88456 45.1267 4.64779C45.2142 4.41101 45.2593 4.15724 45.2593 3.90096C45.2593 3.64467 45.2142 3.3909 45.1267 3.15412C45.0391 2.91735 44.9107 2.70221 44.7489 2.52099C44.5871 2.33977 44.395 2.19602 44.1836 2.09795C43.9721 1.99987 43.7455 1.94939 43.5167 1.94939C43.2878 1.94939 43.0612 1.99987 42.8498 2.09795C42.6384 2.19602 42.4463 2.33977 42.2845 2.52099L36.5501 8.94538V1.95048C36.5501 1.43318 36.3666 0.937067 36.04 0.571282C35.7133 0.205496 35.2703 0 34.8084 0C34.3465 0 33.9035 0.205496 33.5769 0.571282C33.2503 0.937067 33.0668 1.43318 33.0668 1.95048V9.89136C30.4129 8.17563 27.328 7.48752 24.2897 7.93356C21.2514 8.37961 18.4291 9.93492 16.2598 12.3587C7.52975 21.9624 0.965885 44.8049 0.325826 47.0894C0.0240474 47.8149 -0.0711896 48.6267 0.0530321 49.4148C0.177254 50.203 0.514922 50.9292 1.02024 51.4951C1.52556 52.061 2.17407 52.4392 2.87782 52.5783C3.58157 52.7174 4.30649 52.6108 4.95427 52.2728C6.99419 51.556 27.4173 44.1954 35.971 34.4235C38.1337 31.9934 39.521 28.8327 39.9181 25.4307C40.3152 22.0286 39.7 18.5748 38.1676 15.6038H45.2583C45.7203 15.6038 46.1633 15.3983 46.4899 15.0325C46.8165 14.6668 47 14.1706 47 13.6533C47 13.136 46.8165 12.6399 46.4899 12.2741C46.1633 11.9084 45.7203 11.7029 45.2583 11.7029ZM33.4761 31.6953C31.5298 33.9188 28.8498 36.0351 25.889 37.9685L20.3636 31.7782C20.2017 31.5969 20.0096 31.4532 19.7982 31.3551C19.5868 31.257 19.3602 31.2066 19.1313 31.2066C18.9025 31.2066 18.6759 31.257 18.4645 31.3551C18.253 31.4532 18.0609 31.5969 17.8991 31.7782C17.7373 31.9594 17.6089 32.1745 17.5214 32.4113C17.4338 32.6481 17.3887 32.9018 17.3887 33.1581C17.3887 33.4144 17.4338 33.6682 17.5214 33.9049C17.6089 34.1417 17.7373 34.3569 17.8991 34.5381L22.7083 39.9238C13.8106 45.0902 3.91581 48.5596 3.76777 48.6108C3.66056 48.6497 3.55702 48.7004 3.45863 48.7619C3.51123 48.6523 3.55424 48.5371 3.58708 48.4182C3.65021 48.1914 9.68287 26.5777 17.5203 16.5596L24.8723 24.793C25.1991 25.159 25.6423 25.3646 26.1045 25.3646C26.5667 25.3646 27.0099 25.159 27.3367 24.793C27.6635 24.427 27.8471 23.9306 27.8471 23.413C27.8471 22.8955 27.6635 22.3991 27.3367 22.0331L20.0435 13.8679C22.1803 12.1653 24.8106 11.4247 27.4123 11.793C30.0141 12.1614 32.397 13.6117 34.0882 15.8563C35.7794 18.1008 36.6553 20.9754 36.5419 23.9095C36.4285 26.8437 35.3341 29.6228 33.4761 31.6953Z" fill="currentColor"/></svg> ) },
@@ -13,6 +19,8 @@ const NAV_ITEMS = [
   { label: "Riwayat", path: "/riwayat",   icon: ( <svg width="22" height="22" viewBox="0 0 44 39" fill="none"><path d="M24.6477 9.6834V18.4529L32.5966 22.8245C32.997 23.0449 33.2854 23.4021 33.3985 23.8175C33.5116 24.2329 33.44 24.6725 33.1996 25.0396C32.9591 25.4066 32.5694 25.671 32.1163 25.7747C31.6631 25.8783 31.1836 25.8127 30.7832 25.5923L21.9805 20.7506C21.7199 20.6072 21.5044 20.4043 21.3547 20.1618C21.2051 19.9192 21.1265 19.6454 21.1266 19.3667V9.6834C21.1266 9.25537 21.3121 8.84487 21.6423 8.5422C21.9724 8.23954 22.4202 8.06951 22.8871 8.06951C23.3541 8.06951 23.8019 8.23954 24.132 8.5422C24.4622 8.84487 24.6477 9.25537 24.6477 9.6834ZM22.8871 5.97366e-05C20.1099 -0.00628194 17.3588 0.492364 14.7931 1.46714C12.2275 2.44192 9.8982 3.87346 7.94008 5.67893C6.34018 7.16371 4.91854 8.592 3.5211 10.0869V6.45562C3.5211 6.02759 3.33561 5.61709 3.00545 5.31442C2.67528 5.01176 2.22748 4.84173 1.76055 4.84173C1.29362 4.84173 0.84582 5.01176 0.515653 5.31442C0.185486 5.61709 0 6.02759 0 6.45562V14.5251C0 14.9531 0.185486 15.3636 0.515653 15.6663C0.84582 15.9689 1.29362 16.139 1.76055 16.139H10.5633C11.0302 16.139 11.478 15.9689 11.8082 15.6663C12.1384 15.3636 12.3238 14.9531 12.3238 14.5251C12.3238 14.097 12.1384 13.6865 11.8082 13.3839C11.478 13.0812 11.0302 12.9112 10.5633 12.9112H5.50172C7.07521 11.2126 8.6421 9.61279 10.4291 7.95452C12.8759 5.71152 15.9895 4.17924 19.3809 3.54916C22.7723 2.91907 26.2911 3.21912 29.4975 4.4118C32.704 5.60448 35.4559 7.63691 37.4095 10.2551C39.363 12.8734 40.4316 15.9613 40.4817 19.133C40.5317 22.3048 39.561 25.4197 37.6909 28.0887C35.8208 30.7576 33.1341 32.8621 29.9667 34.1393C26.7992 35.4165 23.2914 35.8098 19.8815 35.2699C16.4717 34.73 13.311 33.2809 10.7944 31.1037C10.6262 30.958 10.4283 30.8441 10.2121 30.7685C9.99588 30.6929 9.76552 30.6571 9.5342 30.6631C9.30287 30.6691 9.0751 30.7168 8.86388 30.8034C8.65266 30.8901 8.46214 31.0141 8.30319 31.1683C8.14424 31.3225 8.01998 31.5039 7.9375 31.7021C7.85501 31.9003 7.81593 32.1114 7.82246 32.3235C7.829 32.5355 7.88104 32.7444 7.97561 32.938C8.07018 33.1316 8.20542 33.3062 8.37362 33.452C10.8812 35.6212 13.9298 37.1948 17.2534 38.0356C20.577 38.8764 24.0745 38.9587 27.4408 38.2754C30.8071 37.5921 33.9398 36.1639 36.5655 34.1155C39.1912 32.0672 41.2302 29.4608 42.5043 26.524C43.7785 23.5871 44.2493 20.409 43.8755 17.267C43.5017 14.1251 42.2947 11.1147 40.3598 8.49867C38.425 5.88264 35.8212 3.74045 32.7755 2.25907C29.7299 0.777681 26.335 0.0021169 22.8871 5.97366e-05Z" fill="currentColor"/></svg> ) },
 ];
 
+=======
+>>>>>>> a6a8478 (update api endpoint)
 function loadStorage(key, fallback) {
   try {
     const saved = localStorage.getItem(key);
@@ -26,7 +34,10 @@ function saveStorage(key, value) {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+<<<<<<< HEAD
   const location = useLocation();
+=======
+>>>>>>> a6a8478 (update api endpoint)
 
   const [activeFilter, setActiveFilter] = useState(
     () => loadStorage("dashboard_activeFilter", "Semua")
@@ -56,7 +67,11 @@ export default function DashboardPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
+<<<<<<< HEAD
         // resep
+=======
+        // Ambil resep
+>>>>>>> a6a8478 (update api endpoint)
         const resepRes = await recipeAPI.getAll();
         console.log("resepRes:", resepRes);
         const recipes = Array.isArray(resepRes.data)
@@ -66,6 +81,7 @@ export default function DashboardPage() {
             : [];
         setRecipeCards(recipes);
 
+<<<<<<< HEAD
         // pantry
         const pantryRes = await pantryAPI.getAll();
         console.log("pantryRes:", pantryRes);
@@ -74,6 +90,14 @@ export default function DashboardPage() {
           : Array.isArray(pantryRes.data?.items)
             ? pantryRes.data.items
             : [];
+=======
+        // Ambil pantry
+        const pantryRes = await pantryAPI.getAll();
+        console.log("pantryRes:", pantryRes);
+        const pantryList = Array.isArray(pantryRes.data?.pantry)
+        ? pantryRes.data.pantry
+        : [];
+>>>>>>> a6a8478 (update api endpoint)
         const expiring = pantryList
           .filter((item) => item.daysLeft <= 5)
           .map((item) => ({
@@ -88,7 +112,11 @@ export default function DashboardPage() {
           ? notifRes.data.notifications
           : [];
         setNotifications(notifList);
+<<<<<<< HEAD
         // nama user
+=======
+        // Ambil nama user
+>>>>>>> a6a8478 (update api endpoint)
         const user = JSON.parse(localStorage.getItem("user") || "{}");
         if (user?.name) setUserName(user.name);
 
@@ -172,6 +200,7 @@ export default function DashboardPage() {
   }, [activeFilter, recipeCards, appliedSearch]);
 
   return (
+<<<<<<< HEAD
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
       {/* sidebar desktop */}
@@ -207,11 +236,20 @@ export default function DashboardPage() {
       <div className="md:ml-[110px] flex-1 flex flex-col overflow-hidden min-w-0 pb-16 md:pb-0">
 
       {/* banner */}
+=======
+    <PageLayout>
+
+      {/* Hero Banner */}
+>>>>>>> a6a8478 (update api endpoint)
       <section className="relative h-[220px] overflow-hidden">
         <img src={heroImg} alt="Hero" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(232,179,148,0.74)_38%,rgba(208,98,36,1)_100%)]" />
 
+<<<<<<< HEAD
         <div className="absolute top-[45px] left-4 sm:left-[40px] w-[55%] sm:w-[calc(100%-340px)] max-w-[380px]">
+=======
+        <div className="absolute top-[20px] left-4 sm:left-[40px] w-[55%] sm:w-[calc(100%-340px)] max-w-[380px]">
+>>>>>>> a6a8478 (update api endpoint)
           <p className="text-white text-lg sm:text-2xl font-normal leading-tight">Selamat Pagi, {userName}!</p>
           <h1 className="text-white text-xl sm:text-[28px] font-semibold mt-0.5 leading-snug">Mau Masak Apa Hari Ini?</h1>
           <p className="text-white/80 text-xs sm:text-base mt-1 hidden sm:block">
@@ -259,11 +297,19 @@ export default function DashboardPage() {
 
       <div className="px-4 sm:px-7 py-5 flex flex-col gap-6 overflow-hidden">
 
+<<<<<<< HEAD
         {/* rekomendasi */}
         <section>
           <h2 className="text-lg font-light text-black mb-2">Rekomendasi Makanan Untukmu</h2>
 
           {/* filter */}
+=======
+        {/* Rekomendasi */}
+        <section>
+          <h2 className="text-lg font-light text-black mb-2">Rekomendasi Makanan Untukmu</h2>
+
+          {/* Filter tabs */}
+>>>>>>> a6a8478 (update api endpoint)
           <div className="flex gap-0 mb-5 h-[30px] w-full max-w-[330px] rounded-[15px] bg-white shadow-sm overflow-hidden">
             {recommendationFilters.map((f) => {
               const isActive = activeFilter === f;
@@ -279,7 +325,11 @@ export default function DashboardPage() {
             })}
           </div>
 
+<<<<<<< HEAD
           {/* resep cards */}
+=======
+          {/* Recipe cards */}
+>>>>>>> a6a8478 (update api endpoint)
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 w-full">
             {loading ? (
               <div className="col-span-full text-center text-gray-400 py-6">
@@ -302,9 +352,16 @@ export default function DashboardPage() {
           </div>
         </section>
 
+<<<<<<< HEAD
         {/* bahan kadarluarsa */}
         <section className="flex flex-col lg:flex-row gap-5">
 
+=======
+        {/* Bahan Kadaluarsa + Notifikasi */}
+        <section className="flex flex-col lg:flex-row gap-5">
+
+          {/* Bahan Kadaluarsa */}
+>>>>>>> a6a8478 (update api endpoint)
           <div className="flex-1 bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               <div className="flex flex-col items-center gap-3 shrink-0">
@@ -364,7 +421,11 @@ export default function DashboardPage() {
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* notifikasi */}
+=======
+          {/* Notifikasi */}
+>>>>>>> a6a8478 (update api endpoint)
           <div className="w-full lg:w-[450px] bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
             <h2 className="text-base sm:text-lg font-light text-black mb-3">Notifikasi Terbaru</h2>
             <div className="flex flex-col gap-2">
@@ -385,7 +446,11 @@ export default function DashboardPage() {
           </div>
         </section>
       </div>
+<<<<<<< HEAD
     </div>
   </div>
+=======
+    </PageLayout>
+>>>>>>> a6a8478 (update api endpoint)
   );
 }
