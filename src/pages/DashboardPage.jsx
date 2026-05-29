@@ -162,10 +162,13 @@ export default function DashboardPage() {
     if (activeFilter === "Favorit") results = results.filter((r) => r.isFavorite);
     if (appliedSearch && appliedSearch.trim() !== "") {
       const q = appliedSearch.toLowerCase();
-      results = results.filter((r) =>
-        r.title.toLowerCase().includes(q) ||
-        r.ingredients.some((ing) => ing.toLowerCase().includes(q))
-      );
+      results = results.filter((r) => {
+        const title = (r.title || r.name || "").toLowerCase();
+        const ings = (r.ingredients || []).map((ing) =>
+          typeof ing === "string" ? ing : ing.name || ""
+        );
+        return title.includes(q);
+      });
     }
     return results;
   }, [activeFilter, recipeCards, appliedSearch]);

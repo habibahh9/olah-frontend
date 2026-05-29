@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logoOlah from "../assets/logo-olah.png";
+
+const API_BASE = "http://localhost:5000/api/shopping-list";
 
 const NAV_ITEMS = [
   { label: "Beranda", path: "/dashboard", icon: ( <svg width="22" height="22" viewBox="0 0 46 47" fill="none"><path d="M44.8763 19.7641L25.7097 1.09287C24.9909 0.393093 24.0162 0 23 0C21.9838 0 21.0091 0.393093 20.2903 1.09287L1.12367 19.7641C0.765982 20.11 0.482445 20.5216 0.289545 20.9752C0.0966444 21.4288 -0.0017697 21.9152 2.40864e-05 22.4061V44.8116C2.40864e-05 45.3068 0.201958 45.7817 0.561403 46.1318C0.920847 46.482 1.40836 46.6787 1.91669 46.6787H17.25C17.7583 46.6787 18.2458 46.482 18.6053 46.1318C18.9647 45.7817 19.1667 45.3068 19.1667 44.8116V31.7417H26.8333V44.8116C26.8333 45.3068 27.0353 45.7817 27.3947 46.1318C27.7542 46.482 28.2417 46.6787 28.75 46.6787H44.0833C44.5916 46.6787 45.0792 46.482 45.4386 46.1318C45.798 45.7817 46 45.3068 46 44.8116V22.4061C46.0018 21.9152 45.9034 21.4288 45.7105 20.9752C45.5176 20.5216 45.234 20.11 44.8763 19.7641ZM42.1666 42.9445H30.6667V29.8746C30.6667 29.3794 30.4647 28.9045 30.1053 28.5543C29.7458 28.2042 29.2583 28.0075 28.75 28.0075H17.25C16.7417 28.0075 16.2542 28.2042 15.8947 28.5543C15.5353 28.9045 15.3333 29.3794 15.3333 29.8746V42.9445H3.83335V22.4061L23 3.73485L42.1666 22.4061V42.9445Z" fill="currentColor"/></svg> ) },
@@ -10,47 +12,152 @@ const NAV_ITEMS = [
   { label: "Riwayat", path: "/riwayat",   icon: ( <svg width="22" height="22" viewBox="0 0 44 39" fill="none"><path d="M24.6477 9.6834V18.4529L32.5966 22.8245C32.997 23.0449 33.2854 23.4021 33.3985 23.8175C33.5116 24.2329 33.44 24.6725 33.1996 25.0396C32.9591 25.4066 32.5694 25.671 32.1163 25.7747C31.6631 25.8783 31.1836 25.8127 30.7832 25.5923L21.9805 20.7506C21.7199 20.6072 21.5044 20.4043 21.3547 20.1618C21.2051 19.9192 21.1265 19.6454 21.1266 19.3667V9.6834C21.1266 9.25537 21.3121 8.84487 21.6423 8.5422C21.9724 8.23954 22.4202 8.06951 22.8871 8.06951C23.3541 8.06951 23.8019 8.23954 24.132 8.5422C24.4622 8.84487 24.6477 9.25537 24.6477 9.6834ZM22.8871 5.97366e-05C20.1099 -0.00628194 17.3588 0.492364 14.7931 1.46714C12.2275 2.44192 9.8982 3.87346 7.94008 5.67893C6.34018 7.16371 4.91854 8.592 3.5211 10.0869V6.45562C3.5211 6.02759 3.33561 5.61709 3.00545 5.31442C2.67528 5.01176 2.22748 4.84173 1.76055 4.84173C1.29362 4.84173 0.84582 5.01176 0.515653 5.31442C0.185486 5.61709 0 6.02759 0 6.45562V14.5251C0 14.9531 0.185486 15.3636 0.515653 15.6663C0.84582 15.9689 1.29362 16.139 1.76055 16.139H10.5633C11.0302 16.139 11.478 15.9689 11.8082 15.6663C12.1384 15.3636 12.3238 14.9531 12.3238 14.5251C12.3238 14.097 12.1384 13.6865 11.8082 13.3839C11.478 13.0812 11.0302 12.9112 10.5633 12.9112H5.50172C7.07521 11.2126 8.6421 9.61279 10.4291 7.95452C12.8759 5.71152 15.9895 4.17924 19.3809 3.54916C22.7723 2.91907 26.2911 3.21912 29.4975 4.4118C32.704 5.60448 35.4559 7.63691 37.4095 10.2551C39.363 12.8734 40.4316 15.9613 40.4817 19.133C40.5317 22.3048 39.561 25.4197 37.6909 28.0887C35.8208 30.7576 33.1341 32.8621 29.9667 34.1393C26.7992 35.4165 23.2914 35.8098 19.8815 35.2699C16.4717 34.73 13.311 33.2809 10.7944 31.1037C10.6262 30.958 10.4283 30.8441 10.2121 30.7685C9.99588 30.6929 9.76552 30.6571 9.5342 30.6631C9.30287 30.6691 9.0751 30.7168 8.86388 30.8034C8.65266 30.8901 8.46214 31.0141 8.30319 31.1683C8.14424 31.3225 8.01998 31.5039 7.9375 31.7021C7.85501 31.9003 7.81593 32.1114 7.82246 32.3235C7.829 32.5355 7.88104 32.7444 7.97561 32.938C8.07018 33.1316 8.20542 33.3062 8.37362 33.452C10.8812 35.6212 13.9298 37.1948 17.2534 38.0356C20.577 38.8764 24.0745 38.9587 27.4408 38.2754C30.8071 37.5921 33.9398 36.1639 36.5655 34.1155C39.1912 32.0672 41.2302 29.4608 42.5043 26.524C43.7785 23.5871 44.2493 20.409 43.8755 17.267C43.5017 14.1251 42.2947 11.1147 40.3598 8.49867C38.425 5.88264 35.8212 3.74045 32.7755 2.25907C29.7299 0.777681 26.335 0.0021169 22.8871 5.97366e-05Z" fill="currentColor"/></svg> ) },
 ];
 
-const ProfileIcon = () => (
-  <svg width="52" height="52" viewBox="0 0 70 70" fill="none">
-    <rect width="70" height="70" rx="35" fill="white" fillOpacity="0.85"/>
-    <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224"/>
-  </svg>
-);
+async function apiFetch(path, options = {}) {
+  const token = localStorage.getItem("token"); 
+  const headers = { 
+    "Content-Type": "application/json" 
+  };
 
-const initialItems = [
-  { id: 1, name: "Sawi",         checked: false, resep: "Tumis Kangkung Tempe" },
-  { id: 2, name: "Kangkung",     checked: false, resep: "Tumis Kangkung Tempe" },
-  { id: 3, name: "Tempe",        checked: true,  resep: "Tumis Kangkung Tempe" },
-  { id: 4, name: "Minyak Goreng",checked: false,  resep: "Ayam Kecap Pedas"    },
-];
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
-const resepList = [
-  { name: "Tumis Kangkung Tempe", count: 3 },
-  { name: "Ayam Kecap Pedas",     count: 1 },
-];
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      ...headers,
+      ...options.headers, 
+    },
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Request gagal");
+  }
+  return res.json();
+}
+
+const api = {
+  getList:       ()           => apiFetch("/"),
+  // Mengirim objek { items: [...] } bukan { name } langsung
+  addItem:       (name)       => apiFetch("/", { method: "POST", body: JSON.stringify({ items: [{ name }] }) }),
+  toggleItem:    (id)         => apiFetch(`/${id}/toggle`, { method: "PATCH" }),
+  deleteItem:    (id)         => apiFetch(`/${id}`,        { method: "DELETE" }),
+  clearChecked:  ()           => apiFetch("/clear-checked", { method: "DELETE" }),
+};
+
+// ── Derive resep list from items ─────────────────────────────────────────────
+function buildResepList(items) {
+  const map = {};
+  items.forEach((item) => {
+    if (item.resep) {
+      map[item.resep] = (map[item.resep] || 0) + 1;
+    }
+  });
+  return Object.entries(map).map(([name, count]) => ({ name, count }));
+}
 
 export default function KeranjangPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [items, setItems] = useState(initialItems);
-  const [search, setSearch] = useState("");
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newItemName, setNewItemName] = useState("");
 
-  const toggleItem  = (id) => setItems((prev) => prev.map((item) => item.id === id ? { ...item, checked: !item.checked } : item));
-  const hapusSelesai = () => setItems((prev) => prev.filter((item) => !item.checked));
-  const tambahItem  = () => {
-    if (!newItemName.trim()) return;
-    setItems((prev) => [...prev, { id: Date.now(), name: newItemName.trim(), checked: false, resep: null }]);
-    setNewItemName("");
-    setShowAddModal(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [items, setItems]           = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState(null);
+  const [search, setSearch]         = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newItemName, setNewItemName]   = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const fetchList = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const resResponse = await api.getList();
+      
+      // Bongkar sesuai struktur asli backend: resResponse.data.shoppingList
+      if (resResponse && resResponse.success && resResponse.data && Array.isArray(resResponse.data.shoppingList)) {
+        setItems(resResponse.data.shoppingList);
+      } else {
+        setItems([]);
+      }
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchList(); }, [fetchList]);
+
+  // ── Actions ─────────────────────────────────────────────────────────────────
+  const toggleItem = async (id) => {
+    // optimistic update
+    setItems((prev) =>
+      prev.map((item) => item._id === id ? { ...item, checked: !item.checked } : item)
+    );
+    try {
+      const updated = await api.toggleItem(id);
+      setItems((prev) =>
+        prev.map((item) => item._id === id ? { ...item, ...updated } : item)
+      );
+    } catch {
+      fetchList(); // rollback on error
+    }
   };
 
-  const filtered   = items.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
-  const totalItem  = items.length;
-  const sudahBeli  = items.filter((i) => i.checked).length;
-  const belumBeli  = totalItem - sudahBeli;
+  const hapusSelesai = async () => {
+    setActionLoading(true);
+    try {
+      await api.clearChecked();
+      setItems((prev) => prev.filter((item) => !item.checked));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const hapusItem = async (id) => {
+    setItems((prev) => prev.filter((item) => item._id !== id)); // optimistic
+    try {
+      await api.deleteItem(id);
+    } catch {
+      fetchList(); // rollback
+    }
+  };
+
+  const tambahItem = async () => {
+    if (!newItemName.trim()) return;
+    setActionLoading(true);
+    
+    try {
+      // 1. Kirim data ke backend dengan format yang diinginkan backend
+      await api.addItem(newItemName.trim());
+      
+      // 2. Tarik data terbaru langsung dari database agar data benar-benar valid dan sinkron
+      await fetchList();
+
+      setNewItemName("");
+      setShowAddModal(false);
+    } catch (e) {
+      console.error("Gagal menambahkan item:", e);
+      setError(e.message || "Gagal menambahkan item baru ke server");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // ── Derived state ────────────────────────────────────────────────────────────
+  const filtered  = items.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+  const totalItem = items.length;
+  const sudahBeli = items.filter((i) => i.checked).length;
+  const belumBeli = totalItem - sudahBeli;
+  const resepList = buildResepList(items);
 
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
@@ -69,26 +176,20 @@ export default function KeranjangPage() {
         })}
         <div className="mt-auto relative">
           <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
-            <svg width="45" height="45" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="70" height="70" rx="35" fill="white" fillOpacity="0.85" />
-              <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224" />
+            <svg width="45" height="45" viewBox="0 0 70 70" fill="none">
+              <rect width="70" height="70" rx="35" fill="white" fillOpacity="0.85"/>
+              <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224"/>
             </svg>
           </button>
           {isProfileMenuOpen && (
             <div className="absolute bottom-14 left-0 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
               <button onClick={() => { setIsProfileMenuOpen(false); navigate("/profil"); }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
-                Kelola Profil
-              </button>
+                className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Kelola Profil</button>
               <button onClick={() => { setIsProfileMenuOpen(false); navigate("/sandi"); }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
-                Ubah Kata Sandi
-              </button>
+                className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Ubah Kata Sandi</button>
               <hr className="my-1" />
               <button onClick={() => navigate("/login")}
-                className="w-full text-left px-4 py-2 text-sm text-[#ae431e] font-semibold hover:bg-gray-50">
-                Keluar
-              </button>
+                className="w-full text-left px-4 py-2 text-sm text-[#ae431e] font-semibold hover:bg-gray-50">Keluar</button>
             </div>
           )}
         </div>
@@ -115,11 +216,20 @@ export default function KeranjangPage() {
           <h1 className="text-xl md:text-[28px] font-bold text-[#d06224]">Daftar Belanja</h1>
           <button
             onClick={hapusSelesai}
-            className="h-[38px] md:h-[46px] px-4 md:px-8 bg-[#d06224] text-white font-semibold text-sm md:text-base rounded-[15px] hover:bg-[#b85520] transition"
+            disabled={actionLoading || sudahBeli === 0}
+            className="h-[38px] md:h-[46px] px-4 md:px-8 bg-[#d06224] text-white font-semibold text-sm md:text-base rounded-[15px] hover:bg-[#b85520] transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Hapus Selesai
+            {actionLoading ? "Menghapus..." : "Hapus Selesai"}
           </button>
         </div>
+
+        {/* ERROR BANNER */}
+        {error && (
+          <div className="mx-4 md:mx-10 mt-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-[12px] px-4 py-3 flex items-center justify-between">
+            <span>{error}</span>
+            <button onClick={() => setError(null)} className="ml-4 font-bold text-red-400 hover:text-red-600">✕</button>
+          </div>
+        )}
 
         {/* CONTENT */}
         <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col lg:flex-row gap-4 md:gap-6">
@@ -150,29 +260,37 @@ export default function KeranjangPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="flex-1 text-sm text-gray-500 outline-none bg-transparent placeholder-gray-400"
               />
-              <button className="w-9 h-9 bg-[#d06224] rounded-[10px] flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 bg-[#d06224] rounded-[10px] flex items-center justify-center shrink-0">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M21 21L16.514 16.506M19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
                 </svg>
-              </button>
+              </div>
             </div>
 
             {/* ITEM LIST */}
             <div className="bg-white rounded-[15px] shadow-sm overflow-hidden">
-              {filtered.length === 0 ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-12 text-gray-300">
+                  <svg className="animate-spin w-6 h-6 text-[#d06224]" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                  </svg>
+                  <span className="ml-3 text-sm text-gray-400">Memuat...</span>
+                </div>
+              ) : filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-gray-300">
                   <p className="text-sm">Tidak ada item</p>
                 </div>
               ) : (
                 filtered.map((item, idx) => (
                   <div
-                    key={item.id}
+                    key={item._id}
                     className={`flex items-center gap-3 md:gap-4 px-4 md:px-6 py-4 md:py-5 transition ${
                       idx !== filtered.length - 1 ? "border-b border-gray-100" : ""
                     } ${item.checked ? "bg-[#fdf7f4]" : "bg-white hover:bg-gray-50"}`}
                   >
                     <button
-                      onClick={() => toggleItem(item.id)}
+                      onClick={() => toggleItem(item._id)}
                       className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
                         item.checked ? "bg-[#d06224] border-[#d06224] scale-110" : "border-gray-300 bg-white hover:border-[#d06224]"
                       }`}
@@ -184,7 +302,7 @@ export default function KeranjangPage() {
                       )}
                     </button>
 
-                    <div className="flex-1 flex items-center gap-2 cursor-pointer" onClick={() => toggleItem(item.id)}>
+                    <div className="flex-1 flex items-center gap-2 cursor-pointer" onClick={() => toggleItem(item._id)}>
                       <span className={`text-sm md:text-base font-medium transition-all duration-200 ${item.checked ? "line-through text-gray-400" : "text-gray-800"}`}>
                         {item.name}
                       </span>
@@ -196,7 +314,7 @@ export default function KeranjangPage() {
                     </div>
 
                     <button
-                      onClick={(e) => { e.stopPropagation(); setItems((prev) => prev.filter((i) => i.id !== item.id)); }}
+                      onClick={(e) => { e.stopPropagation(); hapusItem(item._id); }}
                       className="w-8 h-8 md:w-9 md:h-9 bg-gray-100 rounded-[10px] flex items-center justify-center shrink-0 hover:bg-red-100 hover:text-red-500 text-gray-400 transition"
                     >
                       <svg width="14" height="14" viewBox="0 0 15 16" fill="none">
@@ -207,17 +325,19 @@ export default function KeranjangPage() {
                 ))
               )}
 
-              <div
-                className="flex items-center gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer hover:bg-gray-50 transition border-t border-gray-100"
-                onClick={() => setShowAddModal(true)}
-              >
-                <div className="w-6 h-6 rounded-full border-2 border-dashed border-[#d06224] flex items-center justify-center shrink-0">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <path d="M5 1V9M1 5H9" stroke="#d06224" strokeWidth="1.8" strokeLinecap="round"/>
-                  </svg>
+              {!loading && (
+                <div
+                  className="flex items-center gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer hover:bg-gray-50 transition border-t border-gray-100"
+                  onClick={() => setShowAddModal(true)}
+                >
+                  <div className="w-6 h-6 rounded-full border-2 border-dashed border-[#d06224] flex items-center justify-center shrink-0">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                      <path d="M5 1V9M1 5H9" stroke="#d06224" strokeWidth="1.8" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <span className="text-sm text-[#d06224] font-medium">Tambah item baru...</span>
                 </div>
-                <span className="text-sm text-[#d06224] font-medium">Tambah item baru...</span>
-              </div>
+              )}
             </div>
           </div>
 
@@ -225,12 +345,16 @@ export default function KeranjangPage() {
           <div className="w-full lg:w-[280px] flex flex-col gap-4 shrink-0">
             <h2 className="text-base md:text-lg font-normal text-gray-700">Sumber dari resep</h2>
             <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-3">
-              {resepList.map((resep) => (
-                <div key={resep.name} className="bg-[#f5ede7] rounded-[10px] px-4 py-3">
-                  <p className="text-sm font-semibold text-[#d06224]">{resep.name}</p>
-                  <p className="text-xs text-[#b07055] mt-0.5">{resep.count} bahan dari resep ini</p>
-                </div>
-              ))}
+              {resepList.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-2">Tidak ada sumber resep</p>
+              ) : (
+                resepList.map((resep) => (
+                  <div key={resep.name} className="bg-[#f5ede7] rounded-[10px] px-4 py-3">
+                    <p className="text-sm font-semibold text-[#d06224]">{resep.name}</p>
+                    <p className="text-xs text-[#b07055] mt-0.5">{resep.count} bahan dari resep ini</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -251,8 +375,19 @@ export default function KeranjangPage() {
               className="border border-gray-200 rounded-[12px] px-4 py-3 text-sm outline-none focus:border-[#d06224] transition"
             />
             <div className="flex gap-3 justify-end">
-              <button onClick={() => { setShowAddModal(false); setNewItemName(""); }} className="px-5 py-2 rounded-[10px] text-sm text-gray-500 border border-gray-200 hover:bg-gray-50 transition">Batal</button>
-              <button onClick={tambahItem} className="px-5 py-2 rounded-[10px] text-sm text-white bg-[#d06224] hover:bg-[#b85520] transition font-semibold">Tambah</button>
+              <button
+                onClick={() => { setShowAddModal(false); setNewItemName(""); }}
+                className="px-5 py-2 rounded-[10px] text-sm text-gray-500 border border-gray-200 hover:bg-gray-50 transition"
+              >
+                Batal
+              </button>
+              <button
+                onClick={tambahItem}
+                disabled={actionLoading || !newItemName.trim()}
+                className="px-5 py-2 rounded-[10px] text-sm text-white bg-[#d06224] hover:bg-[#b85520] transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {actionLoading ? "Menyimpan..." : "Tambah"}
+              </button>
             </div>
           </div>
         </div>

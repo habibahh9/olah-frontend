@@ -22,10 +22,16 @@ api.interceptors.response.use(
   (response) => response.data,
   (error) => {
     const message = error.response?.data?.message || 'Terjadi kesalahan.';
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      
+      // Mencegah auto-reload jika user sudah berada di halaman /login
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
+    
     return Promise.reject(new Error(message));
   }
 );
@@ -47,6 +53,7 @@ export const recipeAPI = {
   create: (data) => api.post('/recipes', data),
   update: (id, data) => api.put(`/recipes/${id}`, data),
   delete: (id) => api.delete(`/recipes/${id}`),
+  toggleLove: (id) => api.post(`/recipes/${id}/love`),
 };
 
 // ── Pantry → BahanPage, TambahItemPage ───────────────────────────────────────
@@ -62,7 +69,8 @@ export const shoppingListAPI = {
   getAll: () => api.get('/shopping-list'),
   addItem: (data) => api.post('/shopping-list', data),
   updateItem: (id, data) => api.put(`/shopping-list/${id}`, data),
-  deleteItem: (id) => api.delete(`/shopping-list/${id}`),
+  deleteItem: (ingredientName) =>
+  api.delete(`/shopping-list/${encodeURIComponent(ingredientName)}`),
   clearAll: () => api.delete('/shopping-list'),
 };
 
@@ -70,7 +78,7 @@ export const shoppingListAPI = {
 export const userAPI = {
   getProfile: () => api.get('/users/profile'),
   updateProfile: (data) => api.put('/users/profile', data),
-  changePassword: (data) => api.patch('/users/change-password', data),
+  changePassword: (data) => api.put('/auth/change-password', data),
   deleteAccount: () => api.delete('/users/account'),
 };
 

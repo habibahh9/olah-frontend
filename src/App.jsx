@@ -58,7 +58,7 @@ export default function App() {
         <Route path="/bahan-lengkap" element={<RequireOnboarding><BahanLengkapPage /></RequireOnboarding>} />
         <Route path="/cepat" element={<RequireOnboarding><CepatPage /></RequireOnboarding>} />
         <Route path="/detail-resep/:id" element={<RequireOnboarding><DetailResepPage /></RequireOnboarding>} />
-        <Route path="/detail-masak" element={<RequireOnboarding><DetailMasakPage /></RequireOnboarding>} />
+        <Route path="/detail-masak/:id" element={<RequireOnboarding><DetailMasakPage /></RequireOnboarding>} />
         <Route path="/keranjang" element={<RequireOnboarding><KeranjangPage /></RequireOnboarding>} />
         <Route path="/riwayat" element={<RequireOnboarding><RiwayatPage /></RequireOnboarding>} />
         <Route path="/tambah-item" element={<RequireOnboarding><TambahItemPage /></RequireOnboarding>} />
