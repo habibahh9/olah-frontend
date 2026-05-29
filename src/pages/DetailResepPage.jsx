@@ -28,11 +28,15 @@ export default function DetailResepPage() {
   const imageUrl = useUnsplashImage(recipe.title);
 
   const [cartItems, setCartItems] = useState(
-    recipe.ingredients.map((i) => i.inCart)
+    recipe.ingredients.map((i) => !i.inCart)
   );
 
   const toggleCart = (index) => {
-    setCartItems((prev) => prev.map((v, i) => (i === index ? !v : v)));
+    setCartItems((prev) => {
+      const updated = prev.map((v, i) => (i === index ? !v : v));
+      return updated;
+    });
+    navigate("/keranjang");
   };
 
   const navItems = [
@@ -46,16 +50,14 @@ export default function DetailResepPage() {
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-<<<<<<< HEAD
-      {/* sidebar */}
-=======
       {/* SIDEBAR */}
->>>>>>> a6a8478 (update api endpoint)
-      <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-6 gap-6">
+      <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
 
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive =
+            location.pathname === item.path ||
+            (item.path === "/resep" && location.pathname.startsWith("/detail-resep"));
           return (
             <button
               key={item.label}
@@ -71,11 +73,7 @@ export default function DetailResepPage() {
 
         <div className="mt-auto relative">
           <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
-<<<<<<< HEAD
-            <svg width="45" height="52" viewBox="0 0 70 70" fill="none">
-=======
             <svg width="52" height="52" viewBox="0 0 70 70" fill="none">
->>>>>>> a6a8478 (update api endpoint)
               <rect width="70" height="70" rx="35" fill="white" fillOpacity="0.85"/>
               <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224"/>
             </svg>
@@ -94,17 +92,10 @@ export default function DetailResepPage() {
         </div>
       </aside>
 
-<<<<<<< HEAD
-      {/* main */}
-      <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
-
-        {/* header */}
-=======
       {/* MAIN */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
         {/* HEADER */}
->>>>>>> a6a8478 (update api endpoint)
         <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center px-4 md:px-10">
           <button onClick={() => navigate(-1)} className="mr-4 text-[#d06224] hover:opacity-70">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -116,18 +107,6 @@ export default function DetailResepPage() {
           </h1>
         </div>
 
-<<<<<<< HEAD
-        {/* content */}
-        <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col gap-6 flex-1">
-
-          {/* judul */}
-          <h2 className="text-2xl font-light text-black">{recipe.title}</h2>
-
-          {/* info */}
-          <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-start">
-
-            {/* gambar */}
-=======
         {/* CONTENT */}
         <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col gap-6 flex-1">
 
@@ -138,24 +117,16 @@ export default function DetailResepPage() {
           <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-start">
 
             {/* GAMBAR */}
->>>>>>> a6a8478 (update api endpoint)
             <img
               src={imageUrl}  
               alt={recipe.title}
               className="w-full md:w-[300px] h-[200px] md:h-[250px] object-cover rounded-[15px] shrink-0"
             />
 
-<<<<<<< HEAD
-            {/* detil */}
-            <div className="flex flex-col gap-4 flex-1">
-
-              {/* tombol favorit */}
-=======
             {/* DETAIL */}
             <div className="flex flex-col gap-4 flex-1">
 
               {/* Tombol favorit */}
->>>>>>> a6a8478 (update api endpoint)
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
                 className={`w-full md:w-[260px] h-[46px] rounded-[15px] font-medium text-base transition ${
@@ -167,20 +138,12 @@ export default function DetailResepPage() {
                 {isFavorite ? "✓ Ditambahkan Ke Favorit" : "Tambahkan Ke Favorit"}
               </button>
 
-<<<<<<< HEAD
-              {/* deskripsi */}
-=======
               {/* Deskripsi */}
->>>>>>> a6a8478 (update api endpoint)
               <p className="text-black text-base font-light leading-relaxed max-w-[600px]">
                 {recipe.description}
               </p>
 
-<<<<<<< HEAD
-              {/* waktu & Porsi */}
-=======
               {/* Waktu & Porsi */}
->>>>>>> a6a8478 (update api endpoint)
               <div className="flex gap-3">
                 <div className="px-6 py-2 bg-[#8a8635cc] rounded-[15px] text-white font-medium text-sm">
                   {recipe.time}
@@ -192,11 +155,7 @@ export default function DetailResepPage() {
             </div>
           </div>
 
-<<<<<<< HEAD
-          {/* bahan */}
-=======
           {/* BAHAN-BAHAN */}
->>>>>>> a6a8478 (update api endpoint)
           <div>
             <h3 className="text-lg font-light text-black mb-4">Bahan - bahan</h3>
             <div className="flex flex-col gap-4 max-w-[700px]">
@@ -214,11 +173,11 @@ export default function DetailResepPage() {
                     {item.amount}
                   </span>
                   <button
-                    onClick={() => toggleCart(index)}
-                    className={`w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 ${
-                      cartItems[index] ? "bg-[#d06224]" : "bg-white border border-gray-100"
-                    }`}
-                  >
+                      onClick={(e) => { e.stopPropagation(); toggleCart(index); }}
+                      className={`w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 ${
+                        cartItems[index] ? "bg-[#d06224]" : "bg-white border border-gray-100"
+                      }`}
+                    >
                     <svg width="18" height="18" viewBox="0 0 44 49" fill="none">
                       <path d="M43.6163 9.65765C43.4633 9.45521 43.272 9.29238 43.0559 9.18066C42.8398 9.06894 42.6042 9.01106 42.3657 9.0111H9.50783L8.26945 1.48007C8.20124 1.06481 8.00342 0.689203 7.71049 0.418726C7.41755 0.148248 7.04808 6.09989e-05 6.66648 0H1.62945C1.19729 0 0.782835 0.189876 0.477254 0.527858C0.171673 0.86584 0 1.32424 0 1.80222C0 2.2802 0.171673 2.7386 0.477254 3.07658C0.782835 3.41457 1.19729 3.60444 1.62945 3.60444H5.29571L10.5018 35.2086C10.6552 36.1459 11.0297 37.0218 11.5874 37.7475C10.8176 38.5428 10.262 39.5583 9.98212 40.6815C9.70228 41.8048 9.70917 42.9918 10.002 44.1109C10.2949 45.23 10.8623 46.2376 11.6412 47.0219C12.4202 47.8062 13.3804 48.3365 14.4152 48.5541C15.4501 48.7716 16.5192 48.668 17.504 48.2545C18.4889 47.8411 19.3509 47.134 19.9946 46.2118C20.6383 45.2896 21.0385 44.1882 21.1508 43.0297C21.2631 41.8713 21.0832 40.7011 20.6309 39.6489H29.8821C29.5175 40.493 29.3289 41.4168 29.3301 42.3522C29.3301 43.5998 29.6646 44.8193 30.2912 45.8566C30.9179 46.8939 31.8086 47.7024 32.8507 48.1798C33.8928 48.6572 35.0395 48.7822 36.1458 48.5388C37.252 48.2954 38.2682 47.6946 39.0658 46.8125C39.8634 45.9303 40.4066 44.8064 40.6266 43.5828C40.8467 42.3592 40.7337 41.0909 40.3021 39.9383C39.8704 38.7857 39.1395 37.8006 38.2016 37.1075C37.2637 36.4144 36.1611 36.0444 35.0331 36.0444H15.3107C14.9291 36.0444 14.5596 35.8962 14.2667 35.6257C13.9738 35.3552 13.7759 34.9796 13.7077 34.5643L13.0621 30.6378H36.6891C37.8339 30.6376 38.9423 30.193 39.8211 29.3816C40.6999 28.5701 41.2934 27.4433 41.498 26.1975L43.9747 11.1355C44.0167 10.8751 44.0063 10.6078 43.9443 10.3524C43.8824 10.097 43.7704 9.85981 43.6163 9.65765ZM38.292 25.5532C38.2236 25.9696 38.0249 26.3461 37.7307 26.6168C37.4365 26.8874 37.0656 27.0348 36.683 27.0333H12.4694L10.1005 12.6155H40.4124L38.292 25.5532Z" fill={cartItems[index] ? "white" : "#d06224"}/>
                     </svg>
@@ -228,11 +187,7 @@ export default function DetailResepPage() {
             </div>
           </div>
 
-<<<<<<< HEAD
-          {/* tombol mulai */}
-=======
           {/* TOMBOL MULAI MASAK */}
->>>>>>> a6a8478 (update api endpoint)
           <button
             onClick={() => navigate("/detail-masak")}
             className="w-full h-[50px] bg-[#d06224] rounded-[15px] text-white font-semibold text-lg mt-auto mb-6 hover:bg-[#b85520] transition"
@@ -243,14 +198,12 @@ export default function DetailResepPage() {
         </div>
       </main>
 
-<<<<<<< HEAD
-      {/* mpbile */}
-=======
       {/* BOTTOM NAV — hanya mobile */}
->>>>>>> a6a8478 (update api endpoint)
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive =
+            location.pathname === item.path ||
+            (item.path === "/resep" && location.pathname.startsWith("/detail-resep"));
           return (
             <button
               key={item.label}

@@ -14,27 +14,55 @@ import KeranjangPage from "./pages/KeranjangPage";
 import RiwayatPage from "./pages/RiwayatPage";
 import TambahItemPage from "./pages/TambahItemPage";
 import ArticlePage from "./pages/ArticlePage";
+import OnboardingPage from "./pages/OnboardingPage";
+
+export function setOnboardingDone() {
+  sessionStorage.setItem("onboarding_done", "true");
+}
+
+function isOnboardingDone() {
+  return sessionStorage.getItem("onboarding_done") === "true";
+}
+
+// Guard: kalau onboarding belum selesai, paksa ke /onboarding
+function RequireOnboarding({ children }) {
+  if (!isOnboardingDone()) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  return children;
+}
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/profil" element={<ProfilePage />} />
-        <Route path="/sandi" element={<SandiPage />} />
-        <Route path="/bahan" element={<BahanPage />} />
-        <Route path="/resep" element={<ResepPage />} />
-        <Route path="/bahan-lengkap" element={<BahanLengkapPage />} />
-        <Route path="/cepat" element={<CepatPage />} />
-        <Route path="/detail-resep/:id" element={<DetailResepPage />} />
-        <Route path="/detail-masak" element={<DetailMasakPage />} />
-        <Route path="/keranjang" element={<KeranjangPage />} />
-        <Route path="/riwayat" element={<RiwayatPage />} />
-        <Route path="/tambah-item" element={<TambahItemPage />} />
-        <Route path="/artikel" element={<ArticlePage />} />
+        <Route
+          path="/"
+          element={
+            isOnboardingDone()
+              ? <Navigate to="/login" replace />
+              : <Navigate to="/onboarding" replace />
+          }
+        />
+
+        <Route path="/onboarding" element={<OnboardingPage />} />
+
+        {/* Semua halaman lain wajib onboarding selesai dulu */}
+        <Route path="/login" element={<RequireOnboarding><LoginPage /></RequireOnboarding>} />
+        <Route path="/register" element={<RequireOnboarding><RegisterPage /></RequireOnboarding>} />
+        <Route path="/dashboard" element={<RequireOnboarding><DashboardPage /></RequireOnboarding>} />
+        <Route path="/profil" element={<RequireOnboarding><ProfilePage /></RequireOnboarding>} />
+        <Route path="/sandi" element={<RequireOnboarding><SandiPage /></RequireOnboarding>} />
+        <Route path="/bahan" element={<RequireOnboarding><BahanPage /></RequireOnboarding>} />
+        <Route path="/resep" element={<RequireOnboarding><ResepPage /></RequireOnboarding>} />
+        <Route path="/bahan-lengkap" element={<RequireOnboarding><BahanLengkapPage /></RequireOnboarding>} />
+        <Route path="/cepat" element={<RequireOnboarding><CepatPage /></RequireOnboarding>} />
+        <Route path="/detail-resep/:id" element={<RequireOnboarding><DetailResepPage /></RequireOnboarding>} />
+        <Route path="/detail-masak" element={<RequireOnboarding><DetailMasakPage /></RequireOnboarding>} />
+        <Route path="/keranjang" element={<RequireOnboarding><KeranjangPage /></RequireOnboarding>} />
+        <Route path="/riwayat" element={<RequireOnboarding><RiwayatPage /></RequireOnboarding>} />
+        <Route path="/tambah-item" element={<RequireOnboarding><TambahItemPage /></RequireOnboarding>} />
+        <Route path="/artikel" element={<RequireOnboarding><ArticlePage /></RequireOnboarding>} />
       </Routes>
     </BrowserRouter>
   );

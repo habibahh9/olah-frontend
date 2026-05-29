@@ -47,15 +47,13 @@ export default function DetailMasakPage() {
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
 
-<<<<<<< HEAD
-      {/* sidebar */}
-=======
       {/* SIDEBAR */}
->>>>>>> a6a8478 (update api endpoint)
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive =
+            location.pathname === item.path ||
+            (item.path === "/resep" && location.pathname === "/detail-masak");
           return (
             <button key={item.label} onClick={() => navigate(item.path)}
               className={`flex flex-col items-center gap-1 transition text-xs font-medium w-full px-2 ${isActive ? "text-[#d06224]" : "text-gray-400 hover:text-[#d06224]"}`}>
@@ -66,11 +64,7 @@ export default function DetailMasakPage() {
         })}
         <div className="mt-auto relative">
           <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
-<<<<<<< HEAD
-            <svg width="45" height="52" viewBox="0 0 70 70" fill="none">
-=======
             <svg width="52" height="52" viewBox="0 0 70 70" fill="none">
->>>>>>> a6a8478 (update api endpoint)
               <rect width="70" height="70" rx="35" fill="white" fillOpacity="0.85"/>
               <path d="M58.7392 55.8384C55.3743 49.6996 50.1888 45.2977 44.1372 43.211C47.1306 41.3306 49.4563 38.4652 50.7571 35.055C52.0579 31.6448 52.2619 27.8782 51.3378 24.3338C50.4137 20.7893 48.4126 17.663 45.6418 15.4349C42.871 13.2067 39.4836 12 36 12C32.5164 12 29.129 13.2067 26.3582 15.4349C23.5874 17.663 21.5863 20.7893 20.6622 24.3338C19.7381 27.8782 19.9421 31.6448 21.2429 35.055C22.5437 38.4652 24.8694 41.3306 27.8628 43.211C21.8112 45.2954 16.6257 49.6972 13.2608 55.8384C13.1374 56.0507 13.0555 56.287 13.0201 56.5332C12.9846 56.7795 12.9962 57.0307 13.0543 57.2721C13.1123 57.5136 13.2156 57.7403 13.358 57.9389C13.5004 58.1375 13.6791 58.3041 13.8835 58.4286C14.0878 58.5532 14.3138 58.6333 14.548 58.6643C14.7822 58.6952 15.0199 58.6763 15.2471 58.6087C15.4743 58.5412 15.6863 58.4263 15.8707 58.2708C16.0551 58.1153 16.2082 57.9225 16.3208 57.7036C20.4833 50.1122 27.8407 45.5798 36 45.5798C44.1593 45.5798 51.5167 50.1122 55.6792 57.7036C55.7918 57.9225 55.9449 58.1153 56.1293 58.2708C56.3137 58.4263 56.5257 58.5412 56.7529 58.6087C56.9801 58.6763 57.2178 58.6952 57.452 58.6643C57.6862 58.6333 57.9122 58.5532 58.1165 58.4286C58.3209 58.3041 58.4996 58.1375 58.642 57.9389C58.7844 57.7403 58.8877 57.5136 58.9457 57.2721C59.0038 57.0307 59.0154 56.7795 58.9799 56.5332C58.9445 56.287 58.8626 56.0507 58.7392 55.8384ZM23.6273 28.7931C23.6273 26.2108 24.353 23.6865 25.7125 21.5394C27.072 19.3923 29.0044 17.7188 31.2652 16.7306C33.526 15.7424 36.0137 15.4838 38.4138 15.9876C40.8139 16.4914 43.0185 17.7349 44.7488 19.5608C46.4791 21.3868 47.6575 23.7132 48.1349 26.2459C48.6123 28.7786 48.3673 31.4038 47.4309 33.7895C46.4944 36.1753 44.9086 38.2144 42.8739 39.649C40.8392 41.0837 38.4471 41.8494 36 41.8494C32.7196 41.8457 29.5746 40.469 27.2551 38.0212C24.9355 35.5735 23.6308 32.2547 23.6273 28.7931Z" fill="#D06224"/>
             </svg>
@@ -86,17 +80,10 @@ export default function DetailMasakPage() {
         </div>
       </aside>
 
-<<<<<<< HEAD
-      {/* main */}
-      <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
-
-        {/* header */}
-=======
       {/* MAIN */}
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
         {/* HEADER */}
->>>>>>> a6a8478 (update api endpoint)
         <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center justify-between px-4 md:px-10">
           <h1 className="text-[28px] font-bold text-[#d06224]">
             Buku Resep
@@ -109,11 +96,7 @@ export default function DetailMasakPage() {
           </button>
         </div>
 
-<<<<<<< HEAD
-        {/* content */}
-=======
         {/* CONTENT */}
->>>>>>> a6a8478 (update api endpoint)
         <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col gap-4">
 
           <h2 className="text-lg font-light text-black">Cara Membuat</h2>
@@ -127,33 +110,21 @@ export default function DetailMasakPage() {
                   className="flex items-center gap-5 bg-white rounded-[15px] px-5 py-4 cursor-pointer"
                   onClick={() => toggleStep(index)}
                 >
-<<<<<<< HEAD
-                  {/* nomor */}
-=======
                   {/* Nomor */}
->>>>>>> a6a8478 (update api endpoint)
                   <div className={`w-10 h-10 md:w-14 md:h-14 rounded-[12px] text-xl md:text-2xl flex items-center justify-center shrink-0 text-2xl font-semibold transition ${
                     done ? "bg-[#f5c5ac] text-[#d06224]/50" : "bg-[#d06224] text-white"
                   }`}>
                     {step.id}
                   </div>
 
-<<<<<<< HEAD
-                  {/* teks  */}
-=======
                   {/* Teks langkah */}
->>>>>>> a6a8478 (update api endpoint)
                   <p className={`flex-1 text-base font-medium leading-relaxed transition ${
                     done ? "text-[#d06224]/40 line-through" : "text-[#d06224]"
                   }`}>
                     {step.text}
                   </p>
 
-<<<<<<< HEAD
-                  {/* checkbox */}
-=======
                   {/* Checkbox */}
->>>>>>> a6a8478 (update api endpoint)
                   <div className={`w-9 h-9 rounded-[8px] border-2 flex items-center justify-center shrink-0 transition ${
                     done ? "border-[#d06224] bg-white" : "border-[#d06224] bg-white"
                   }`}>
@@ -173,7 +144,9 @@ export default function DetailMasakPage() {
 
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive =
+            location.pathname === item.path ||
+            (item.path === "/resep" && location.pathname === "/detail-masak");
           return (
             <button
               key={item.label}
