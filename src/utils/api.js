@@ -93,11 +93,14 @@ export const pantryAPI = {
 // ── Shopping List → KeranjangPage ─────────────────────────────────────────────
 export const shoppingListAPI = {
   getAll: () => api.get('/shopping-list'),
-  addItem: (data) => api.post('/shopping-list', data),
+  addItem: ({ ingredientName, name }) => {
+    const itemName = ingredientName || name;
+    return api.post('/shopping-list', { items: [{ name: itemName }] });
+  },
   updateItem: (id, data) => api.put(`/shopping-list/${id}`, data),
-  deleteItem: (ingredientName) =>
-  api.delete(`/shopping-list/${encodeURIComponent(ingredientName)}`),
-  clearAll: () => api.delete('/shopping-list'),
+  toggleItem: (id) => api.patch(`/shopping-list/${id}/toggle`),
+  deleteItem: (id) => api.delete(`/shopping-list/${id}`),
+  clearChecked: () => api.delete('/shopping-list/clear-checked'),
 };
 
 // ── Users → ProfilePage, SandiPage ───────────────────────────────────────────
@@ -111,7 +114,7 @@ export const userAPI = {
 // ── Riwayat → RiwayatPage ─────────────────────────────────────────────────────
 export const riwayatAPI = {
   getAll: () => api.get('/users/history'),
-  addItem: (data) => api.post(`/recipes/${data.recipeId}/selesai`),
+  addItem: (data) => api.post('/users/history', data),
   clear: () => api.delete('/users/history'),
 };
 

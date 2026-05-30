@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { recipeAPI, riwayatAPI } from "../utils/api";
 import PageLayout from "../components/layout/PageLayout";
@@ -7,6 +7,7 @@ export default function DetailMasakPage() {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const hasSaved = useRef(false);
   
   const [steps, setSteps] = useState([]);
   const [checkedSteps, setCheckedSteps] = useState([]);
@@ -55,12 +56,16 @@ export default function DetailMasakPage() {
       </h1>
       <button
         onClick={async () => {
+          if (hasSaved.current) return; // guard
+          hasSaved.current = true;      // langsung lock
+          
           try {
             await riwayatAPI.addItem({ recipeId: id });
           } catch (err) {
             console.error("Gagal simpan riwayat:", err);
+            hasSaved.current = false; // kalau error, boleh coba lagi
           } finally {
-            navigate("/resep");  
+            navigate("/resep");
           }
         }}
         className="h-[42px] px-6 bg-[#d06224] text-white font-semibold text-sm rounded-xl hover:bg-[#b85520] transition-all active:scale-95"
