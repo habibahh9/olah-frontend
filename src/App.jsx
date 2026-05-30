@@ -7,7 +7,6 @@ import SandiPage from "./pages/SandiPage";
 import BahanPage from "./pages/BahanPage";
 import ResepPage from "./pages/ResepPage";
 import BahanLengkapPage from "./pages/BahanLengkapPage";
-import CepatPage from "./pages/CepatPage";
 import DetailResepPage from "./pages/DetailResepPage";
 import DetailMasakPage from "./pages/DetailMasakPage";
 import KeranjangPage from "./pages/KeranjangPage";
@@ -56,7 +55,6 @@ export default function App() {
         <Route path="/bahan" element={<RequireOnboarding><BahanPage /></RequireOnboarding>} />
         <Route path="/resep" element={<RequireOnboarding><ResepPage /></RequireOnboarding>} />
         <Route path="/bahan-lengkap" element={<RequireOnboarding><BahanLengkapPage /></RequireOnboarding>} />
-        <Route path="/cepat" element={<RequireOnboarding><CepatPage /></RequireOnboarding>} />
         <Route path="/detail-resep/:id" element={<RequireOnboarding><DetailResepPage /></RequireOnboarding>} />
         <Route path="/detail-masak/:id" element={<RequireOnboarding><DetailMasakPage /></RequireOnboarding>} />
         <Route path="/keranjang" element={<RequireOnboarding><KeranjangPage /></RequireOnboarding>} />

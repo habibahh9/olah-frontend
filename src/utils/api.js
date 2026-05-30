@@ -80,15 +80,20 @@ export const recipeAPI = {
   delete: (id) => api.delete(`/recipes/${id}`),
   toggleLove: (id) => api.post(`/recipes/${id}/love`),
   getRecommendations: (params = {}) => api.get("/recipes/recommend", { params }),
+   selesai: (id) => api.post(`/recipes/${id}/selesai`),
 };
 
 // ── Pantry → BahanPage, TambahItemPage ───────────────────────────────────────
 export const pantryAPI = {
-  getAll: () => api.get('/pantry'),
-  addItem: (data) => api.post('/pantry', data),
-  updateItem: (id, data) => api.put(`/pantry/${id}`, data),
-  deleteItem: (id) => api.delete(`/pantry/${id}`),
+  getAll:       ()           => api.get('/pantry'),
+  getStats:     ()           => api.get('/pantry/stats'),          
+  addItem:      (data)       => api.post('/pantry', data),
+  updateItem:   (id, data)   => api.put(`/pantry/${id}`, data),
+  deleteItem:   (id)         => api.delete(`/pantry/${id}`),      
+  markUsed:     (id)         => api.patch(`/pantry/${id}/use`),    
+  checkExpired: ()           => api.post('/pantry/check-expired'), 
 };
+
 
 // ── Shopping List → KeranjangPage ─────────────────────────────────────────────
 export const shoppingListAPI = {
@@ -126,10 +131,6 @@ export const masakAPI = {
 
 export const notificationAPI = {
   getAll: () => api.get('/users/notifications'),
-};
-
-export const articleAPI = {
-  getAll: () => api.get('/articles'),
 };
 
 

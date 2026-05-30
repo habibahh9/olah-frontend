@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logoOlah from "../assets/logo-olah.png";
 import { riwayatAPI } from "../utils/api";
 
+const toCapitalize = (str = "") =>
+  str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
 const navItems = [
   { label: "Beranda", path: "/dashboard", icon: ( <svg width="22" height="22" viewBox="0 0 46 47" fill="none"><path d="M44.8763 19.7641L25.7097 1.09287C24.9909 0.393093 24.0162 0 23 0C21.9838 0 21.0091 0.393093 20.2903 1.09287L1.12367 19.7641C0.765982 20.11 0.482445 20.5216 0.289545 20.9752C0.0966444 21.4288 -0.0017697 21.9152 2.40864e-05 22.4061V44.8116C2.40864e-05 45.3068 0.201958 45.7817 0.561403 46.1318C0.920847 46.482 1.40836 46.6787 1.91669 46.6787H17.25C17.7583 46.6787 18.2458 46.482 18.6053 46.1318C18.9647 45.7817 19.1667 45.3068 19.1667 44.8116V31.7417H26.8333V44.8116C26.8333 45.3068 27.0353 45.7817 27.3947 46.1318C27.7542 46.482 28.2417 46.6787 28.75 46.6787H44.0833C44.5916 46.6787 45.0792 46.482 45.4386 46.1318C45.798 45.7817 46 45.3068 46 44.8116V22.4061C46.0018 21.9152 45.9034 21.4288 45.7105 20.9752C45.5176 20.5216 45.234 20.11 44.8763 19.7641ZM42.1666 42.9445H30.6667V29.8746C30.6667 29.3794 30.4647 28.9045 30.1053 28.5543C29.7458 28.2042 29.2583 28.0075 28.75 28.0075H17.25C16.7417 28.0075 16.2542 28.2042 15.8947 28.5543C15.5353 28.9045 15.3333 29.3794 15.3333 29.8746V42.9445H3.83335V22.4061L23 3.73485L42.1666 22.4061V42.9445Z" fill="currentColor"/></svg> ) },
   { label: "Bahan",   path: "/bahan",     icon: ( <svg width="22" height="22" viewBox="0 0 47 53" fill="none"><path d="M45.2583 11.7029H39.0123L44.7489 5.28092C44.9107 5.0997 45.0391 4.88456 45.1267 4.64779C45.2142 4.41101 45.2593 4.15724 45.2593 3.90096C45.2593 3.64467 45.2142 3.3909 45.1267 3.15412C45.0391 2.91735 44.9107 2.70221 44.7489 2.52099C44.5871 2.33977 44.395 2.19602 44.1836 2.09795C43.9721 1.99987 43.7455 1.94939 43.5167 1.94939C43.2878 1.94939 43.0612 1.99987 42.8498 2.09795C42.6384 2.19602 42.4463 2.33977 42.2845 2.52099L36.5501 8.94538V1.95048C36.5501 1.43318 36.3666 0.937067 36.04 0.571282C35.7133 0.205496 35.2703 0 34.8084 0C34.3465 0 33.9035 0.205496 33.5769 0.571282C33.2503 0.937067 33.0668 1.43318 33.0668 1.95048V9.89136C30.4129 8.17563 27.328 7.48752 24.2897 7.93356C21.2514 8.37961 18.4291 9.93492 16.2598 12.3587C7.52975 21.9624 0.965885 44.8049 0.325826 47.0894C0.0240474 47.8149 -0.0711896 48.6267 0.0530321 49.4148C0.177254 50.203 0.514922 50.9292 1.02024 51.4951C1.52556 52.061 2.17407 52.4392 2.87782 52.5783C3.58157 52.7174 4.30649 52.6108 4.95427 52.2728C6.99419 51.556 27.4173 44.1954 35.971 34.4235C38.1337 31.9934 39.521 28.8327 39.9181 25.4307C40.3152 22.0286 39.7 18.5748 38.1676 15.6038H45.2583C45.7203 15.6038 46.1633 15.3983 46.4899 15.0325C46.8165 14.6668 47 14.1706 47 13.6533C47 13.136 46.8165 12.6399 46.4899 12.2741C46.1633 11.9084 45.7203 11.7029 45.2583 11.7029ZM33.4761 31.6953C31.5298 33.9188 28.8498 36.0351 25.889 37.9685L20.3636 31.7782C20.2017 31.5969 20.0096 31.4532 19.7982 31.3551C19.5868 31.257 19.3602 31.2066 19.1313 31.2066C18.9025 31.2066 18.6759 31.257 18.4645 31.3551C18.253 31.4532 18.0609 31.5969 17.8991 31.7782C17.7373 31.9594 17.6089 32.1745 17.5214 32.4113C17.4338 32.6481 17.3887 32.9018 17.3887 33.1581C17.3887 33.4144 17.4338 33.6682 17.5214 33.9049C17.6089 34.1417 17.7373 34.3569 17.8991 34.5381L22.7083 39.9238C13.8106 45.0902 3.91581 48.5596 3.76777 48.6108C3.66056 48.6497 3.55702 48.7004 3.45863 48.7619C3.51123 48.6523 3.55424 48.5371 3.58708 48.4182C3.65021 48.1914 9.68287 26.5777 17.5203 16.5596L24.8723 24.793C25.1991 25.159 25.6423 25.3646 26.1045 25.3646C26.5667 25.3646 27.0099 25.159 27.3367 24.793C27.6635 24.427 27.8471 23.9306 27.8471 23.413C27.8471 22.8955 27.6635 22.3991 27.3367 22.0331L20.0435 13.8679C22.1803 12.1653 24.8106 11.4247 27.4123 11.793C30.0141 12.1614 32.397 13.6117 34.0882 15.8563C35.7794 18.1008 36.6553 20.9754 36.5419 23.9095C36.4285 26.8437 35.3341 29.6228 33.4761 31.6953Z" fill="currentColor"/></svg> ) },
@@ -34,9 +37,12 @@ const groupByMonth = (historyArray = []) => {
 
     if (!map[bulan]) map[bulan] = { bulan, items: [] };
 
-    const allIngredients = item.recipeId?.ingredients?.map(i =>
-      typeof i === "string" ? i : i.name ?? i.ingredientName ?? ""
-    ).filter(Boolean) ?? [];
+    const cleaned = item.recipeId?.ingredientsCleaned ?? item.recipeId?.ingredients_cleaned ?? "";
+    const allIngredients = cleaned
+      ? cleaned.split(",").map(i => i.trim()).filter(Boolean)
+      : (item.recipeId?.ingredients ?? []).map(i =>
+          typeof i === "string" ? i : i.name ?? ""
+        ).filter(Boolean);
 
     map[bulan].items.push({
       id: item._id,
@@ -264,12 +270,8 @@ export default function RiwayatPage() {
 
             {/* ── Loading state ── */}
             {loading && (
-              <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-                <svg className="animate-spin w-8 h-8 mb-3 text-[#d06224]" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                </svg>
-                <p className="text-sm">Memuat riwayat…</p>
+              <div className="flex items-center justify-center py-16">
+                <span className="text-[#d06224] font-medium animate-pulse">Memuat riwayat...</span>
               </div>
             )}
 
@@ -305,44 +307,44 @@ export default function RiwayatPage() {
                 </h2>
                 <div className="flex flex-col gap-3">
                   {group.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="bg-white rounded-[12px] px-4 md:px-6 py-4 shadow-sm"
-                    >
-                      {/* Baris atas */}
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="font-semibold text-[#d06224] text-sm md:text-base leading-snug">
-                          {item.title}
-                        </p>
-                        <span className="text-[11px] text-gray-400 shrink-0 mt-0.5">
-                          {item.tanggal}
-                        </span>
-                      </div>
-
-                      {/* Baris bawah */}
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {item.ingredients.map((ing) => (
-                            <span
-                              key={ing}
-                              className="bg-[#d06224bf] rounded-[8px] px-2.5 py-0.5 text-white text-[11px]"
-                            >
-                              {ing}
-                            </span>
-                          ))}
-                          <span className="text-gray-400 text-[11px]">{item.time}</span>
-                          <span className="text-gray-400 text-[11px]">{item.portion}</span>
-                        </div>
-                        <button
-                          onClick={() => handleMasakLagi(item)}
-                          disabled={cookingId === item.historyId}
-                          className="shrink-0 h-[32px] px-4 bg-[#d06224] text-white text-xs font-medium rounded-[8px] hover:bg-[#b85520] transition disabled:opacity-60 disabled:cursor-wait"
-                        >
-                          {cookingId === item.historyId ? "Memproses…" : "Masak Lagi"}
-                        </button>
-                      </div>
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-[12px] px-4 md:px-6 py-4 shadow-sm"
+                  >
+                    {/* Baris atas */}
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <p className="font-semibold text-[#d06224] text-sm md:text-base leading-snug">
+                        {toCapitalize(item.title)}
+                      </p>
+                      <span className="text-[11px] text-gray-400 shrink-0 mt-0.5">
+                        {item.tanggal}
+                      </span>
                     </div>
-                  ))}
+
+                    {/* Baris bawah */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {item.ingredients.map((ing) => (
+                          <span
+                            key={ing}
+                            className="bg-[#d06224bf] rounded-[8px] px-2.5 py-0.5 text-white text-[11px]"
+                          >
+                            {toCapitalize(ing)}
+                          </span>
+                        ))}
+                        <span className="text-gray-400 text-[11px]">{item.time}</span>
+                        <span className="text-gray-400 text-[11px]">{item.portion}</span>
+                      </div>
+                      <button
+                        onClick={() => handleMasakLagi(item)}
+                        disabled={cookingId === item.historyId}
+                        className="shrink-0 h-[32px] px-4 bg-[#d06224] text-white text-xs font-medium rounded-[8px] hover:bg-[#b85520] transition disabled:opacity-60 disabled:cursor-wait"
+                      >
+                        {cookingId === item.historyId ? "Memproses…" : "Masak Lagi"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
                 </div>
               </section>
             ))}
@@ -352,12 +354,10 @@ export default function RiwayatPage() {
               <div className="md:hidden flex flex-col gap-3 mt-1">
                 <h2 className="text-base font-light text-black">Resep Paling Sering</h2>
                 <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-1">
-                  {resepSering.length === 0 ? (
-                    <p className="text-xs text-gray-400 text-center py-2">Belum ada data</p>
-                  ) : resepSering.map((resep) => (
+                  {resepSering.map((resep) => (
                     <div key={resep.rank} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
                       <span className="text-sm font-semibold text-[#d06224] w-4 shrink-0">{resep.rank}</span>
-                      <span className="flex-1 text-sm text-gray-700">{resep.title}</span>
+                      <span className="flex-1 text-sm text-gray-700">{toCapitalize(resep.title)}</span>
                       <span className="text-xs font-semibold text-white bg-[#9f9b4a] rounded-[6px] px-2 py-0.5 shrink-0">{resep.count}x</span>
                     </div>
                   ))}
@@ -371,13 +371,13 @@ export default function RiwayatPage() {
             <h2 className="text-lg font-light text-black">Resep Paling Sering</h2>
             <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-2">
               {loading ? (
-                <p className="text-xs text-gray-400 text-center py-4">Memuat…</p>
+                <p className="text-[#d06224] text-sm font-medium animate-pulse text-center py-4">Memuat...</p>
               ) : resepSering.length === 0 ? (
                 <p className="text-xs text-gray-400 text-center py-4">Belum ada data</p>
               ) : resepSering.map((resep) => (
                 <div key={resep.rank} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
                   <span className="text-sm font-semibold text-[#d06224] w-4 shrink-0">{resep.rank}</span>
-                  <span className="flex-1 text-sm text-gray-700">{resep.title}</span>
+                  <span className="flex-1 text-sm text-gray-700">{toCapitalize(resep.title)}</span>
                   <span className="text-xs font-semibold text-white bg-[#9f9b4a] rounded-[6px] px-2 py-0.5 shrink-0">{resep.count}x</span>
                 </div>
               ))}

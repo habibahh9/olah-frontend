@@ -56,14 +56,10 @@ export default function DetailMasakPage() {
       </h1>
       <button
         onClick={async () => {
-          if (hasSaved.current) return; // guard
-          hasSaved.current = true;      // langsung lock
-          
           try {
             await riwayatAPI.addItem({ recipeId: id });
           } catch (err) {
-            console.error("Gagal simpan riwayat:", err);
-            hasSaved.current = false; // kalau error, boleh coba lagi
+            console.error("Gagal proses selesai masak:", err);
           } finally {
             navigate("/resep");
           }
@@ -111,43 +107,7 @@ export default function DetailMasakPage() {
           })
         )}
       </div>
-
-      {/* CONTENT */}
-      <div className="px-4 md:px-10 py-4 md:py-6 flex flex-col gap-4">
-        <h2 className="text-lg font-light text-black">Cara Membuat</h2>
-        <div className="flex flex-col gap-4">
-          {steps.length === 0 ? (
-            <p className="text-sm text-gray-400">Tidak ada langkah tersedia.</p>
-          ) : (
-            steps.map((step, index) => {
-              const done = checkedSteps[index];
-              return (
-                <div
-                  key={step.id}
-                  className="flex items-center gap-5 bg-white rounded-[15px] px-5 py-4 cursor-pointer"
-                  onClick={() => toggleStep(index)}
-                >
-                  <div className={`w-10 h-10 md:w-14 md:h-14 rounded-[12px] flex items-center justify-center shrink-0 text-xl md:text-2xl font-semibold transition ${done ? "bg-[#f5c5ac] text-[#d06224]/50" : "bg-[#d06224] text-white"
-                    }`}>
-                    {step.id}
-                  </div>
-                  <p className={`flex-1 text-base font-medium leading-relaxed transition capitalize ${done ? "text-[#d06224]/40 line-through" : "text-[#d06224]"
-                    }`}>
-                    {step.text}
-                  </p>
-                  <div className="w-9 h-9 rounded-[8px] border-2 border-[#d06224] bg-white flex items-center justify-center shrink-0 transition">
-                    {done && (
-                      <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
-                        <path d="M1 7L6.5 12.5L17 1" stroke="#d06224" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
-    </PageLayout>
-  );
+    </div>
+  </PageLayout>
+);
 }

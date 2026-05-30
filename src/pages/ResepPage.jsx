@@ -32,7 +32,7 @@ export default function ResepPage() {
     const fetchResep = async () => {
       setLoading(true);
       try {
-        const res = await recipeAPI.getAll();
+        const res = await recipeAPI.getAll({ limit: 500, page: 1 });
         const list = Array.isArray(res.data)
           ? res.data
           : Array.isArray(res.data?.recipes)

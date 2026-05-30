@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logoOlah from "../assets/logo-olah.png";
 import { useUnsplashImage } from "../hooks/useUnsplashImage";
 import { recipeAPI, pantryAPI, notificationAPI } from "../utils/api";
+import ExpiringSection from "../pages/ExpiringSection";
 import heroImg from "../assets/asset6.png";
 
 const NAV_ITEMS = [
@@ -29,12 +30,9 @@ export default function DashboardPage() {
   const location = useLocation();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-  const [activeFilter, setActiveFilter] = useState(
-    () => loadStorage("dashboard_activeFilter", "Semua")
-  );
-  const [showAllExpiring, setShowAllExpiring] = useState(
-    () => loadStorage("dashboard_showAllExpiring", false)
-  );
+  const [pantryList, setPantryList] = useState([]); 
+  const [activeFilter, setActiveFilter] = useState(() => loadStorage("dashboard_activeFilter", "Semua"));
+  const [showAllExpiring, setShowAllExpiring] = useState(() => loadStorage("dashboard_showAllExpiring", false));
   const [recipeCards, setRecipeCards] = useState([]);
   const [expiringItems, setExpiringItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,63 +46,66 @@ export default function DashboardPage() {
   useEffect(() => { saveStorage("dashboard_activeFilter", activeFilter); }, [activeFilter]);
   useEffect(() => { saveStorage("dashboard_showAllExpiring", showAllExpiring); }, [showAllExpiring]);
 
- useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const pantryRes = await pantryAPI.getAll();
-        const pantryList = Array.isArray(pantryRes.data?.pantry) ? pantryRes.data.pantry : [];
-        const pantryIngredients = pantryList.map((p) => p.name).join(",");
+  useEffect(() => {
+      const fetchData = async () => {
+        setLoading(true);
+        try {
+          const pantryRes = await pantryAPI.getAll();
+          const fetchedPantry = Array.isArray(pantryRes.data?.pantry) ? pantryRes.data.pantry : [];
+          setPantryList(fetchedPantry); // Simpan ke state global komponen
 
-        // Baca lovedRecipes dari user localStorage
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-        const lovedIds = user.lovedRecipes || [];
+          const pantryIngredients = fetchedPantry.map((p) => p.name).join(",");
 
-        let recipes = [];
-        if (pantryIngredients) {
-          const resepRes = await recipeAPI.getRecommendations({ ingredients: pantryIngredients, limit: 20 });
-          const recs = resepRes.data?.recommendations ?? [];
-          recipes = recs.map((r) => {
-            const rec = r.recipe ?? r;
-            const recId = String(rec._id ?? rec.id ?? rec.recipeId ?? rec.recipe_id ?? "");
-            return { ...rec, isFavorite: lovedIds.includes(recId) };
-          });
-        } else {
-          const resepRes = await recipeAPI.getAll();
-          const rawRecipes = resepRes.data?.recipes ?? [];
-          recipes = rawRecipes.map((r) => {
-            const recId = String(r._id ?? r.id ?? "");
-            return { ...r, isFavorite: lovedIds.includes(recId) };
-          });
+          // Baca lovedRecipes
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          const lovedIds = user.lovedRecipes || [];
+
+          // Logic Resep
+          let recipes = [];
+          if (pantryIngredients) {
+            const resepRes = await recipeAPI.getRecommendations({ ingredients: pantryIngredients, limit: 20 });
+            const recs = resepRes.data?.recommendations ?? [];
+            recipes = recs.map((r) => {
+              const rec = r.recipe ?? r;
+              const recId = String(rec._id ?? rec.id ?? rec.recipeId ?? rec.recipe_id ?? "");
+              return { ...rec, isFavorite: lovedIds.includes(recId) };
+            });
+          } else {
+            const resepRes = await recipeAPI.getAll();
+            const rawRecipes = resepRes.data?.recipes ?? [];
+            recipes = rawRecipes.map((r) => {
+              const recId = String(r._id ?? r.id ?? "");
+              return { ...r, isFavorite: lovedIds.includes(recId) };
+            });
+          }
+          setRecipeCards(recipes);
+
+          // Logic Expiring (Menggunakan data dari fetchedPantry)
+          const expiring = fetchedPantry
+            .filter((item) => item.daysLeft !== undefined && item.daysLeft <= 5)
+            .map((item) => ({
+              _id: item._id, // Pastikan ada ID untuk key
+              name: item.name,
+              daysLeft: item.daysLeft, // Kirim daysLeft agar ExpiringSection bisa pakai
+              days: `${item.daysLeft} Hari Lagi`,
+              percent: Math.min(100, (item.daysLeft / 7) * 100),
+            }));
+          setExpiringItems(expiring);
+
+          // Notifikasi
+          const notifRes = await notificationAPI.getAll();
+          setNotifications(Array.isArray(notifRes.data?.notifications) ? notifRes.data.notifications : []);
+
+          if (user?.name) setUserName(user.name);
+
+        } catch (err) {
+          console.error("Gagal fetch data dashboard:", err.message);
+        } finally {
+          setLoading(false);
         }
-
-        setRecipeCards(recipes);
-
-        const expiring = pantryList
-          .filter((item) => item.daysLeft <= 5)
-          .map((item) => ({
-            name: item.name,
-            days: `${item.daysLeft} Hari Lagi`,
-            percent: Math.min(100, (item.daysLeft / 7) * 100),
-          }));
-        setExpiringItems(expiring);
-
-        const notifRes = await notificationAPI.getAll();
-        const notifList = Array.isArray(notifRes.data?.notifications)
-          ? notifRes.data.notifications
-          : [];
-        setNotifications(notifList);
-
-        if (user?.name) setUserName(user.name);
-
-      } catch (err) {
-        console.error("Gagal fetch data dashboard:", err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+      };
+      fetchData();
+    }, []);
 
   useEffect(() => {
   const handleStorageChange = () => {
@@ -337,55 +338,11 @@ export default function DashboardPage() {
 
           {/* bahan kadaluarsa */}
           <section className="flex flex-col lg:flex-row gap-5">
-            <div className="flex-1 bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                <div className="flex flex-col items-center gap-3 shrink-0">
-                  <svg width="200" height="200" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ae431e" strokeWidth="20" />
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#d06224" strokeWidth="20"
-                      strokeDasharray={`${72 * 2.513} ${(100 - 72) * 2.513}`}
-                      strokeDashoffset="62.8" strokeLinecap="butt" transform="rotate(-90 50 50)" />
-                  </svg>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#d06224] inline-block" />
-                      <span className="text-xs text-gray-500">Terselamatkan 72%</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#ae431e] inline-block" />
-                      <span className="text-xs text-gray-500">Terbuang 35%</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0 w-full">
-                  <div className="flex justify-between items-center mb-3">
-                    <h2 className="text-base sm:text-lg font-light text-black">Bahan Segera Kadaluarsa</h2>
-                    <button onClick={() => setShowAllExpiring(!showAllExpiring)}
-                      className="text-sm text-[#d06224] font-semibold shrink-0 ml-2">
-                      {showAllExpiring ? "Lihat Sedikit" : "Lihat Semua"}
-                    </button>
-                  </div>
-                  <div className="flex flex-col gap-4 sm:gap-5">
-                    {visibleExpiring.length === 0 ? (
-                      <p className="text-sm text-gray-400">Tidak ada bahan yang hampir kadaluarsa.</p>
-                    ) : (
-                      visibleExpiring.map((item) => (
-                        <div key={item.name}>
-                          <div className="flex justify-between mb-0.5">
-                            <span className="text-xs font-medium text-black">{item.name}</span>
-                            <span className="text-[10px] text-gray-400">{item.days}</span>
-                          </div>
-                          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full rounded-full"
-                              style={{ width: `${item.percent}%`, background: item.percent <= 25 ? "#ae431e" : item.percent >= 75 ? "#8a8635" : "#d06224" }} />
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ExpiringSection
+              expiringItems={expiringItems}
+              showAllExpiring={showAllExpiring}
+              setShowAllExpiring={setShowAllExpiring}
+            />
 
             {/* notifikasi */}
             <div className="w-full lg:w-[450px] bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">

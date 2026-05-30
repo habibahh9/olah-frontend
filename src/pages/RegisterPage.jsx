@@ -4,7 +4,7 @@ import food1 from "../assets/asset1.png";
 import food2 from "../assets/asset2.png";
 import food3 from "../assets/asset3.png";
 import food4 from "../assets/asset4.png";
-import logoOlah from "../assets/logo-olah.png";
+import logoOlah from "../assets/logo-OLAH-1.png";
 import { authAPI } from "../utils/api";
 
 export default function RegisterPage() {
@@ -92,10 +92,10 @@ export default function RegisterPage() {
         {/* ── PANEL KIRI ── */}
         <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-10 md:px-14 py-8 md:py-10 bg-white">
           <div className="mb-6 flex justify-center">
-            <img src={logoOlah} alt="OLAH Logo" className="h-14 w-auto object-contain" />
+            <img src={logoOlah} alt="OLAH Logo" className="h-10 w-auto object-contain" />
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Buat Akun Baru</h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-6">Buat Akun Baru</h1>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Nama Depan & Belakang */}

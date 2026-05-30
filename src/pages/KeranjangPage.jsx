@@ -247,13 +247,9 @@
               {/* ITEM LIST */}
               <div className="bg-white rounded-[15px] shadow-sm overflow-hidden">
                 {loading ? (
-                  <div className="flex items-center justify-center py-12 text-gray-300">
-                    <svg className="animate-spin w-6 h-6 text-[#d06224]" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                    </svg>
-                    <span className="ml-3 text-sm text-gray-400">Memuat...</span>
-                  </div>
+                <div className="flex items-center justify-center py-12">
+                  <span className="text-[#d06224] font-medium animate-pulse">Memuat Daftar Belanja...</span>
+                </div>
                 ) : filtered.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-gray-300">
                     <p className="text-sm">Tidak ada item</p>
@@ -300,20 +296,6 @@
                       </button>
                     </div>
                   ))
-                )}
-
-                {!loading && (
-                  <div
-                    className="flex items-center gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer hover:bg-gray-50 transition border-t border-gray-100"
-                    onClick={() => setShowAddModal(true)}
-                  >
-                    <div className="w-6 h-6 rounded-full border-2 border-dashed border-[#d06224] flex items-center justify-center shrink-0">
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M5 1V9M1 5H9" stroke="#d06224" strokeWidth="1.8" strokeLinecap="round"/>
-                      </svg>
-                    </div>
-                    <span className="text-sm text-[#d06224] font-medium">Tambah item baru...</span>
-                  </div>
                 )}
               </div>
             </div>

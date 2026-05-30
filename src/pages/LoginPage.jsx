@@ -5,7 +5,7 @@ import food1 from "../assets/asset1.png";
 import food2 from "../assets/asset2.png";
 import food3 from "../assets/asset3.png";
 import food4 from "../assets/asset4.png";
-import logoOlah from "../assets/logo-olah.png";
+import logoOlah from "../assets/logo-OLAH-1.png";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ export default function LoginPage() {
         {/* ── PANEL KIRI ── */}
         <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-10 md:px-14 py-10 md:py-12 bg-white">
           <div className="mb-8 flex justify-center">
-            <img src={logoOlah} alt="OLAH Logo" className="h-14 w-auto object-contain" />
+            <img src={logoOlah} alt="OLAH Logo" className="h-10 w-auto object-contain" />
           </div>
 
           <div className="mb-6">
