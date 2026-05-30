@@ -24,7 +24,7 @@ const groupByMonth = (historyArray = []) => {
   const map = {};
   historyArray.forEach((item) => {
     // Fix: coba semua kemungkinan field tanggal
-    const rawDate = item.cookedAt ?? item.createdAt ?? item.date ?? item.cooked_at;
+    const rawDate = item.cookedAt ?? item.viewedAt ?? item.createdAt ?? item.date;
     const date = rawDate ? new Date(rawDate) : null;
     const isValidDate = date && !isNaN(date.getTime());
 
@@ -41,6 +41,7 @@ const groupByMonth = (historyArray = []) => {
     map[bulan].items.push({
       id: item._id,
       historyId: item._id,
+      recipeId: item.recipeId?._id ?? item.recipeId,
       title: item.recipeId?.recipeName ?? item.recipeId?.title ?? "-",
       tanggal: isValidDate ? formatTanggal(date, new Date()) : "-",
       time: item.recipeId?.cookTime ?? "-",
@@ -107,17 +108,8 @@ export default function RiwayatPage() {
   }, [fetchHistory]);
 
   // ── Tandai "Masak Lagi" → PATCH /api/users/history/:historyId/cooked ───
-  const handleMasakLagi = async (item) => {
-    setCookingId(item.historyId);
-    try {
-      await riwayatAPI.addItem({ recipeId: item.historyId });
-      await fetchHistory();
-      navigate(`/detail-resep/${item.historyId}`);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setCookingId(null);
-    }
+  const handleMasakLagi = (item) => {
+    navigate(`/detail-resep/${item.recipeId}`); // hapus addItem di sini
   };
 
   // ── Filter + search (client-side) ─────────────────────────────────────
@@ -131,7 +123,7 @@ export default function RiwayatPage() {
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
       const thisWeekItems = rawHistory.filter((item) => {
-        const d = new Date(item.cooked_at ?? item.createdAt ?? item.date);
+        const d = new Date(item.cookedAt ?? item.createdAt ?? item.date);
         return d >= oneWeekAgo;
       });
       grouped = groupByMonth(thisWeekItems, now);
