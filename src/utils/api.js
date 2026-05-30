@@ -67,6 +67,9 @@ export const authAPI = {
     }
     return res;
   },
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
+  verifyOtp: (data) => api.post('/auth/verify-otp', data),
+  resetPassword: (data) => api.post('/auth/reset-password', data),
 };
 
 // ── Recipes → ResepPage, DetailResepPage, CepatPage, BahanLengkapPage ─────────
@@ -112,7 +115,8 @@ export const shoppingListAPI = {
 export const userAPI = {
   getProfile: () => api.get('/users/profile'),
   updateProfile: (data) => api.put('/users/profile', data),
-  changePassword: (data) => api.put('/auth/change-password', data),
+  requestOtp: () => api.post('/users/request-otp'),
+  changePassword: (data) => api.put('/users/change-password', data),
   deleteAccount: () => api.delete('/users/account'),
 };
 
