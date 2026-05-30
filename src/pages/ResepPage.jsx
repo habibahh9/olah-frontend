@@ -39,19 +39,21 @@ export default function ResepPage() {
             ? res.data.recipes
             : [];
 
-        const favoritesMap = JSON.parse(localStorage.getItem("dashboard_favorites") || "{}");
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        const lovedIds = user.lovedRecipes || [];
 
         const mapped = list.map((r) => ({
           id: r._id,
+          recipeName: r.recipeName || r.title || "Resep",
           title: r.recipeName || r.title || "Resep",
           time: r.cookingTimeMinutes ? `${r.cookingTimeMinutes} Menit` : "-",
           portion: r.servings ? `${r.servings} Porsi` : "-",
           ingredients: Array.isArray(r.ingredients)
             ? r.ingredients.slice(0, 2).map((i) => i.name || i)
             : [],
+          ingredientsCleaned: r.ingredientsCleaned || r.ingredients_cleaned || "",
           available: r.available ?? false,
-
-          isFavorite: favoritesMap[r._id] ?? favoritesMap[String(r._id)] ?? false,
+          isFavorite: lovedIds.includes(String(r._id)),
           imageUrl: r.imageUrl || null,
         }));
 
@@ -64,6 +66,23 @@ export default function ResepPage() {
       }
     };
     fetchResep();
+  }, []);
+
+  useEffect(() => {
+  const handleStorageChange = () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const lovedIds = user.lovedRecipes || [];
+    setAllMenus((prev) =>
+      prev.map((r) => ({ ...r, isFavorite: lovedIds.includes(String(r.id)) }))
+    );
+    setFavoriteMenus((prev) =>
+      prev
+        .map((r) => ({ ...r, isFavorite: lovedIds.includes(String(r.id)) }))
+        .filter((r) => r.isFavorite)
+    );
+  };
+  window.addEventListener("storage", handleStorageChange);
+  return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // ✅ Fix: filteredAllMenus tidak lagi menyertakan duplikat favorit
@@ -79,74 +98,68 @@ export default function ResepPage() {
 
   // ─── Recipe Card ──────────────────────────────────────────────────────────
   const RecipeCard = ({ recipe }) => {
-    const unsplashUrl = useUnsplashImage(recipe.title);
-    const imageUrl = recipe.imageUrl || unsplashUrl;
+  const recipeName = recipe.recipeName || recipe.recipe_name || recipe.title || "Resep";
+  const imageUrl = useUnsplashImage(recipeName);
+  const recipeId = recipe._id ?? recipe.id ?? recipe.recipeId ?? recipe.recipe_id;
+  const ingredients = (() => {
+  const cleaned = recipe.ingredientsCleaned || recipe.ingredients_cleaned || "";
+  if (cleaned && typeof cleaned === "string") {
+    return cleaned.split(",").map((i) => i.trim()).filter(Boolean).slice(0, 2);
+  }
+  if (Array.isArray(recipe.ingredients)) {
+    return recipe.ingredients.slice(0, 2).map((i) => (typeof i === "string" ? i : i.name || ""));
+  }
+  return [];
+  })();
 
-    return (
-      <article
-        className="relative h-[220px] cursor-pointer"
-        onClick={() => navigate(`/detail-resep/${recipe.id}`)}
-      >
-        <img
-          src={imageUrl}
-          alt={recipe.title}
-          className="absolute top-0 left-0 w-full h-[215px] object-cover rounded-[12px]"
-        />
-        {/* Ikon Love — selalu tampil jika favorit */}
-        {recipe.isFavorite && (
-          <div className="absolute top-2 right-2 w-7 h-7 bg-white/80 rounded-full flex items-center justify-center shadow-sm">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#e11d48">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-            </svg>
+  return (
+    <article
+      className="relative h-[180px] sm:h-[220px] cursor-pointer"
+      onClick={() => navigate(`/detail-resep/${recipeId}`)}
+    >
+      {/* Gambar */}
+      <img
+        src={imageUrl}
+        alt={recipeName}
+        className="absolute top-0 left-0 w-full h-[175px] sm:h-[215px] object-cover rounded-[12px]"
+      />
+
+      {/* Ikon Love — hanya tampil jika favorit */}
+      {recipe.isFavorite && (
+        <div className="absolute top-[125px] sm:top-[183px] right-[10px] z-10">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="white">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          </svg>
+        </div>
+      )}
+
+      {/* Overlay */}
+      <div className="absolute top-[95px] sm:top-[130px] left-0 w-full h-[80px] sm:h-[85px] bg-[#8a8635cc] rounded-[12px]" />
+
+      {/* Ikon Silang — jika bahan tidak lengkap */}
+      {!recipe.available && (
+        <div className="absolute top-[100px] sm:top-[136px] right-[8px] w-5 h-5 rounded-full bg-[#ff2e2e] flex items-center justify-center text-white text-[10px] z-10">
+          ✕
+        </div>
+      )}
+
+      {/* Nama resep */}
+      <div className="absolute top-[100px] sm:top-[137px] left-[8px] right-[32px]">
+        <span className="font-semibold text-white text-xs sm:text-sm leading-normal truncate block capitalize">
+          {recipeName}
+        </span>
+      </div>
+
+      {/* Badge bahan */}
+      <div className="absolute top-[150px] sm:top-[163px] left-[8px] sm:left-[10px] flex gap-2">
+        {ingredients.map((ing) => (
+          <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-1.5 h-[16px] sm:h-[18px] flex items-center justify-center max-w-[80px]">
+            <span className="text-white text-[9px] sm:text-[11px] truncate w-full text-center capitalize">{ing}</span>
           </div>
-        )}
-
-        {/* Ikon Silang — hanya tampil jika bahan tidak lengkap */}
-        {!recipe.available && (
-          <div className="absolute top-[138px] right-[8px] w-5 h-5 rounded-full bg-[#ff2e2e] flex items-center justify-center text-white text-[10px]">
-            ✕
-          </div>
-        )}
-        <div className="absolute top-[130px] left-0 w-full h-[85px] bg-[#8a8635cc] rounded-[12px]" />
-
-        {/* ✅ Fix: right-[36px] agar tidak tertutup ikon available */}
-        <div className="absolute top-[137px] left-[10px] right-[36px]">
-          <span className="font-semibold text-white text-sm leading-normal truncate block">
-            {recipe.title}
-          </span>
-        </div>
-
-        {/* Indikator ketersediaan bahan */}
-        <div className="absolute top-[138px] right-[8px]">
-          {recipe.available ? (
-            <div className="w-5 h-5 rounded-full bg-[#36c35c] flex items-center justify-center text-white text-[10px]">
-              ✓
-            </div>
-          ) : (
-            <div className="w-5 h-5 rounded-full bg-[#ff2e2e] flex items-center justify-center text-white text-[10px]">
-              ✕
-            </div>
-          )}
-        </div>
-
-        <div className="absolute top-[163px] left-[10px] flex items-center gap-1.5 whitespace-nowrap">
-          <span className="text-white text-xs">{recipe.time}</span>
-          <span className="w-1 h-1 bg-white rounded-full inline-block" />
-          <span className="text-white text-xs">{recipe.portion}</span>
-        </div>
-
-        <div className="absolute top-[185px] left-[10px] flex gap-1.5">
-          {recipe.ingredients.map((ing) => (
-            <div
-              key={ing}
-              className="bg-[#d06224bf] rounded-[10px] px-2 h-[18px] flex items-center justify-center max-w-[80px]"
-            >
-              <span className="text-white text-[11px] truncate w-full text-center">{ing}</span>
-            </div>
-          ))}
-        </div>
-      </article>
-    );
+        ))}
+      </div>
+    </article>
+  );
   };
 
   // ─── Render ───────────────────────────────────────────────────────────────
@@ -252,14 +265,6 @@ export default function ResepPage() {
               className="h-[40px] md:h-[50px] px-10 rounded-full bg-[#9f9b4a] text-white font-medium"
             >
               Bahan Lengkap
-            </button>
-
-            {/* ✅ Fix: font-Regular → font-medium */}
-            <button
-              onClick={() => navigate("/cepat")}
-              className="h-[40px] md:h-[50px] px-12 rounded-full bg-[#9f9b4a] text-white font-medium"
-            >
-              Cepat
             </button>
           </div>
 

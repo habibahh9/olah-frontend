@@ -43,32 +43,43 @@ export default function DashboardPage() {
   const [appliedSearch, setAppliedSearch] = useState("");
   const [notifications, setNotifications] = useState([]);
 
-  const recommendationFilters = ["Semua", "Cepat", "Favorit"];
+  const recommendationFilters = ["Semua", "Favorit"];
 
   useEffect(() => { saveStorage("dashboard_activeFilter", activeFilter); }, [activeFilter]);
   useEffect(() => { saveStorage("dashboard_showAllExpiring", showAllExpiring); }, [showAllExpiring]);
-  useEffect(() => {
-    const favoritesMap = {};
-    recipeCards.forEach((r) => { favoritesMap[r.id] = r.isFavorite; });
-    saveStorage("dashboard_favorites", favoritesMap);
-  }, [recipeCards]);
 
-  useEffect(() => {
+ useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Ambil resep
-        const resepRes = await recipeAPI.getAll();
-        console.log("resepRes:", resepRes);
-        const recipes = resepRes.data?.recipes ?? [];
+        const pantryRes = await pantryAPI.getAll();
+        const pantryList = Array.isArray(pantryRes.data?.pantry) ? pantryRes.data.pantry : [];
+        const pantryIngredients = pantryList.map((p) => p.name).join(",");
+
+        // Baca lovedRecipes dari user localStorage
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        const lovedIds = user.lovedRecipes || [];
+
+        let recipes = [];
+        if (pantryIngredients) {
+          const resepRes = await recipeAPI.getRecommendations({ ingredients: pantryIngredients, limit: 20 });
+          const recs = resepRes.data?.recommendations ?? [];
+          recipes = recs.map((r) => {
+            const rec = r.recipe ?? r;
+            const recId = String(rec._id ?? rec.id ?? rec.recipeId ?? rec.recipe_id ?? "");
+            return { ...rec, isFavorite: lovedIds.includes(recId) };
+          });
+        } else {
+          const resepRes = await recipeAPI.getAll();
+          const rawRecipes = resepRes.data?.recipes ?? [];
+          recipes = rawRecipes.map((r) => {
+            const recId = String(r._id ?? r.id ?? "");
+            return { ...r, isFavorite: lovedIds.includes(recId) };
+          });
+        }
+
         setRecipeCards(recipes);
 
-        // Ambil pantry
-        const pantryRes = await pantryAPI.getAll();
-        console.log("pantryRes:", pantryRes);
-        const pantryList = Array.isArray(pantryRes.data?.pantry)
-        ? pantryRes.data.pantry
-        : [];
         const expiring = pantryList
           .filter((item) => item.daysLeft <= 5)
           .map((item) => ({
@@ -77,14 +88,13 @@ export default function DashboardPage() {
             percent: Math.min(100, (item.daysLeft / 7) * 100),
           }));
         setExpiringItems(expiring);
-        
+
         const notifRes = await notificationAPI.getAll();
         const notifList = Array.isArray(notifRes.data?.notifications)
           ? notifRes.data.notifications
           : [];
         setNotifications(notifList);
-        // Ambil nama user
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
+
         if (user?.name) setUserName(user.name);
 
       } catch (err) {
@@ -96,65 +106,90 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
-  const toggleFavorite = (id, e) => {
-    e.stopPropagation();
+  useEffect(() => {
+  const handleStorageChange = () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const lovedIds = user.lovedRecipes || [];
     setRecipeCards((prev) =>
-      prev.map((r) => r.id === id ? { ...r, isFavorite: !r.isFavorite } : r)
+      prev.map((r) => {
+        const recId = String(r._id ?? r.id ?? r.recipeId ?? r.recipe_id ?? "");
+        return { ...r, isFavorite: lovedIds.includes(recId) };
+      })
     );
   };
+  window.addEventListener("storage", handleStorageChange);
+  return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const RecipeCard = ({ recipe }) => {
-    const imageUrl = useUnsplashImage(recipe.recipeName ?? "masakan indonesia");
-    return (
-      <article
-        className="relative h-[180px] sm:h-[220px] cursor-pointer"
-        onClick={() => navigate(`/detail-resep/${recipe.id}`)}
-      >
-        <img
-          src={imageUrl}
-          alt={recipe.title}
-          className="absolute top-0 left-0 w-full h-[175px] sm:h-[215px] object-cover rounded-[12px]"
-        />
-        <div className="absolute top-[95px] sm:top-[130px] left-0 w-full h-[80px] sm:h-[85px] bg-[#8a8635cc] rounded-[12px]" />
-        <div className="absolute top-[100px] sm:top-[137px] left-[8px] right-[8px] sm:left-[10px] sm:right-[10px]">
-          <span className="font-semibold text-white text-xs sm:text-sm leading-normal truncate block">
-            {recipe.recipeName}
-          </span>
-        </div>
-        <button
-          onClick={(e) => toggleFavorite(recipe.id, e)}
-          className="absolute top-[118px] sm:top-[155px] right-[8px] sm:right-[10px] p-1"
-        >
-          <svg width="16" height="15" viewBox="0 0 20 19" fill="none">
-            <path
-              d="M9.316 18.362C9.44273 18.4518 9.5942 18.5 9.7495 18.5C9.9048 18.5 10.0563 18.4518 10.183 18.362L9.75 17.75L10.184 18.362L10.192 18.356L10.213 18.341L10.293 18.283C10.3623 18.233 10.4607 18.16 10.588 18.064C12.074 16.9424 13.4767 15.7145 14.785 14.39C15.933 13.222 17.1 11.857 17.984 10.409C18.864 8.969 19.5 7.385 19.5 5.797C19.5 3.912 18.915 2.439 17.88 1.439C16.85 0.445 15.46 0 14 0C12.275 0 10.752 0.833 9.75 2.117C8.748 0.833 7.224 0 5.5 0C2.42 0 0 2.639 0 5.797C0 7.385 0.637 8.968 1.516 10.409C2.4 11.857 3.567 13.222 4.715 14.391C6.10981 15.8021 7.61161 17.1034 9.207 18.283L9.287 18.341L9.308 18.356L9.316 18.362Z"
-              fill={recipe.isFavorite ? "white" : "none"}
-              stroke="white"
-              strokeWidth={recipe.isFavorite ? "0" : "1.5"}
-            />
+  const recipeName = recipe.recipeName || recipe.recipe_name || recipe.title || "Resep";
+  const imageUrl = useUnsplashImage(recipeName);
+  const recipeId = recipe._id ?? recipe.id ?? recipe.recipeId ?? recipe.recipe_id;
+  const ingredients = (() => {
+  const cleaned = recipe.ingredientsCleaned || recipe.ingredients_cleaned || "";
+  if (cleaned && typeof cleaned === "string") {
+    return cleaned.split(",").map((i) => i.trim()).filter(Boolean).slice(0, 2);
+  }
+  if (Array.isArray(recipe.ingredients)) {
+    return recipe.ingredients.slice(0, 2).map((i) => (typeof i === "string" ? i : i.name || ""));
+  }
+  return [];
+  })();
+
+  return (
+    <article
+      className="relative h-[180px] sm:h-[220px] cursor-pointer"
+      onClick={() => navigate(`/detail-resep/${recipeId}`)}
+    >
+      {/* Gambar */}
+      <img
+        src={imageUrl}
+        alt={recipeName}
+        className="absolute top-0 left-0 w-full h-[175px] sm:h-[215px] object-cover rounded-[12px]"
+      />
+
+      {/* Ikon Love — hanya tampil jika favorit */}
+      {recipe.isFavorite && (
+        <div className="absolute top-[125px] sm:top-[183px] right-[10px] z-10">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="white">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
           </svg>
-        </button>
-        <div className="absolute top-[127px] sm:top-[162px] left-[8px] sm:left-[10px] flex items-center gap-1 whitespace-nowrap">
-          <span className="text-white text-[10px] sm:text-xs">{recipe.time}</span>
-          <span className="w-1 h-1 bg-white rounded-full inline-block" />
-          <span className="text-white text-[10px] sm:text-xs">{recipe.portion}</span>
         </div>
-        <div className="absolute top-[145px] sm:top-[185px] left-[8px] sm:left-[10px] flex gap-1">
-          {(recipe.ingredients ?? []).slice(0, 2).map((ing) => (
-            <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-1.5 h-[16px] sm:h-[18px] flex items-center justify-center max-w-[80px]">
-              <span className="text-white text-[9px] sm:text-[11px] truncate w-full text-center">{ing}</span>
-            </div>
-          ))}
+      )}
+
+      {/* Overlay */}
+      <div className="absolute top-[95px] sm:top-[130px] left-0 w-full h-[80px] sm:h-[85px] bg-[#8a8635cc] rounded-[12px]" />
+
+      {/* Ikon Silang — jika bahan tidak lengkap */}
+      {!recipe.available && (
+        <div className="absolute top-[100px] sm:top-[136px] right-[8px] w-5 h-5 rounded-full bg-[#ff2e2e] flex items-center justify-center text-white text-[10px] z-10">
+          ✕
         </div>
-      </article>
-    );
+      )}
+
+      {/* Nama resep */}
+      <div className="absolute top-[100px] sm:top-[137px] left-[8px] right-[32px]">
+        <span className="font-semibold text-white text-xs sm:text-sm leading-normal truncate block capitalize">
+          {recipeName}
+        </span>
+      </div>
+
+      {/* Badge bahan */}
+      <div className="absolute top-[125px] sm:top-[163px] left-[8px] sm:left-[10px] flex gap-1">
+        {ingredients.map((ing) => (
+          <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-1.5 h-[16px] sm:h-[18px] flex items-center justify-center max-w-[80px]">
+            <span className="text-white text-[9px] sm:text-[11px] truncate w-full text-center capitalize">{ing}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
   };
 
   const visibleExpiring = showAllExpiring ? expiringItems : expiringItems.slice(0, 4);
 
   const filteredRecipes = useMemo(() => {
     let results = recipeCards;
-    if (activeFilter === "Cepat") results = results.filter((r) => (r.cookingTimeMinutes ?? 999) < 20);
     if (activeFilter === "Favorit") results = results.filter((r) => r.isFavorite);
     if (appliedSearch && appliedSearch.trim() !== "") {
       const q = appliedSearch.toLowerCase();

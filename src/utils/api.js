@@ -38,10 +38,35 @@ api.interceptors.response.use(
 
 // ── Auth → LoginPage, RegisterPage ───────────────────────────────────────────
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
-  logout: () => api.post('/auth/logout'),
-  getMe: () => api.get('/auth/me'),
+  register: async (data) => {
+    const res = await api.post('/auth/register', data);
+    if (res?.data?.token) {
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user || {}));
+    }
+    return res;
+  },
+  login: async (data) => {
+    const res = await api.post('/auth/login', data);
+    if (res?.data?.token) {
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user || {}));
+    }
+    return res;
+  },
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return api.post('/auth/logout');
+  },
+  getMe: async () => {
+    const res = await api.get('/auth/me');
+    if (res?.data?.user) {
+      const current = JSON.parse(localStorage.getItem('user') || '{}');
+      localStorage.setItem('user', JSON.stringify({ ...current, ...res.data.user }));
+    }
+    return res;
+  },
 };
 
 // ── Recipes → ResepPage, DetailResepPage, CepatPage, BahanLengkapPage ─────────
@@ -54,6 +79,7 @@ export const recipeAPI = {
   update: (id, data) => api.put(`/recipes/${id}`, data),
   delete: (id) => api.delete(`/recipes/${id}`),
   toggleLove: (id) => api.post(`/recipes/${id}/love`),
+  getRecommendations: (params = {}) => api.get("/recipes/recommend", { params }),
 };
 
 // ── Pantry → BahanPage, TambahItemPage ───────────────────────────────────────
@@ -102,5 +128,6 @@ export const notificationAPI = {
 export const articleAPI = {
   getAll: () => api.get('/articles'),
 };
+
 
 export default api;

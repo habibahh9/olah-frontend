@@ -68,26 +68,29 @@ export default function DetailResepPage() {
 
   // ── Toggle favorit ──────────────────────────────────────────────────────────
   const handleToggleFavorite = async () => {
-  try {
-    await recipeAPI.toggleLove(id);
-    setIsFavorite((prev) => {
-      const next = !prev;
-      // Simpan ke localStorage agar ResepPage bisa baca
-      try {
-        const favoritesMap = JSON.parse(localStorage.getItem("dashboard_favorites") || "{}");
-        if (next) {
-          favoritesMap[id] = true;
-        } else {
-          delete favoritesMap[id];
-        }
-        localStorage.setItem("dashboard_favorites", JSON.stringify(favoritesMap));
-      } catch {}
-      return next;
-    });
-  } catch (err) {
-    console.error("Gagal toggle favorit:", err);
-    alert("Gagal memperbarui favorit. Periksa koneksimu.");
-  }
+    try {
+      await recipeAPI.toggleLove(id);
+      setIsFavorite((prev) => {
+        const next = !prev;
+        // Sinkronisasi ke user.lovedRecipes di localStorage
+        try {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          const lovedIds = Array.isArray(user.lovedRecipes)
+            ? user.lovedRecipes.map(String)
+            : [];
+          user.lovedRecipes = next
+            ? [...new Set([...lovedIds, String(id)])]   // tambah
+            : lovedIds.filter((v) => v !== String(id)); // hapus
+          localStorage.setItem("user", JSON.stringify(user));
+          // Beritahu ResepPage & DashboardPage untuk refresh ikon
+          window.dispatchEvent(new Event("storage"));
+        } catch {}
+        return next;
+      });
+    } catch (err) {
+      console.error("Gagal toggle favorit:", err);
+      alert("Gagal memperbarui favorit. Periksa koneksimu.");
+    }
   };
 
   // ── Toggle keranjang ────────────────────────────────────────────────────────
