@@ -212,8 +212,10 @@ export default function KeranjangPage() {
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-16 md:pb-0">
 
         {/* HEADER */}
-        <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center justify-between px-4 md:px-10">
-          <h1 className="text-xl md:text-[28px] font-bold text-[#d06224]">Daftar Belanja</h1>
+        <div className="h-[70px] md:h-[80px] bg-white shadow-sm flex items-center justify-between px-4 md:px-10">
+          <h1 className="text-[22px] md:text-[24px] font-semibold text-[#d06224]">
+            Daftar Belanja
+          </h1>
           <button
             onClick={hapusSelesai}
             disabled={actionLoading || sudahBeli === 0}

@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { recipeAPI } from "../utils/api";
+import { recipeAPI, riwayatAPI } from "../utils/api";
 import PageLayout from "../components/layout/PageLayout";
 
 export default function DetailMasakPage() {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  
   const [steps, setSteps] = useState([]);
   const [checkedSteps, setCheckedSteps] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,15 @@ export default function DetailMasakPage() {
         {recipeName || "Buku Resep"}
       </h1>
       <button
-        onClick={() => navigate(-1)}
+        onClick={async () => {
+          try {
+            await riwayatAPI.addItem({ recipeId: id });
+          } catch (err) {
+            console.error("Gagal simpan riwayat:", err);
+          } finally {
+            navigate("/resep");  
+          }
+        }}
         className="h-[42px] px-6 bg-[#d06224] text-white font-semibold text-sm rounded-xl hover:bg-[#b85520] transition-all active:scale-95"
       >
         Selesai

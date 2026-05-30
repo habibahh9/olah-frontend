@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logoOlah from "../assets/logo-olah.png";
+import { riwayatAPI } from "../utils/api";
 
 const navItems = [
   { label: "Beranda", path: "/dashboard", icon: ( <svg width="22" height="22" viewBox="0 0 46 47" fill="none"><path d="M44.8763 19.7641L25.7097 1.09287C24.9909 0.393093 24.0162 0 23 0C21.9838 0 21.0091 0.393093 20.2903 1.09287L1.12367 19.7641C0.765982 20.11 0.482445 20.5216 0.289545 20.9752C0.0966444 21.4288 -0.0017697 21.9152 2.40864e-05 22.4061V44.8116C2.40864e-05 45.3068 0.201958 45.7817 0.561403 46.1318C0.920847 46.482 1.40836 46.6787 1.91669 46.6787H17.25C17.7583 46.6787 18.2458 46.482 18.6053 46.1318C18.9647 45.7817 19.1667 45.3068 19.1667 44.8116V31.7417H26.8333V44.8116C26.8333 45.3068 27.0353 45.7817 27.3947 46.1318C27.7542 46.482 28.2417 46.6787 28.75 46.6787H44.0833C44.5916 46.6787 45.0792 46.482 45.4386 46.1318C45.798 45.7817 46 45.3068 46 44.8116V22.4061C46.0018 21.9152 45.9034 21.4288 45.7105 20.9752C45.5176 20.5216 45.234 20.11 44.8763 19.7641ZM42.1666 42.9445H30.6667V29.8746C30.6667 29.3794 30.4647 28.9045 30.1053 28.5543C29.7458 28.2042 29.2583 28.0075 28.75 28.0075H17.25C16.7417 28.0075 16.2542 28.2042 15.8947 28.5543C15.5353 28.9045 15.3333 29.3794 15.3333 29.8746V42.9445H3.83335V22.4061L23 3.73485L42.1666 22.4061V42.9445Z" fill="currentColor"/></svg> ) },
@@ -14,19 +15,6 @@ const navItems = [
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
-/** Ambil token dari localStorage (sesuaikan dengan key yang dipakai auth kamu) */
-const getToken = () => localStorage.getItem("token") ?? "";
-
-const apiFetch = (path, options = {}) =>
-  fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-      ...(options.headers ?? {}),
-    },
-  });
-
 /**
  * Mengubah array riwayat mentah dari API menjadi format yang dikelompokkan per bulan.
  * Sesuaikan field-name (recipe_name, cooked_at, dst.) dengan respons backend-mu.
@@ -35,26 +23,35 @@ const groupByMonth = (historyArray = []) => {
   if (!Array.isArray(historyArray)) return [];
   const map = {};
   historyArray.forEach((item) => {
-    const date = new Date(item.cooked_at ?? item.createdAt ?? item.date);
-    const bulan = date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+    // Fix: coba semua kemungkinan field tanggal
+    const rawDate = item.cookedAt ?? item.createdAt ?? item.date ?? item.cooked_at;
+    const date = rawDate ? new Date(rawDate) : null;
+    const isValidDate = date && !isNaN(date.getTime());
+
+    const bulan = isValidDate
+      ? date.toLocaleDateString("id-ID", { month: "long", year: "numeric" })
+      : "Tidak Diketahui";
 
     if (!map[bulan]) map[bulan] = { bulan, items: [] };
 
+    const allIngredients = item.recipeId?.ingredients?.map(i =>
+      typeof i === "string" ? i : i.name ?? i.ingredientName ?? ""
+    ).filter(Boolean) ?? [];
+
     map[bulan].items.push({
-      id: item._id ?? item.id,
-      historyId: item._id ?? item.id,
-      title: item.recipe_name ?? item.recipeName ?? item.title ?? "-",
-      tanggal: formatTanggal(date),
-      time: item.cook_time ?? item.cookTime ?? item.time ?? "-",
-      portion: item.portion ?? item.servings ?? "-",
-      ingredients: item.main_ingredients ?? item.ingredients ?? [],
+      id: item._id,
+      historyId: item._id,
+      title: item.recipeId?.recipeName ?? item.recipeId?.title ?? "-",
+      tanggal: isValidDate ? formatTanggal(date, new Date()) : "-",
+      time: item.recipeId?.cookTime ?? "-",
+      portion: item.recipeId?.servings ?? "-",
+      ingredients: allIngredients.slice(0, 3), // ← max 3 bahan
     });
   });
   return Object.values(map);
 };
 
-const formatTanggal = (date) => {
-  const now = new Date();
+const formatTanggal = (date, now) => {
   const diffMs = now - date;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   const timeStr = date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
@@ -69,6 +66,13 @@ const formatTanggal = (date) => {
 export default function RiwayatPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60_000); // update tiap 1 menit
+    return () => clearInterval(timer);
+  }, []);
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,19 +91,9 @@ export default function RiwayatPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await apiFetch("/users/history");
-      if (!res.ok) throw new Error(`Gagal mengambil riwayat (${res.status})`);
-      const json = await res.json();
-      console.log("Response history:", json);
-      const arr = Array.isArray(json)
-      ? json
-      : Array.isArray(json.data)
-        ? json.data
-        : Array.isArray(json.history)
-          ? json.history
-          : Array.isArray(json.result)
-            ? json.result
-            : [];
+      const json = await riwayatAPI.getAll();
+      // Backend return: { success, data: { history: [...] } }
+      const arr = json?.data?.history ?? [];
       setRawHistory(arr);
     } catch (err) {
       setError(err.message);
@@ -116,13 +110,8 @@ export default function RiwayatPage() {
   const handleMasakLagi = async (item) => {
     setCookingId(item.historyId);
     try {
-      const res = await apiFetch(`/users/history/${item.historyId}/cooked`, {
-        method: "PATCH",
-      });
-      if (!res.ok) throw new Error(`Gagal mencatat masak lagi (${res.status})`);
-      // Refresh riwayat agar data terbaru muncul
+      await riwayatAPI.addItem({ recipeId: item.historyId });
       await fetchHistory();
-      // Navigasi ke detail resep (sesuaikan route kamu)
       navigate(`/detail-resep/${item.historyId}`);
     } catch (err) {
       alert(err.message);
@@ -133,7 +122,7 @@ export default function RiwayatPage() {
 
   // ── Filter + search (client-side) ─────────────────────────────────────
   const getFilteredData = () => {
-    let grouped = groupByMonth(rawHistory);
+    let grouped = groupByMonth(rawHistory, now);
 
     if (filter === "Bulan Ini") {
       grouped = grouped.slice(0, 1);
@@ -145,7 +134,7 @@ export default function RiwayatPage() {
         const d = new Date(item.cooked_at ?? item.createdAt ?? item.date);
         return d >= oneWeekAgo;
       });
-      grouped = groupByMonth(thisWeekItems);
+      grouped = groupByMonth(thisWeekItems, now);
     }
 
     if (!searchQuery.trim()) return grouped;
@@ -168,7 +157,7 @@ export default function RiwayatPage() {
   const getResepSering = () => {
     const countMap = {};
     rawHistory.forEach((item) => {
-      const name = item.recipe_name ?? item.recipeName ?? item.title ?? "-";
+      const name = item.recipeId?.recipeName ?? item.recipeId?.title ?? "-";
       countMap[name] = (countMap[name] ?? 0) + 1;
     });
     return Object.entries(countMap)
@@ -233,8 +222,8 @@ export default function RiwayatPage() {
       <main className="md:ml-[110px] flex-1 pb-20 md:pb-6 min-w-0">
 
         {/* HEADER */}
-        <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center px-4 md:px-10">
-          <h1 className="text-[22px] md:text-[28px] font-bold text-[#d06224]">
+        <div className="h-[70px] md:h-[80px] bg-white shadow-sm flex items-center px-4 md:px-10">
+          <h1 className="text-[22px] md:text-[24px] font-semibold text-[#d06224]">
             Riwayat Masakan
           </h1>
         </div>

@@ -84,9 +84,9 @@ export const userAPI = {
 
 // ── Riwayat → RiwayatPage ─────────────────────────────────────────────────────
 export const riwayatAPI = {
-  getAll: () => api.get('/users/riwayat'),
-  addItem: (data) => api.post('/users/riwayat', data),
-  clear: () => api.delete('/users/riwayat'),
+  getAll: () => api.get('/users/history'),
+  addItem: (data) => api.post(`/recipes/${data.recipeId}/selesai`),
+  clear: () => api.delete('/users/history'),
 };
 
 // ── Detail Masak → DetailMasakPage ────────────────────────────────────────────
