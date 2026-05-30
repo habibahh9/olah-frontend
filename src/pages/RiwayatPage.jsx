@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logoOlah from "../assets/logo-olah.png";
 
@@ -10,49 +10,147 @@ const navItems = [
   { label: "Riwayat", path: "/riwayat",   icon: ( <svg width="22" height="22" viewBox="0 0 44 39" fill="none"><path d="M24.6477 9.6834V18.4529L32.5966 22.8245C32.997 23.0449 33.2854 23.4021 33.3985 23.8175C33.5116 24.2329 33.44 24.6725 33.1996 25.0396C32.9591 25.4066 32.5694 25.671 32.1163 25.7747C31.6631 25.8783 31.1836 25.8127 30.7832 25.5923L21.9805 20.7506C21.7199 20.6072 21.5044 20.4043 21.3547 20.1618C21.2051 19.9192 21.1265 19.6454 21.1266 19.3667V9.6834C21.1266 9.25537 21.3121 8.84487 21.6423 8.5422C21.9724 8.23954 22.4202 8.06951 22.8871 8.06951C23.3541 8.06951 23.8019 8.23954 24.132 8.5422C24.4622 8.84487 24.6477 9.25537 24.6477 9.6834ZM22.8871 5.97366e-05C20.1099 -0.00628194 17.3588 0.492364 14.7931 1.46714C12.2275 2.44192 9.8982 3.87346 7.94008 5.67893C6.34018 7.16371 4.91854 8.592 3.5211 10.0869V6.45562C3.5211 6.02759 3.33561 5.61709 3.00545 5.31442C2.67528 5.01176 2.22748 4.84173 1.76055 4.84173C1.29362 4.84173 0.84582 5.01176 0.515653 5.31442C0.185486 5.61709 0 6.02759 0 6.45562V14.5251C0 14.9531 0.185486 15.3636 0.515653 15.6663C0.84582 15.9689 1.29362 16.139 1.76055 16.139H10.5633C11.0302 16.139 11.478 15.9689 11.8082 15.6663C12.1384 15.3636 12.3238 14.9531 12.3238 14.5251C12.3238 14.097 12.1384 13.6865 11.8082 13.3839C11.478 13.0812 11.0302 12.9112 10.5633 12.9112H5.50172C7.07521 11.2126 8.6421 9.61279 10.4291 7.95452C12.8759 5.71152 15.9895 4.17924 19.3809 3.54916C22.7723 2.91907 26.2911 3.21912 29.4975 4.4118C32.704 5.60448 35.4559 7.63691 37.4095 10.2551C39.363 12.8734 40.4316 15.9613 40.4817 19.133C40.5317 22.3048 39.561 25.4197 37.6909 28.0887C35.8208 30.7576 33.1341 32.8621 29.9667 34.1393C26.7992 35.4165 23.2914 35.8098 19.8815 35.2699C16.4717 34.73 13.311 33.2809 10.7944 31.1037C10.6262 30.958 10.4283 30.8441 10.2121 30.7685C9.99588 30.6929 9.76552 30.6571 9.5342 30.6631C9.30287 30.6691 9.0751 30.7168 8.86388 30.8034C8.65266 30.8901 8.46214 31.0141 8.30319 31.1683C8.14424 31.3225 8.01998 31.5039 7.9375 31.7021C7.85501 31.9003 7.81593 32.1114 7.82246 32.3235C7.829 32.5355 7.88104 32.7444 7.97561 32.938C8.07018 33.1316 8.20542 33.3062 8.37362 33.452C10.8812 35.6212 13.9298 37.1948 17.2534 38.0356C20.577 38.8764 24.0745 38.9587 27.4408 38.2754C30.8071 37.5921 33.9398 36.1639 36.5655 34.1155C39.1912 32.0672 41.2302 29.4608 42.5043 26.524C43.7785 23.5871 44.2493 20.409 43.8755 17.267C43.5017 14.1251 42.2947 11.1147 40.3598 8.49867C38.425 5.88264 35.8212 3.74045 32.7755 2.25907C29.7299 0.777681 26.335 0.0021169 22.8871 5.97366e-05Z" fill="currentColor"/></svg> ) },
 ];
 
-const riwayatData = [
-  {
-    bulan: "April 2026",
-    items: [
-      { id: 1, title: "Nasi Goreng Telur",  tanggal: "Hari ini, 17.30",       time: "20 Menit", portion: "2 Porsi", ingredients: ["Nasi"] },
-      { id: 2, title: "Tumis Bayam Tahu",   tanggal: "Kemarin, 17.30",        time: "20 Menit", portion: "2 Porsi", ingredients: ["Bayam", "Tahu"] },
-      { id: 3, title: "Soto Ayam Bening",   tanggal: "26 April 2026, 17.30",  time: "20 Menit", portion: "2 Porsi", ingredients: ["Ayam"] },
-    ],
-  },
-  {
-    bulan: "Maret 2026",
-    items: [
-      { id: 4, title: "Nasi Goreng Telur",    tanggal: "2 Maret 2026, 17.30",  time: "20 Menit", portion: "2 Porsi", ingredients: ["Nasi"] },
-      { id: 5, title: "Sambal Goreng Tempe",  tanggal: "15 Maret 2026, 12.00", time: "45 Menit", portion: "1 Porsi", ingredients: ["Tempe", "Cabe"] },
-    ],
-  },
-];
+// ─── API helpers ────────────────────────────────────────────────────────────
 
-const resepSering = [
-  { rank: 1, title: "Tumis Bayam Tahu",    count: 6 },
-  { rank: 2, title: "Nasi Goreng Telur",   count: 5 },
-  { rank: 3, title: "Orak-arik Sayur",     count: 4 },
-  { rank: 4, title: "Soto Ayam Bening",    count: 3 },
-  { rank: 5, title: "Sambal Goreng Tempe", count: 2 },
-];
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+
+/** Ambil token dari localStorage (sesuaikan dengan key yang dipakai auth kamu) */
+const getToken = () => localStorage.getItem("token") ?? "";
+
+const apiFetch = (path, options = {}) =>
+  fetch(`${BASE_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+      ...(options.headers ?? {}),
+    },
+  });
+
+/**
+ * Mengubah array riwayat mentah dari API menjadi format yang dikelompokkan per bulan.
+ * Sesuaikan field-name (recipe_name, cooked_at, dst.) dengan respons backend-mu.
+ */
+const groupByMonth = (historyArray = []) => {
+  if (!Array.isArray(historyArray)) return [];
+  const map = {};
+  historyArray.forEach((item) => {
+    const date = new Date(item.cooked_at ?? item.createdAt ?? item.date);
+    const bulan = date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+
+    if (!map[bulan]) map[bulan] = { bulan, items: [] };
+
+    map[bulan].items.push({
+      id: item._id ?? item.id,
+      historyId: item._id ?? item.id,
+      title: item.recipe_name ?? item.recipeName ?? item.title ?? "-",
+      tanggal: formatTanggal(date),
+      time: item.cook_time ?? item.cookTime ?? item.time ?? "-",
+      portion: item.portion ?? item.servings ?? "-",
+      ingredients: item.main_ingredients ?? item.ingredients ?? [],
+    });
+  });
+  return Object.values(map);
+};
+
+const formatTanggal = (date) => {
+  const now = new Date();
+  const diffMs = now - date;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const timeStr = date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+
+  if (diffDays === 0) return `Hari ini, ${timeStr}`;
+  if (diffDays === 1) return `Kemarin, ${timeStr}`;
+  return `${date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}, ${timeStr}`;
+};
+
+// ────────────────────────────────────────────────────────────────────────────
 
 export default function RiwayatPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Semua");
 
+  // API state
+  const [rawHistory, setRawHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [cookingId, setCookingId] = useState(null); // historyId yang sedang di-request "Masak Lagi"
+
   const filterOptions = ["Semua", "Bulan Ini", "Minggu Ini"];
 
-  const getFilteredData = () => {
-    let data = riwayatData;
-    if (filter === "Bulan Ini") data = data.slice(0, 1);
-    if (filter === "Minggu Ini") {
-      data = [{ bulan: data[0].bulan, items: data[0].items.slice(0, 2) }];
+  // ── Fetch riwayat dari API ─────────────────────────────────────────────
+  const fetchHistory = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await apiFetch("/users/history");
+      if (!res.ok) throw new Error(`Gagal mengambil riwayat (${res.status})`);
+      const json = await res.json();
+      console.log("Response history:", json);
+      const arr = Array.isArray(json)
+      ? json
+      : Array.isArray(json.data)
+        ? json.data
+        : Array.isArray(json.history)
+          ? json.history
+          : Array.isArray(json.result)
+            ? json.result
+            : [];
+      setRawHistory(arr);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    if (!searchQuery.trim()) return data;
-    return data
+  }, []);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  // ── Tandai "Masak Lagi" → PATCH /api/users/history/:historyId/cooked ───
+  const handleMasakLagi = async (item) => {
+    setCookingId(item.historyId);
+    try {
+      const res = await apiFetch(`/users/history/${item.historyId}/cooked`, {
+        method: "PATCH",
+      });
+      if (!res.ok) throw new Error(`Gagal mencatat masak lagi (${res.status})`);
+      // Refresh riwayat agar data terbaru muncul
+      await fetchHistory();
+      // Navigasi ke detail resep (sesuaikan route kamu)
+      navigate(`/detail-resep/${item.historyId}`);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setCookingId(null);
+    }
+  };
+
+  // ── Filter + search (client-side) ─────────────────────────────────────
+  const getFilteredData = () => {
+    let grouped = groupByMonth(rawHistory);
+
+    if (filter === "Bulan Ini") {
+      grouped = grouped.slice(0, 1);
+    } else if (filter === "Minggu Ini") {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+      const thisWeekItems = rawHistory.filter((item) => {
+        const d = new Date(item.cooked_at ?? item.createdAt ?? item.date);
+        return d >= oneWeekAgo;
+      });
+      grouped = groupByMonth(thisWeekItems);
+    }
+
+    if (!searchQuery.trim()) return grouped;
+
+    return grouped
       .map((group) => ({
         ...group,
         items: group.items.filter(
@@ -66,11 +164,26 @@ export default function RiwayatPage() {
       .filter((group) => group.items.length > 0);
   };
 
-  const filteredData = getFilteredData();
+  // ── Hitung resep paling sering dari rawHistory ─────────────────────────
+  const getResepSering = () => {
+    const countMap = {};
+    rawHistory.forEach((item) => {
+      const name = item.recipe_name ?? item.recipeName ?? item.title ?? "-";
+      countMap[name] = (countMap[name] ?? 0) + 1;
+    });
+    return Object.entries(countMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([title, count], idx) => ({ rank: idx + 1, title, count }));
+  };
 
+  const filteredData = getFilteredData();
+  const resepSering = getResepSering();
+
+  // ── Render ─────────────────────────────────────────────────────────────
   return (
     <div className="flex min-h-screen bg-[#f4f4f4]">
-      {/* SIDEBAR — hanya tampil di md ke atas */}
+      {/* SIDEBAR */}
       <aside className="hidden md:flex md:fixed left-0 top-0 w-[110px] h-screen bg-white shadow-lg flex-col items-center py-5 gap-7 z-50">
         <img src={logoOlah} alt="OLAH Logo" className="w-14 object-contain mb-1" />
         {navItems.map((item) => {
@@ -134,7 +247,6 @@ export default function RiwayatPage() {
 
             {/* SEARCH + FILTER */}
             <div className="flex flex-col gap-3">
-
               {/* Search */}
               <div className="flex">
                 <input
@@ -151,8 +263,8 @@ export default function RiwayatPage() {
                 </button>
               </div>
 
-              {/* Filter pills — scroll horizontal di mobile */}
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+              {/* Filter pills */}
+              <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
                 {filterOptions.map((opt) => (
                   <button
                     key={opt}
@@ -169,84 +281,119 @@ export default function RiwayatPage() {
               </div>
             </div>
 
-            {/* GROUPED LIST */}
-            {filteredData.length === 0 ? (
+            {/* ── Loading state ── */}
+            {loading && (
+              <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+                <svg className="animate-spin w-8 h-8 mb-3 text-[#d06224]" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                </svg>
+                <p className="text-sm">Memuat riwayat…</p>
+              </div>
+            )}
+
+            {/* ── Error state ── */}
+            {!loading && error && (
+              <div className="flex flex-col items-center justify-center py-16 text-red-400 gap-2">
+                <p className="text-sm font-medium">Gagal memuat riwayat</p>
+                <p className="text-xs text-gray-400">{error}</p>
+                <button
+                  onClick={fetchHistory}
+                  className="mt-2 px-4 py-2 bg-[#d06224] text-white text-xs rounded-full hover:bg-[#b85520] transition"
+                >
+                  Coba Lagi
+                </button>
+              </div>
+            )}
+
+            {/* ── Empty state ── */}
+            {!loading && !error && filteredData.length === 0 && (
               <div className="flex flex-col items-center justify-center py-16 text-gray-300">
                 <svg width="48" height="39" viewBox="0 0 44 39" fill="none" className="mb-3 opacity-40">
                   <path d="M24.6477 9.6834V18.4529L32.5966 22.8245C32.997 23.0449 33.2854 23.4021 33.3985 23.8175C33.5116 24.2329 33.44 24.6725 33.1996 25.0396C32.9591 25.4066 32.5694 25.671 32.1163 25.7747C31.6631 25.8783 31.1836 25.8127 30.7832 25.5923L21.9805 20.7506C21.7199 20.6072 21.5044 20.4043 21.3547 20.1618C21.2051 19.9192 21.1265 19.6454 21.1266 19.3667V9.6834C21.1266 9.25537 21.3121 8.84487 21.6423 8.5422C21.9724 8.23954 22.4202 8.06951 22.8871 8.06951C23.3541 8.06951 23.8019 8.23954 24.132 8.5422C24.4622 8.84487 24.6477 9.25537 24.6477 9.6834Z" fill="currentColor" />
                 </svg>
                 <p className="text-sm">Tidak ada riwayat ditemukan</p>
               </div>
-            ) : (
-              filteredData.map((group) => (
-                <section key={group.bulan}>
-                  <h2 className="text-base md:text-lg font-light text-black mb-3">
-                    {group.bulan}
-                  </h2>
-                  <div className="flex flex-col gap-3">
-                    {group.items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="bg-white rounded-[12px] px-4 md:px-6 py-4 shadow-sm"
-                      >
-                        {/* Baris atas: nama resep + tanggal */}
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <p className="font-semibold text-[#d06224] text-sm md:text-base leading-snug">
-                            {item.title}
-                          </p>
-                          <span className="text-[11px] text-gray-400 shrink-0 mt-0.5">
-                            {item.tanggal}
-                          </span>
-                        </div>
-
-                        {/* Baris bawah: tags + tombol */}
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            {item.ingredients.map((ing) => (
-                              <span
-                                key={ing}
-                                className="bg-[#d06224bf] rounded-[8px] px-2.5 py-0.5 text-white text-[11px]"
-                              >
-                                {ing}
-                              </span>
-                            ))}
-                            <span className="text-gray-400 text-[11px]">{item.time}</span>
-                            <span className="text-gray-400 text-[11px]">{item.portion}</span>
-                          </div>
-                          <button
-                            onClick={() => navigate(`/detail-resep/${item.id}`)}
-                            className="shrink-0 h-[32px] px-4 bg-[#d06224] text-white text-xs font-medium rounded-[8px] hover:bg-[#b85520] transition"
-                          >
-                            Masak Lagi
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              ))
             )}
 
-            {/* Panel Resep Paling Sering — tampil di bawah list pada mobile */}
-            <div className="md:hidden flex flex-col gap-3 mt-1">
-              <h2 className="text-base font-light text-black">Resep Paling Sering</h2>
-              <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-1">
-                {resepSering.map((resep) => (
-                  <div key={resep.rank} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
-                    <span className="text-sm font-semibold text-[#d06224] w-4 shrink-0">{resep.rank}</span>
-                    <span className="flex-1 text-sm text-gray-700">{resep.title}</span>
-                    <span className="text-xs font-semibold text-white bg-[#9f9b4a] rounded-[6px] px-2 py-0.5 shrink-0">{resep.count}x</span>
-                  </div>
-                ))}
+            {/* ── Grouped list ── */}
+            {!loading && !error && filteredData.map((group) => (
+              <section key={group.bulan}>
+                <h2 className="text-base md:text-lg font-light text-black mb-3">
+                  {group.bulan}
+                </h2>
+                <div className="flex flex-col gap-3">
+                  {group.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-white rounded-[12px] px-4 md:px-6 py-4 shadow-sm"
+                    >
+                      {/* Baris atas */}
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <p className="font-semibold text-[#d06224] text-sm md:text-base leading-snug">
+                          {item.title}
+                        </p>
+                        <span className="text-[11px] text-gray-400 shrink-0 mt-0.5">
+                          {item.tanggal}
+                        </span>
+                      </div>
+
+                      {/* Baris bawah */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {item.ingredients.map((ing) => (
+                            <span
+                              key={ing}
+                              className="bg-[#d06224bf] rounded-[8px] px-2.5 py-0.5 text-white text-[11px]"
+                            >
+                              {ing}
+                            </span>
+                          ))}
+                          <span className="text-gray-400 text-[11px]">{item.time}</span>
+                          <span className="text-gray-400 text-[11px]">{item.portion}</span>
+                        </div>
+                        <button
+                          onClick={() => handleMasakLagi(item)}
+                          disabled={cookingId === item.historyId}
+                          className="shrink-0 h-[32px] px-4 bg-[#d06224] text-white text-xs font-medium rounded-[8px] hover:bg-[#b85520] transition disabled:opacity-60 disabled:cursor-wait"
+                        >
+                          {cookingId === item.historyId ? "Memproses…" : "Masak Lagi"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))}
+
+            {/* Resep Paling Sering — mobile */}
+            {!loading && !error && (
+              <div className="md:hidden flex flex-col gap-3 mt-1">
+                <h2 className="text-base font-light text-black">Resep Paling Sering</h2>
+                <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-1">
+                  {resepSering.length === 0 ? (
+                    <p className="text-xs text-gray-400 text-center py-2">Belum ada data</p>
+                  ) : resepSering.map((resep) => (
+                    <div key={resep.rank} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                      <span className="text-sm font-semibold text-[#d06224] w-4 shrink-0">{resep.rank}</span>
+                      <span className="flex-1 text-sm text-gray-700">{resep.title}</span>
+                      <span className="text-xs font-semibold text-white bg-[#9f9b4a] rounded-[6px] px-2 py-0.5 shrink-0">{resep.count}x</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* RIGHT — Resep Paling Sering (hanya desktop) */}
+          {/* RIGHT — Resep Paling Sering (desktop) */}
           <div className="hidden md:flex w-[280px] flex-col gap-4 shrink-0">
             <h2 className="text-lg font-light text-black">Resep Paling Sering</h2>
             <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-2">
-              {resepSering.map((resep) => (
+              {loading ? (
+                <p className="text-xs text-gray-400 text-center py-4">Memuat…</p>
+              ) : resepSering.length === 0 ? (
+                <p className="text-xs text-gray-400 text-center py-4">Belum ada data</p>
+              ) : resepSering.map((resep) => (
                 <div key={resep.rank} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
                   <span className="text-sm font-semibold text-[#d06224] w-4 shrink-0">{resep.rank}</span>
                   <span className="flex-1 text-sm text-gray-700">{resep.title}</span>
@@ -258,7 +405,7 @@ export default function RiwayatPage() {
         </div>
       </main>
 
-      {/* BOTTOM NAV — hanya mobile */}
+      {/* BOTTOM NAV — mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex items-center justify-around px-2 py-2 z-50">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;

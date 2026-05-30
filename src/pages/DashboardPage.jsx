@@ -60,11 +60,7 @@ export default function DashboardPage() {
         // Ambil resep
         const resepRes = await recipeAPI.getAll();
         console.log("resepRes:", resepRes);
-        const recipes = Array.isArray(resepRes.data)
-          ? resepRes.data
-          : Array.isArray(resepRes.data?.recipes)
-            ? resepRes.data.recipes
-            : [];
+        const recipes = resepRes.data?.recipes ?? [];
         setRecipeCards(recipes);
 
         // Ambil pantry
@@ -108,7 +104,7 @@ export default function DashboardPage() {
   };
 
   const RecipeCard = ({ recipe }) => {
-    const imageUrl = useUnsplashImage(recipe.title);
+    const imageUrl = useUnsplashImage(recipe.recipeName ?? "masakan indonesia");
     return (
       <article
         className="relative h-[180px] sm:h-[220px] cursor-pointer"
@@ -122,7 +118,7 @@ export default function DashboardPage() {
         <div className="absolute top-[95px] sm:top-[130px] left-0 w-full h-[80px] sm:h-[85px] bg-[#8a8635cc] rounded-[12px]" />
         <div className="absolute top-[100px] sm:top-[137px] left-[8px] right-[8px] sm:left-[10px] sm:right-[10px]">
           <span className="font-semibold text-white text-xs sm:text-sm leading-normal truncate block">
-            {recipe.title}
+            {recipe.recipeName}
           </span>
         </div>
         <button
@@ -144,9 +140,9 @@ export default function DashboardPage() {
           <span className="text-white text-[10px] sm:text-xs">{recipe.portion}</span>
         </div>
         <div className="absolute top-[145px] sm:top-[185px] left-[8px] sm:left-[10px] flex gap-1">
-          {recipe.ingredients.slice(0, 2).map((ing) => (
-            <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-1.5 h-[16px] sm:h-[18px] flex items-center justify-center">
-              <span className="text-white text-[9px] sm:text-[11px]">{ing}</span>
+          {(recipe.ingredients ?? []).slice(0, 2).map((ing) => (
+            <div key={ing} className="bg-[#d06224bf] rounded-[10px] px-1.5 h-[16px] sm:h-[18px] flex items-center justify-center max-w-[80px]">
+              <span className="text-white text-[9px] sm:text-[11px] truncate w-full text-center">{ing}</span>
             </div>
           ))}
         </div>
@@ -158,12 +154,12 @@ export default function DashboardPage() {
 
   const filteredRecipes = useMemo(() => {
     let results = recipeCards;
-    if (activeFilter === "Cepat") results = results.filter((r) => parseInt(r.time) < 20);
+    if (activeFilter === "Cepat") results = results.filter((r) => (r.cookingTimeMinutes ?? 999) < 20);
     if (activeFilter === "Favorit") results = results.filter((r) => r.isFavorite);
     if (appliedSearch && appliedSearch.trim() !== "") {
       const q = appliedSearch.toLowerCase();
       results = results.filter((r) => {
-        const title = (r.title || r.name || "").toLowerCase();
+        const title = (r.recipeName || r.title || r.name || "").toLowerCase();
         const ings = (r.ingredients || []).map((ing) =>
           typeof ing === "string" ? ing : ing.name || ""
         );

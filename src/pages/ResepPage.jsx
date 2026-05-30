@@ -139,9 +139,9 @@ export default function ResepPage() {
           {recipe.ingredients.map((ing) => (
             <div
               key={ing}
-              className="bg-[#d06224bf] rounded-[10px] px-2 h-[18px] flex items-center justify-center"
+              className="bg-[#d06224bf] rounded-[10px] px-2 h-[18px] flex items-center justify-center max-w-[80px]"
             >
-              <span className="text-white text-[11px]">{ing}</span>
+              <span className="text-white text-[11px] truncate w-full text-center">{ing}</span>
             </div>
           ))}
         </div>
