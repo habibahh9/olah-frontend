@@ -15,6 +15,7 @@ import TambahItemPage from "./pages/TambahItemPage";
 import ArticlePage from "./pages/ArticlePage";
 import OnboardingPage from "./pages/OnboardingPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import AboutPage from "./pages/AboutPage";
 
 export function setOnboardingDone() {
   sessionStorage.setItem("onboarding_done", "true");
@@ -63,6 +64,7 @@ export default function App() {
         <Route path="/tambah-item" element={<RequireOnboarding><TambahItemPage /></RequireOnboarding>} />
         <Route path="/artikel" element={<RequireOnboarding><ArticlePage /></RequireOnboarding>} />
         <Route path="/forgot-password" element={<RequireOnboarding><ForgotPasswordPage /></RequireOnboarding>} />
+        <Route path="/tentang" element={<RequireOnboarding><AboutPage /></RequireOnboarding>} />
       </Routes>
     </BrowserRouter>
   );

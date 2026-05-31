@@ -134,8 +134,9 @@ export const masakAPI = {
 };
 
 export const notificationAPI = {
-  getAll: () => api.get('/users/notifications'),
+  getAll:   ()     => api.get('/users/notifications'),
+  dismiss:  (id)   => api.post('/users/notifications/dismiss', { notificationId: id }), 
+  resetAll: ()     => api.delete('/users/notifications/dismiss'),                
 };
-
 
 export default api;

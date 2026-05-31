@@ -120,44 +120,48 @@ export default function RiwayatPage() {
 
   // ── Filter + search (client-side) ─────────────────────────────────────
   const getFilteredData = () => {
-    let grouped = groupByMonth(rawHistory, now);
+  let sourceData = rawHistory;
 
-    if (filter === "Bulan Ini") {
-      grouped = grouped.slice(0, 1);
-    } else if (filter === "Minggu Ini") {
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  if (filter === "Minggu Ini") {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    sourceData = rawHistory.filter((item) => {
+      const d = new Date(item.cookedAt ?? item.viewedAt ?? item.createdAt ?? item.date);
+      return d >= oneWeekAgo;
+    });
+  }
 
-      const thisWeekItems = rawHistory.filter((item) => {
-        const d = new Date(item.cookedAt ?? item.createdAt ?? item.date);
-        return d >= oneWeekAgo;
-      });
-      grouped = groupByMonth(thisWeekItems, now);
-    }
+  let grouped = groupByMonth(sourceData, now);
 
-    if (!searchQuery.trim()) return grouped;
+  if (filter === "Bulan Ini") {
+    grouped = grouped.slice(0, 1);
+  }
 
-    return grouped
-      .map((group) => ({
-        ...group,
-        items: group.items.filter(
-          (item) =>
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.ingredients.some((ing) =>
-              ing.toLowerCase().includes(searchQuery.toLowerCase()),
-            ),
-        ),
-      }))
-      .filter((group) => group.items.length > 0);
+  if (!searchQuery.trim()) return grouped;
+
+  const q = searchQuery.toLowerCase().trim();
+  return grouped
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        const titleMatch = item.title !== "-" && item.title.toLowerCase().includes(q);
+        const ingMatch = item.ingredients.some((ing) => ing.toLowerCase().includes(q));
+        return titleMatch || ingMatch;
+      }),
+    }))
+    .filter((group) => group.items.length > 0);
   };
 
   // ── Hitung resep paling sering dari rawHistory ─────────────────────────
   const getResepSering = () => {
     const countMap = {};
-    rawHistory.forEach((item) => {
-      const name = item.recipeId?.recipeName ?? item.recipeId?.title ?? "-";
-      countMap[name] = (countMap[name] ?? 0) + 1;
-    });
+    rawHistory
+      .filter((item) => item.cooked === true)
+      .forEach((item) => {
+        const name = item.recipeId?.recipeName ?? item.recipeId?.title ?? item.recipeName ?? "-";
+        if (name === "-") return;
+        countMap[name] = (countMap[name] ?? 0) + 1;
+      });
     return Object.entries(countMap)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
@@ -332,8 +336,12 @@ export default function RiwayatPage() {
                             {toCapitalize(ing)}
                           </span>
                         ))}
-                        <span className="text-gray-400 text-[11px]">{item.time}</span>
-                        <span className="text-gray-400 text-[11px]">{item.portion}</span>
+                        {item.time !== "-" && (
+                          <span className="text-gray-400 text-[11px]">{item.time}</span>
+                        )}
+                        {item.portion !== "-" && (
+                          <span className="text-gray-400 text-[11px]">{item.portion}</span>
+                        )}
                       </div>
                       <button
                         onClick={() => handleMasakLagi(item)}
@@ -371,7 +379,7 @@ export default function RiwayatPage() {
             <h2 className="text-lg font-light text-black">Resep Paling Sering</h2>
             <div className="bg-white rounded-[15px] shadow-sm p-4 flex flex-col gap-2">
               {loading ? (
-                <p className="text-[#d06224] text-sm font-medium animate-pulse text-center py-4">Memuat...</p>
+                <p className="text-xs text-gray-400 text-center py-4">Memuat…</p>
               ) : resepSering.length === 0 ? (
                 <p className="text-xs text-gray-400 text-center py-4">Belum ada data</p>
               ) : resepSering.map((resep) => (

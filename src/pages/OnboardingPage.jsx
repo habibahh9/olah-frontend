@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setOnboardingDone } from "../App";
-import logoOlah from "../assets/logo-olah.png";
+import logoOlah from "../assets/logo-OLAH-1.png";
 
 const slides = [
   {
@@ -272,7 +272,7 @@ export default function OnboardingPage() {
           className="hidden md:flex w-2/5 flex-col items-center justify-center gap-6 py-10"
           style={{ background: "linear-gradient(160deg, #FFF5EE 0%, #FDE8D0 60%, #f5cda8 100%)" }}
         >
-          <img src={logoOlah} alt="OLAH" className="w-16 object-contain" />
+          <img src={logoOlah} alt="OLAH" className="w-24 object-contain" />
           <div
             style={{
               opacity: animating ? 0 : 1,
@@ -399,7 +399,7 @@ export default function OnboardingPage() {
                 onMouseOver={(e) => (e.currentTarget.style.background = "#ae431e")}
                 onMouseOut={(e) => (e.currentTarget.style.background = "#d06224")}
               >
-                {isLast ? "🚀 Masuk Sekarang" : "Lanjut →"}
+                {isLast ? "Masuk Sekarang" : "Lanjut →"}
               </button>
             </div>
           </div>

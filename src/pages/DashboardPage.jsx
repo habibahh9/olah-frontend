@@ -42,9 +42,18 @@ export default function DashboardPage() {
   const [notifications, setNotifications] = useState([]);
 
   const recommendationFilters = ["Semua", "Favorit"];
+  const handleDismiss = async (notifId) => {
+    try {
+      await notificationAPI.dismiss(notifId);
+      setNotifications((prev) => prev.filter((n) => n.id !== notifId));
+      } catch (err) {
+    console.error("Gagal dismiss notifikasi:", err);
+      }
+    };
 
   useEffect(() => { saveStorage("dashboard_activeFilter", activeFilter); }, [activeFilter]);
   useEffect(() => { saveStorage("dashboard_showAllExpiring", showAllExpiring); }, [showAllExpiring]);
+  
 
   useEffect(() => {
       const fetchData = async () => {
@@ -92,9 +101,10 @@ export default function DashboardPage() {
             }));
           setExpiringItems(expiring);
 
-          // Notifikasi
           const notifRes = await notificationAPI.getAll();
-          setNotifications(Array.isArray(notifRes.data?.notifications) ? notifRes.data.notifications : []);
+          setNotifications(
+            Array.isArray(notifRes.data?.notifications) ? notifRes.data.notifications : []
+          );
 
           if (user?.name) setUserName(user.name);
 
@@ -278,7 +288,10 @@ export default function DashboardPage() {
               Punya Sisa Bahan Makanan? di <strong>OLAH</strong> Aja!
             </p>
             <div className="flex gap-2 mt-2 sm:mt-3">
-              <button className="h-7 sm:h-8 px-3 sm:px-4 bg-white rounded-[25px] text-[#d06224] font-semibold text-xs sm:text-sm whitespace-nowrap">
+              <button 
+                onClick={() => navigate("/tentang")}
+                className="h-7 sm:h-8 px-3 sm:px-4 bg-white rounded-[25px] text-[#d06224] font-semibold text-xs sm:text-sm whitespace-nowrap"
+              >
                 Tentang OLAH
               </button>
               <button onClick={() => navigate("/artikel")}
@@ -354,10 +367,24 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   notifications.map((n) => (
-                    <div key={n.id} className="bg-[#d9d9d980] rounded-[15px] px-4 py-3">
-                      <p className="text-[#d06224] text-sm font-medium">{n.category}</p>
-                      <p className="text-black text-sm font-light mt-0.5">{n.message}</p>
-                      <p className="text-[#99999980] text-[10px] mt-1">{n.time}</p>
+                    <div key={n.id} className="bg-[#d9d9d980] rounded-[15px] px-4 py-3 flex items-start gap-2">
+                      <div className="flex-1">
+                        <p className="text-[#d06224] text-sm font-medium">{n.category}</p>
+                        <p className="text-black text-sm font-light mt-0.5">{n.message}</p>
+                        <p className="text-[#99999980] text-[10px] mt-1">{n.time}</p>
+                      </div>
+                      {/* Tombol dismiss */}
+                      {n.dismissible && (
+                        <button
+                          onClick={() => handleDismiss(n.id)}
+                          className="text-gray-300 hover:text-gray-500 transition shrink-0 mt-0.5"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2"
+                              strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      )}
                     </div>
                   ))
                 )}

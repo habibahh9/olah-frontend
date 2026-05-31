@@ -134,17 +134,23 @@ export default function TambahItemPage() {
       <main className="md:ml-[110px] flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
 
         {/* HEADER */}
-        <div className="h-[70px] md:h-[90px] bg-white shadow-sm flex items-center px-4 md:px-10 gap-4">
-          <button
-            onClick={() => navigate("/bahan")}
-            className="w-10 h-10 rounded-full bg-[#f4f4f4] flex items-center justify-center hover:bg-gray-200 transition"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M15 19L8 12L15 5" stroke="#d06224" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <h1 className="text-[28px] font-bold text-[#d06224]">Tambah Bahan</h1>
-        </div>
+        <div className="px-4 md:px-8 pt-5 md:pt-7 pb-4 border-b border-gray-200 bg-white flex items-center">
+        <button
+          onClick={() => navigate("/bahan")}
+          className="mr-3 text-[#d06224] hover:bg-[#f5ede6] p-1.5 rounded-lg transition-colors"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M15 18L9 12L15 6"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        <h1 className="text-2xl font-semibold text-[#d06224]">Tambah Bahan</h1>
+      </div>
 
         {/* CONTENT */}
         <div className="flex-1 flex items-start justify-center px-4 md:px-10 py-5 md:py-10">
