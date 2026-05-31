@@ -19,11 +19,11 @@ const getUrgencyLabel = (daysLeft) => {
 };
 
 export default function ExpiringSection() {
-  const chartRef        = useRef(null);
-  const chartInstance   = useRef(null);
-  const [stats, setStats]               = useState(null);
-  const [loading, setLoading]           = useState(true);
-  const [showAll, setShowAll]           = useState(false);
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
@@ -73,13 +73,13 @@ export default function ExpiringSection() {
             enabled: true,
             backgroundColor: "rgba(30,20,10,0.88)",
             titleFont: { size: 12, weight: "600" },
-            bodyFont:  { size: 11 },
+            bodyFont: { size: 11 },
             padding: 10,
             cornerRadius: 8,
             callbacks: {
               label: (ctx) => {
                 const total = saved + wasted;
-                const pct   = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
+                const pct = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
                 return ` ${ctx.parsed} bahan (${pct}%)`;
               },
             },
@@ -99,7 +99,7 @@ export default function ExpiringSection() {
     );
   }
 
-  const chart        = stats?.chart        ?? { saved: 0, wasted: 0, savedPct: 0, wastedPct: 0, total: 0 };
+  const chart = stats?.chart ?? { saved: 0, wasted: 0, savedPct: 0, wastedPct: 0, total: 0 };
   const expiringSoon = stats?.expiringSoon ?? [];
   const visibleItems = showAll ? expiringSoon : expiringSoon.slice(0, 5);
 
@@ -168,16 +168,16 @@ export default function ExpiringSection() {
             <div className="flex flex-col items-center justify-center py-8 gap-2">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                 <path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  stroke="#8a8635" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  stroke="#8a8635" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <p className="text-sm text-gray-400 text-center">Semua bahan masih segar!</p>
+              <p className="text-sm text-gray-400 text-center">Belum Ada Bahan yang Akan Kadaluarsa</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               {visibleItems.map((item, i) => {
-                const color   = getUrgencyColor(item.daysLeft);
+                const color = getUrgencyColor(item.daysLeft);
                 const urgency = getUrgencyLabel(item.daysLeft);
-                const isHov   = hoveredIndex === i;
+                const isHov = hoveredIndex === i;
                 return (
                   <div
                     key={String(item.id)}
