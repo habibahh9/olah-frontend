@@ -281,7 +281,7 @@ export default function DashboardPage() {
         <section className="relative h-[220px] overflow-hidden">
           <img src={heroImg} alt="Hero" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(232,179,148,0.74)_38%,rgba(208,98,36,1)_100%)]" />
-          <div className="absolute top-[45px] left-4 sm:left-[40px] w-[55%] sm:w-[calc(100%-340px)] max-w-[380px]">
+          <div className="absolute top-[75px] sm:top-[45px] left-4 sm:left-[40px] w-[55%] sm:w-[calc(100%-340px)] max-w-[380px]">
             <p className="text-white text-lg sm:text-2xl font-normal leading-tight">Selamat Pagi, {userName}!</p>
             <h1 className="text-white text-xl sm:text-[28px] font-semibold mt-0.5 leading-snug">Mau Masak Apa Hari Ini?</h1>
             <p className="text-white/80 text-xs sm:text-base mt-1 hidden sm:block">
