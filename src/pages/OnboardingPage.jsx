@@ -85,7 +85,7 @@ const slides = [
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5v6l4.5 2.67-.75 1.23L11 14V7h1.5z" fill="#d06224"/>
           </svg>
         ),
-        text: "Filter berdasarkan waktu masak & kesulitan",
+        text: "Filter berdasarkan resep favoritmu",
       },
     ],
     illustrasi: (
