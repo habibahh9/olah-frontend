@@ -38,7 +38,11 @@ export default function LoginPage() {
 
       navigate("/dashboard");
     } catch (err) {
-      setError(err.message || "Email atau kata sandi salah.");
+      setLoading(false); 
+      const status = err.response?.status;
+      if (status === 404) setError("Email belum terdaftar.");
+      else if (status === 401) setError("Kata sandi salah.");
+      else setError("Email belum terdaftar.");
     } finally {
       setLoading(false);
     }
