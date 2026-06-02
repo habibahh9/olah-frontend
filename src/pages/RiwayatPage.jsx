@@ -120,18 +120,29 @@ export default function RiwayatPage() {
 
   // ── Filter + search (client-side) ─────────────────────────────────────
   const getFilteredData = () => {
-  let sourceData = rawHistory;
+  const seen = new Set();
+  const dedupedHistory = rawHistory.filter(item => {
+    const date = new Date(item.cookedAt ?? item.viewedAt ?? item.createdAt);
+    const minuteKey = Math.floor(date.getTime() / 60000);
+    const key = `${item.recipeId?._id ?? item.recipeId}-${minuteKey}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
+  let sourceData = dedupedHistory;
+
+  // ← ini yang hilang, tambah balik
   if (filter === "Minggu Ini") {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    sourceData = rawHistory.filter((item) => {
-      const d = new Date(item.cookedAt ?? item.viewedAt ?? item.createdAt ?? item.date);
+    sourceData = dedupedHistory.filter(item => {
+      const d = new Date(item.cookedAt ?? item.viewedAt ?? item.createdAt);
       return d >= oneWeekAgo;
     });
   }
 
-  let grouped = groupByMonth(sourceData, now);
+  let grouped = groupByMonth(sourceData);
 
   if (filter === "Bulan Ini") {
     grouped = grouped.slice(0, 1);

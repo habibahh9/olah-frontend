@@ -56,6 +56,8 @@ export default function DetailMasakPage() {
       </h1>
       <button
         onClick={async () => {
+          if (hasSaved.current) return;
+          hasSaved.current = true;
           try {
             await riwayatAPI.addItem({ recipeId: id });
           } catch (err) {
