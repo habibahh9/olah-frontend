@@ -360,9 +360,6 @@ export default function DashboardPage() {
           {/* bahan kadaluarsa */}
           <section className="flex flex-col lg:flex-row gap-5">
             <ExpiringSection
-              expiringItems={expiringItems}
-              showAllExpiring={showAllExpiring}
-              setShowAllExpiring={setShowAllExpiring}
             />
 
             {/* notifikasi */}
