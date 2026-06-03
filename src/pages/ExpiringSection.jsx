@@ -22,14 +22,6 @@ const CATEGORIES = [
     dotColor: "#d06224",
     badge: "Segera",
   },
-  {
-    key: "stillFresh",
-    label: "Masih Lama",
-    color: "#8a8635",
-    bgColor: "#8a863515",
-    dotColor: "#8a8635",
-    badge: "Aman",
-  },
 ];
 
 const formatDays = (daysLeft) => {
@@ -126,8 +118,8 @@ export default function ExpiringSection() {
   }
 
   const chart = stats?.chart ?? { saved: 0, wasted: 0, savedPct: 0, wastedPct: 0, total: 0 };
-  const cats       = stats?.categories ?? { expired: [], nearExpiry: [], stillFresh: [] };
-  const hasAnyItem = (cats.expired.length + cats.nearExpiry.length + cats.stillFresh.length) > 0;
+  const cats       = stats?.categories ?? { expired: [], nearExpiry: [] };
+  const hasAnyItem = (cats.expired.length + cats.nearExpiry.length) > 0;
 
   return (
     <div className="flex-1 bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
@@ -187,7 +179,7 @@ export default function ExpiringSection() {
             ))}
             <div className="border-t border-gray-100 my-1" />
             <div className="flex items-center justify-between gap-2 px-1">
-              <span className="text-xs text-gray-400">Aktif di dapur</span>
+              <span className="text-xs text-gray-400">Bahan Tersedia</span>
               <span className="text-xs font-semibold text-gray-600">{stats?.summary?.active ?? 0} bahan</span>
             </div>
           </div>
