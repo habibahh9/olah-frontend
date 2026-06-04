@@ -253,12 +253,6 @@ export default function BahanLengkapPage() {
             >
               Semua Resep
             </button>
-            <button
-              onClick={() => navigate("/cepat")}
-              className="h-[40px] md:h-[50px] px-12 rounded-full bg-[#9f9b4a] text-white font-medium"
-            >
-              Cepat
-            </button>
           </div>
 
           {/* ─── Menu Favorit ─────────────────────────────────────────── */}

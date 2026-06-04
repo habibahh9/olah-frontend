@@ -119,7 +119,11 @@ export default function ExpiringSection() {
 
   const chart = stats?.chart ?? { saved: 0, wasted: 0, savedPct: 0, wastedPct: 0, total: 0 };
   const cats       = stats?.categories ?? { expired: [], nearExpiry: [] };
-  const hasAnyItem = (cats.expired.length + cats.nearExpiry.length) > 0;
+  const hasAnyItem = (
+    (cats.expired?.length ?? 0) +
+    (cats.nearExpiry?.length ?? 0) +
+    (cats.stillFresh?.length ?? 0)
+  ) > 0;
 
   return (
     <div className="flex-1 bg-white rounded-[15px] p-4 sm:p-5 shadow-sm">
@@ -146,22 +150,6 @@ export default function ExpiringSection() {
                 <span className="text-[10px] text-gray-400 text-center px-2 leading-tight">Belum ada data</span>
               )}
             </div>
-          </div>
-
-          {/* Tengah chart — ganti isi ini */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            {hasAnyItem ? (
-              <>
-                <span className="text-lg font-bold text-gray-700">
-                  {(stats?.categories?.expired?.length ?? 0) +
-                  (stats?.categories?.nearExpiry?.length ?? 0) +
-                  (stats?.categories?.stillFresh?.length ?? 0)}
-                </span>
-                <span className="text-[10px] text-gray-400 mt-0.5 text-center leading-tight">bahan aktif</span>
-              </>
-            ) : (
-              <span className="text-[10px] text-gray-400 text-center px-2 leading-tight">Belum ada data</span>
-            )}
           </div>
 
           {/* Legend */}
